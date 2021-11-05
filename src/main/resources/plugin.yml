@@ -1,0 +1,10 @@
+name: Factions
+version: '${project.version}'
+main: com.itndev.factions.Main
+api-version: 1.16
+depend: [ ProtocolLib, PlaceholderAPI, Vault ]
+authors: [ Itndev, Jea ]
+description: Faciton Server Plugin
+commands:
+  국가:
+    description: Faction Main Command
