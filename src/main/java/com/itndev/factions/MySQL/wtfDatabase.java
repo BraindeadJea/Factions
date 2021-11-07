@@ -16,16 +16,9 @@ public class wtfDatabase {
             String FactionName = FactionNameCapped.toLowerCase(Locale.ROOT);
             if(!Main.getInstance().sqlmanager.FactionNameExists(FactionName)) {
                 try {
-                    PreparedStatement ps = Main.hikariCP.getHikariConnection().prepareStatement("INSERT IGNORE INTO FactionName"
-                            + " (FactionName,FactionUUID) VALUES (?,?)");
-                    ps.setString(1, FactionName);
-                    ps.setString(2, FactionUUID);
-                    ps.executeUpdate();
-                    PreparedStatement ps2 = Main.hikariCP.getHikariConnection().prepareStatement("UPDATE FactionName" +
-                            " SET FactionNameCap=? WHERE FactionUUID=?");
-                    ps2.setString(1, FactionNameCapped);
-                    ps2.setString(2, FactionUUID);
-                    ps2.executeQuery();
+                    PreparedStatement ps = Main.hikariCP.getHikariConnection().prepareStatement("Call CREATENAME('" +
+                            FactionName + "','" + FactionUUID + "','" + FactionNameCapped + "')");
+                    ps.executeQuery();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -49,7 +42,7 @@ public class wtfDatabase {
     public void CreateNewDTR(String FactionUUID, String FactionName) {
         new Thread(() -> {
             try {
-                PreparedStatement ps = Main.hikariCP.getHikariConnection().prepareStatement("INSERT IGNORE INTO FactionDTR" +
+                /*PreparedStatement ps = Main.hikariCP.getHikariConnection().prepareStatement("INSERT IGNORE INTO FactionDTR" +
                          " (FactionUUID,FactionName) VALUES (?,?)");
                 ps.setString(1, FactionUUID);
                 ps.setString(2, FactionName);
@@ -57,7 +50,10 @@ public class wtfDatabase {
                 PreparedStatement ps2 = Main.hikariCP.getHikariConnection().prepareStatement("UPDATE FactionDTR" +
                         " SET FactionDTR=? WHERE FactionUUID=?");
                 ps2.setString(1, "100");
-                ps2.setString(2, FactionUUID);
+                ps2.setString(2, FactionUUID);*/
+                PreparedStatement ps = Main.hikariCP.getHikariConnection().prepareStatement("Call CREATEDTR('" +
+                        FactionUUID + "','" + FactionName + "','100')");
+                ps.executeQuery();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -67,15 +63,9 @@ public class wtfDatabase {
     public void CreateNewBank(String FactionUUID, String FactionName) {
         new Thread(() -> {
             try {
-                PreparedStatement ps = Main.hikariCP.getHikariConnection().prepareStatement("INSERT IGNORE INTO FactionBank" +
-                        " (FactionUUID,FactionName) VALUES (?,?)");
-                ps.setString(1, FactionUUID);
-                ps.setString(2, FactionName);
-                ps.executeUpdate();
-                PreparedStatement ps2 = Main.hikariCP.getHikariConnection().prepareStatement("UPDATE FactionBank" +
-                        " SET FactionDTR=? WHERE FactionUUID=?");
-                ps2.setString(1, "0");
-                ps2.setString(2, FactionUUID);
+                PreparedStatement ps = Main.hikariCP.getHikariConnection().prepareStatement("Call CREATEBANK('" +
+                        FactionUUID + "','" + FactionName + "','0')");
+                ps.executeQuery();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -174,13 +164,16 @@ public class wtfDatabase {
         new Thread( () ->{
             try {
 
-                PreparedStatement DTRUPDATE = Main.hikariCP.getHikariConnection().prepareStatement("SELECT @ORIGINNAME := (SELECT FactionDTR FROM FactionDTR WHERE FactionUUID='"+ FactionUUID +"');" +
+                /*PreparedStatement DTRUPDATE = Main.hikariCP.getHikariConnection().prepareStatement("SELECT @ORIGINNAME := (SELECT FactionDTR FROM FactionDTR WHERE FactionUUID='"+ FactionUUID +"');" +
                         "UPDATE FactionDTR SET FactionDTR=CONVERT(CONVERT(@ORIGINNAME, DOUBLE) + " + String.valueOf(DTR) + ", CHAR) WHERE FactionUUID='"+ FactionUUID +"';" +
                         "SELECT FactionDTR FROM FactionDTR WHERE FactionUUID='"+ FactionUUID +"';");
                 ResultSet rs = DTRUPDATE.executeQuery();
                 if(rs.next()) {
                     futureDTR.complete(rs.getDouble("FactionDTR"));
-                }
+                }*/
+                PreparedStatement ps = Main.hikariCP.getHikariConnection().prepareStatement("SELECT " +
+                        "FactionBank FROM FactionBank WHERE FactionUUID='" + FactionUUID + "'");
+
                 /*PreparedStatement ps = Main.hikariCP.getHikariConnection().prepareStatement("SELECT " +
                         "FactionDTR FROM FactionDTR WHERE FactionUUID=?");
                 ps.setString(1, FactionUUID);
