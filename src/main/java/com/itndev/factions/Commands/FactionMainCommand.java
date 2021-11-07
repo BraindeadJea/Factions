@@ -22,6 +22,8 @@ import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class FactionMainCommand implements CommandExecutor {
 
@@ -47,19 +49,14 @@ public class FactionMainCommand implements CommandExecutor {
                     }
                 }
                 commandcooldown.put(sender.getName(), Long.valueOf(System.currentTimeMillis()));
-                try {
-                    factioncommand(p, args);
-                } catch (ExecutionException | InterruptedException e) {
-                    SystemUtils.warning(   "&r&f" + p.getName() + "&r&7이가 국가 명령어를 실행하던 중 에러가 발생했습니다.");
-                    e.printStackTrace();
-                }
+                factioncommand(p, args);
             }
         }
         return false;
     }
 
     @Deprecated
-    private void factioncommand(Player sender, String[] args) throws ExecutionException, InterruptedException {
+    private void factioncommand(Player sender, String[] args) {
 
         if(args.length < 1) {
             FactionHelp.FactionHelp(sender);
@@ -67,71 +64,70 @@ public class FactionMainCommand implements CommandExecutor {
 
 
         } else {
-            String UUID = sender.getUniqueId().toString();
-            switch (args[0].toLowerCase(Locale.ROOT)) {
-                case "도움말":
-                    FactionHelp.FactionHelp(sender);
-                case "생성":
-                    CompletableFuture<Boolean> FutureValidCheck = ValidChecker.ValidCheck(args[1]);
+            try {
+                String UUID = sender.getUniqueId().toString();
+                switch (args[0].toLowerCase(Locale.ROOT)) {
+                    case "도움말":
+                        FactionHelp.FactionHelp(sender);
+                    case "생성":
+                        CompletableFuture<Boolean> FutureValidCheck = ValidChecker.ValidCheck(args[1]);
+                        CompletableFuture<Boolean> FutureNameCheck = Main.database.isExistingName(args[1]);
 
-                    if(FactionUtils.getPlayerRank(sender.getUniqueId().toString()).equalsIgnoreCase("nomad")) {
-                        if (FutureValidCheck.get()) {
-                            OfflinePlayer op = Bukkit.getOfflinePlayer(sender.getUniqueId());
-                            double bal = Main.econ.getBalance(op);
-                            if(bal > Config.FactionCreateBalance) {
-                                if(!Main.getInstance().sqlmanager.FactionNameExists(args[1])) {
-                                    Main.econ.withdrawPlayer(op, Config.FactionCreateBalance);
-                                    CreateFaction.CreateFaction(sender, args[1]);
-
-
+                        if (FactionUtils.getPlayerRank(sender.getUniqueId().toString()).equalsIgnoreCase("nomad")) {
+                            if (FutureValidCheck.get(40, TimeUnit.MILLISECONDS)) {
+                                OfflinePlayer op = Bukkit.getOfflinePlayer(sender.getUniqueId());
+                                double bal = Main.econ.getBalance(op);
+                                if (bal > Config.FactionCreateBalance) {
+                                    if (args[1].length() > 12) {
+                                        if (!FutureNameCheck.get(40, TimeUnit.MILLISECONDS)) {
+                                            Main.econ.withdrawPlayer(op, Config.FactionCreateBalance);
+                                            CreateFaction.CreateFaction(sender, args[1]);
+                                        } else {
+                                            SystemUtils.sendfactionmessage(sender, "&r&f해당 국가가 이미 존재합니다");
+                                        }
+                                    } else {
+                                        SystemUtils.sendfactionmessage(sender, "&r&f국가 이름의 길이는 12자를 초과할수 없습니다");
+                                    }
                                 } else {
-                                    SystemUtils.sendfactionmessage(sender, "&r&f해당 국가가 이미 존재합니다");
+                                    SystemUtils.sendfactionmessage(sender, "&r&f국가를 생성하기 위한 비용이 부족합니다 &7( " + String.valueOf(Config.FactionCreateBalance - bal) + "원 )");
                                 }
                             } else {
-                                SystemUtils.sendfactionmessage(sender, "&r&f국가를 생성하기 위한 비용이 부족합니다 &7( " + String.valueOf(Config.FactionCreateBalance - bal) + "원 )");
+                                SystemUtils.sendfactionmessage(sender, "&r&f해당 문자/단어는 국가 이름에 들어갈수 없습니다");
                             }
+                        } else {
+                            SystemUtils.sendfactionmessage(sender, "&r&f당신은 이미 다른 국가에 소속되어 있습니다. 기존 국가를 나간후에 다시 시도해 주십시오");
+                        }
+                        return;
+                    case "해제":
+                        if (FactionUtils.getPlayerRank(UUID).equalsIgnoreCase("leader")) {
 
                         } else {
-                            SystemUtils.sendfactionmessage(sender, "&r&f해당 문자/단어는 국가 이름에 들어갈수 없습니다");
+                            SystemUtils.sendfactionmessage(sender, "&r&f당신은 국가에 소속되어 있지 않거나 국가의 왕이 아닙니다");
                         }
-                    } else {
-                        SystemUtils.sendfactionmessage(sender, "&r&f당신은 이미 다른 국가에 소속되어 있습니다. 기존 국가를 나간후에 다시 시도해 주십시오");
-                    }
-                    return;
+                    case "해제수락":
 
-                case "해제":
+                    case "초대":
 
-                    if(FactionUtils.getPlayerRank(UUID).equalsIgnoreCase("leader")) {
+                    case "초대취소":
 
-                    } else {
-                        SystemUtils.sendfactionmessage(sender, "&r&f당신은 국가에 소속되어 있지 않거나 국가의 왕이 아닙니다");
-                    }
+                    case "수락":
 
+                    case "진급":
 
-                case "해제수락":
+                    case "강등":
 
+                    case "정보":
 
+                    case "소속":
 
-                case "초대":
+                    case "temp":
 
-                case "초대취소":
-
-                case "수락":
-
-                case "진급":
-
-                case "강등":
-
-                case "정보":
-
-                case "소속":
-
-                case "temp":
-
-                default:
-                    FactionHelp.FactionHelp(sender);
+                    default:
+                        FactionHelp.FactionHelp(sender);
+                }
+            } catch (ExecutionException | InterruptedException | TimeoutException e) {
+                e.printStackTrace();
             }
         }
-
     }
 }

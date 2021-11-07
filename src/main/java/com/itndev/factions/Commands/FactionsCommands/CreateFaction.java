@@ -8,6 +8,8 @@ import com.itndev.factions.Utils.FactionUtils;
 import com.itndev.factions.Utils.SystemUtils;
 import org.bukkit.entity.Player;
 
+import java.util.Locale;
+
 public class CreateFaction {
 
     public static MySQLUtils sqlUtils = new MySQLUtils();
@@ -18,5 +20,7 @@ public class CreateFaction {
         String newFactionUUID = FactionUtils.newFactionUUID();
         FactionUtils.CreateFaction(p.getName(), newFactionUUID, FactionName);
         Main.database.AddNewFactionName(FactionName, newFactionUUID);
+        Main.database.CreateNewDTR(newFactionUUID, FactionName.toLowerCase(Locale.ROOT));
+        Main.database.CreateNewBank(newFactionUUID, FactionName.toLowerCase(Locale.ROOT));
     }
 }
