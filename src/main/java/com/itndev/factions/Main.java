@@ -54,9 +54,8 @@ public class Main extends JavaPlugin {
 
         RegisterStuff.RegisterFactionCommands();
         RegisterStuff.RegisterListener();
+        RegisterStuff.onStartup();
         setupEconomy();
-
-        ValidChecker.setvalid();
 
     }
 

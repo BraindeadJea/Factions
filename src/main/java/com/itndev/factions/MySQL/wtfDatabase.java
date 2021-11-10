@@ -171,9 +171,14 @@ public class wtfDatabase {
                 if(rs.next()) {
                     futureDTR.complete(rs.getDouble("FactionDTR"));
                 }*/
-                PreparedStatement ps = Main.hikariCP.getHikariConnection().prepareStatement("SELECT " +
-                        "FactionBank FROM FactionBank WHERE FactionUUID='" + FactionUUID + "'");
-
+                PreparedStatement ps = Main.hikariCP.getHikariConnection().prepareStatement("Call " +
+                        "UPDATEDTR(0," + String.valueOf(DTR) + ",0,'" + FactionUUID + "')");
+                ResultSet rs = ps.executeQuery();
+                if(rs.next()) {
+                    futureDTR.complete(rs.getDouble("FINALDTR"));
+                } else {
+                    futureDTR.complete(-420D);
+                }
                 /*PreparedStatement ps = Main.hikariCP.getHikariConnection().prepareStatement("SELECT " +
                         "FactionDTR FROM FactionDTR WHERE FactionUUID=?");
                 ps.setString(1, FactionUUID);
@@ -200,7 +205,15 @@ public class wtfDatabase {
         new Thread( () ->{
             try {
 
-                PreparedStatement DTRUPDATE = Main.hikariCP.getHikariConnection().prepareStatement("SELECT @ORIGINNAME := (SELECT FactionBank FROM FactionBank WHERE FactionUUID='"+ FactionUUID +"');" +
+                String cmd = "Call UPDATEBANK(0," + String.valueOf(DTR) + ",0,'" + FactionUUID + "')";
+                PreparedStatement ps = Main.hikariCP.getHikariConnection().prepareStatement(cmd);
+                ResultSet rs = ps.executeQuery();
+                if(rs.next()) {
+                    futureBank.complete(rs.getDouble("FINALBANK"));
+                } else {
+                    futureBank.complete(-420D);
+                }
+                /*PreparedStatement DTRUPDATE = Main.hikariCP.getHikariConnection().prepareStatement("SELECT @ORIGINNAME := (SELECT FactionBank FROM FactionBank WHERE FactionUUID='"+ FactionUUID +"');" +
                         "UPDATE FactionBank SET FactionBank=CONVERT(CONVERT(@ORIGINNAME, DOUBLE) + " + String.valueOf(DTR) + ", CHAR) WHERE FactionUUID='"+ FactionUUID +"';" +
                         "SELECT FactionBank FROM FactionBank WHERE FactionUUID='"+ FactionUUID +"';");
                 ResultSet rs = DTRUPDATE.executeQuery();
@@ -208,7 +221,7 @@ public class wtfDatabase {
                     futureBank.complete(rs.getDouble("FactionBank"));
                 } else {
                     futureBank.complete(null);
-                }
+                }*/
                 /*PreparedStatement ps = Main.hikariCP.getHikariConnection().prepareStatement("SELECT " +
                         "FactionDTR FROM FactionDTR WHERE FactionUUID=?");
                 ps.setString(1, FactionUUID);
@@ -230,4 +243,15 @@ public class wtfDatabase {
         return futureBank;
     }
 
+    public void ChangeFactionDatabaseName(String FactionUUID, String FactionNameCap) {
+        new Thread( () ->{
+            try {
+                String cmd = "Call UPDATENAME('" + FactionNameCap.toLowerCase(Locale.ROOT) + "','" + FactionUUID + "','" + FactionNameCap + "')";
+                PreparedStatement ps = Main.hikariCP.getHikariConnection().prepareStatement(cmd);
+                ps.executeQuery();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
 }

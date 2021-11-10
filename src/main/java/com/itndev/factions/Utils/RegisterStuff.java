@@ -1,6 +1,7 @@
 package com.itndev.factions.Utils;
 
 import com.itndev.factions.Commands.FactionMainCommand;
+import com.itndev.factions.Commands.FactionsCommands.FactionTimeOut;
 import com.itndev.factions.Listener.PlayerListener;
 import com.itndev.factions.Main;
 import org.bukkit.Bukkit;
@@ -11,8 +12,10 @@ import java.util.Objects;
 
 public class RegisterStuff {
 
-    public static void onEnablemethod() {
+    public static void onStartup() {
 
+        FactionTimeOut.TimeoutManager();
+        ValidChecker.setvalid();
     }
 
 

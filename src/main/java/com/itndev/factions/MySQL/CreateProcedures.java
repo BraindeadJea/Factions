@@ -36,11 +36,11 @@ public class CreateProcedures {
                         "        VALUE_FactionUUID CHAR(100)" +
                         "    )" +
                         " BEGIN" +
-                        "    SET ORIGINALBANK = CONVERT((SELECT FactionNameCap FROM FactionName WHERE FactionUUID=VALUE_FactionUUID), DOUBLE);" +
+                        "    SET ORIGINALBANK = CONVERT((SELECT FactionBank FROM FactionBank WHERE FactionUUID=VALUE_FactionUUID), DOUBLE);" +
                         "    IF ORIGINALBANK > TAKEFROMBANK THEN" +
                         "        SET FINALBANK = ORIGINALBANK - TAKEFROMBANK;" +
-                        "        UPDATE FactionName SET FactionName=CONVERT(FINALBANK, CHAR) WHERE FactionUUID=VALUE_FactionUUID;" +
-                        "        SELECT FactionNameCap FROM FactionName WHERE FactionUUID=VALUE_FactionUUID;" +
+                        "        UPDATE FactionBank SET FactionBank=CONVERT(FINALBANK, CHAR) WHERE FactionUUID=VALUE_FactionUUID;" +
+                        "        SELECT FINALBANK;" +
                         "    ELSE" +
                         "        SET FINALBANK = -1;" +
                         "        SELECT FINALBANK;" +
@@ -82,7 +82,7 @@ public class CreateProcedures {
                         "    IF ORIGINALDTR > TAKEFROMDTR THEN" +
                         "        SET FINALDTR = ORIGINALDTR - TAKEFROMDTR;" +
                         "        UPDATE FactionDTR SET FactionDTR=CONVERT(FINALDTR, CHAR) WHERE FactionUUID=VALUE_FactionUUID;" +
-                        "        SELECT FactionDTR FROM FactionDTR WHERE FactionUUID=VALUE_FactionUUID;" +
+                        "        SELECT FINALDTR;" +
                         "    ELSE" +
                         "        SET FINALDTR = -404;" +
                         "        SELECT FINALDTR;" +
