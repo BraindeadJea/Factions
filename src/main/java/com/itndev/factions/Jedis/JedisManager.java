@@ -1,9 +1,13 @@
 package com.itndev.factions.Jedis;
 
+import com.itndev.factions.Listener.PlayerListener;
 import com.itndev.factions.Main;
+import com.itndev.factions.Storage.CachedStorage;
 import com.itndev.factions.Storage.FactionStorage;
 import com.itndev.factions.Storage.UserInfoStorage;
 import com.itndev.factions.Utils.FactionUtils;
+import com.itndev.factions.Utils.SystemUtils;
+import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitRunnable;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -340,6 +344,9 @@ public class JedisManager {
                         || args[1].equalsIgnoreCase("nameuuid")
                         || args[1].equalsIgnoreCase("uuidname")) {
                     UserInfoStorage.UserInfoStorageUpdateHandler(args);
+                } else if(args[1].equalsIgnoreCase("cachedDTR")
+                        || args[1].equalsIgnoreCase("cachedBank")) {
+                    CachedStorage.JedisCacheSync(args);
                 }
             } else if(args[0].equalsIgnoreCase("ping")) {
                 //jedis.c = Math.toIntExact(c + 1);
@@ -367,8 +374,16 @@ public class JedisManager {
                 String trueorfalse = args[4];
                 FactionUtils.FactionNotify(playeruuid, targetuuid, message, trueorfalse);
                 //utils.teamnotify(playeruuid, targetuuid, message, trueorfalse);
+            } else if(args[0].equalsIgnoreCase("warplocation")) {
+                String targetuuid = args[1];
+                String Server = args[2];
+                String stringlocation = args[3];
+                if(Main.ServerName.equalsIgnoreCase(Server)) {
+                    Location loc = SystemUtils.string2loc(stringlocation);
+                    PlayerListener.onJoinWarp.put(targetuuid, loc);
+                }
             } else {
-                System.out.println("[WARNING (REDIS)] WRONG COMMAND USAGE FROM REDIS" + " (" + k + ")");
+                System.out.println("[WARNING (REDIS)] WRONG COMMAND USAGE FROM REDIS" + " ( '" + k + "' )");
             }
 
 

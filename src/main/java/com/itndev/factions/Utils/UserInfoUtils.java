@@ -30,6 +30,15 @@ public class UserInfoUtils {
     public static void getPlayerUUID() {
 
     }
+
+    public static Boolean hasJoined(String name) {
+        return (UserInfoStorage.nameuuid.containsKey(name.toLowerCase(Locale.ROOT)));
+    }
+
+    public static Boolean hasJoinedUUID(String UUID) {
+        return (UserInfoStorage.uuidname.containsKey(UUID));
+    }
+
     public static String getPlayerName(String UUID) {
         String finalname = null;
         if(UserInfoStorage.uuidname.containsKey(UUID)) {
@@ -51,10 +60,6 @@ public class UserInfoUtils {
         }
         return finalname;
     }
-
-
-
-
 
 
 

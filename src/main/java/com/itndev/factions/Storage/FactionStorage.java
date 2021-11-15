@@ -46,6 +46,13 @@ public class FactionStorage {
 
     public static ConcurrentHashMap<String, String> FactionOutPost = new ConcurrentHashMap<>(); //do not trust this
 
+    public static ConcurrentHashMap<String, String> FactionWarpLocations = new ConcurrentHashMap<>();
+    // key : FactionUUID + Type + id
+    // if Type is Spawn id is Spawn
+    // -- example --
+    // FactionUUID=Spawn=Spawn , Coords
+    // FactionUUID=OutPost=ID , Coords
+
     public static void FactionStorageUpdateHandler(String[] args) {
 
         if(args[1].equalsIgnoreCase("FactionToLand")) {
@@ -356,7 +363,7 @@ public class FactionStorage {
                 }
             }
 
-        } else if(args[1].equalsIgnoreCase("FactionDTR")) {
+        } else if(args[1].equalsIgnoreCase("FactionDTR")) { //no longer used
 
             if(args[2].equalsIgnoreCase("add")) {
                 String key = args[3]; //키

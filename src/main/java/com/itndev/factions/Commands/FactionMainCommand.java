@@ -10,6 +10,7 @@ import com.itndev.factions.MySQL.MySQLManager;
 import com.itndev.factions.MySQL.MySQLUtils;
 import com.itndev.factions.Utils.FactionUtils;
 import com.itndev.factions.Utils.SystemUtils;
+import com.itndev.factions.Utils.UserInfoUtils;
 import com.itndev.factions.Utils.ValidChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -34,7 +35,7 @@ public class FactionMainCommand implements CommandExecutor {
     //public MySQLUtils sqlUtils = Main.getInstance().sqlutils;
     private HashMap<String, Long> commandcooldown = new HashMap<>();
 
-    private static HashMap<UUID, Long> FactionCommandCoolDown = new HashMap<>();
+    //private static HashMap<UUID, Long> FactionCommandCoolDown = new HashMap<>();
 
     @Deprecated
     @Override
@@ -59,12 +60,9 @@ public class FactionMainCommand implements CommandExecutor {
 
     @Deprecated
     private void factioncommand(Player sender, String[] args) {
-
         if(args.length < 1) {
             FactionHelp.FactionHelp(sender);
             return;
-
-
         } else {
             try {
                 String UUID = sender.getUniqueId().toString();
@@ -124,18 +122,80 @@ public class FactionMainCommand implements CommandExecutor {
                             SystemUtils.sendfactionmessage(sender, "&r&f당신은 국가에 소속되어 있지 않거나 국가의 왕이 아닙니다");
                         }
                     case "초대":
+                        if (FactionUtils.isInFaction(UUID)) {
+                            if (FactionUtils.HigherThenRank(FactionUtils.getPlayerRank(UUID), Config.VipMember)) {
+                                if(UserInfoUtils.hasJoined(args[1])) {
+                                    String InviteUUID = UserInfoUtils.getPlayerUUID(args[1]);
+                                    String CasedName = UserInfoUtils.getPlayerOrginName(InviteUUID);
+                                    if(!FactionUtils.isInFaction(InviteUUID)) {
 
+                                    } else {
+                                        SystemUtils.sendfactionmessage(sender, "&r&c" + CasedName + "&r&f(은)는 이미 다른 국가에 소속되어 있습니다");
+                                    }
+                                } else {
+                                    SystemUtils.sendfactionmessage(sender,   "&r&c" + args[1] + "&r&f(은)는 존재하지 않는 유저입니다");
+                                }
+                            } else {
+                                SystemUtils.sendfactionmessage(sender, "&r&f권한이 없습니다. &c" + Config.VipMember_Lang + " &r&f랭크 이상부터 사용이 가능합니다");
+                            }
+                        } else {
+                            SystemUtils.sendfactionmessage(sender, "&r&f");
+                        }
                     case "초대취소":
 
                     case "수락":
 
-                    case "진급":
+                    case "추방":
 
-                    case "강등":
+                    case "설정":
+                        switch (args[1].toLowerCase(Locale.ROOT)) {
+                            case "계급":
+
+                            case "설명":
+
+                            case "공지":
+
+                            case "스폰":
+
+                            case "동맹":
+
+                            case "적대":
+
+                            case "중립":
+
+                            default:
+                                //send help message
+
+                        }
+                    case "스폰":
+
+                    case "영토":
+                        //if is in faction & has permission to claim land
+                        if(FactionUtils.isInFaction(UUID)) {
+                            if(FactionUtils.HigherThenRank(UUID, Config.CoLeader)) {
+                                switch (args[1].toLowerCase(Locale.ROOT)) {
+                                    case "구매":
+
+
+                                    case "해제":
+
+                                        return;
+                                }
+                            } else {
+
+                            }
+                        } else {
+
+                        }
+
 
                     case "정보":
 
                     case "소속":
+
+                    case "목록":
+
+                    case "공지":
 
                     case "temp":
 

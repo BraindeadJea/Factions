@@ -1,6 +1,7 @@
 package com.itndev.factions.Utils;
 
 import com.itndev.factions.Commands.FactionsCommands.ClaimLand;
+import com.itndev.factions.Config.Config;
 import com.itndev.factions.Jedis.JedisTempStorage;
 import com.itndev.factions.Main;
 import com.itndev.factions.Storage.FactionStorage;
@@ -52,15 +53,6 @@ public class FactionUtils {
         }
     }
 
-    public static void AddFactionDTR(String FactionUUID, double DTR, Boolean RemoveFaction) {
-        if(!RemoveFaction) {
-            JedisTempStorage.AddCommandToQueue("update:=:FactionDTR:=:add:=:" + FactionUUID + ":=:add:=:" + DTR);
-        } else {
-            JedisTempStorage.AddCommandToQueue("update:=:FactionDTR:=:remove:=:" + FactionUUID + ":=:remove:=:" + "D");
-        }
-
-    }
-
     public static void SetFactionName(String FactionUUID, String NewFactionName) {
         //Faction name update
         String oldFactionName = getFactionName(FactionUUID);
@@ -83,7 +75,7 @@ public class FactionUtils {
         JedisTempStorage.AddCommandToQueue("update:=:FactionNameToFactionUUID:=:add:=:" + FactionName + ":=:add:=:" + FactionUUID);
         JedisTempStorage.AddCommandToQueue("update:=:FactionNameToFactionName:=:add:=:" + FactionName + ":=:add:=:" + FactionOrginName);
         JedisTempStorage.AddCommandToQueue("update:=:FactionUUIDToFactionName:=:add:=:" + FactionUUID + ":=:add:=:" + FactionName);
-        JedisTempStorage.AddCommandToQueue("update:=:FactionRank:=:add:=:" + LeaderUUID + ":=:add:=:leader");
+        JedisTempStorage.AddCommandToQueue("update:=:FactionRank:=:add:=:" + LeaderUUID + ":=:add:=:" + Config.Leader);
         JedisTempStorage.AddCommandToQueue("update:=:PlayerFaction:=:add:=:" + LeaderUUID + ":=:add:=:" + FactionName);
     }
 
@@ -95,7 +87,7 @@ public class FactionUtils {
         JedisTempStorage.AddCommandToQueue("update:=:FactionUUIDToFactionName:=:remove:=:" + FactionUUID + ":=:add:=:" + "nothing");
         if(FactionStorage.FactionMember.containsKey(FactionUUID)) {
             for(String PlayerUUID : FactionStorage.FactionMember.get(FactionUUID)) {
-                JedisTempStorage.AddCommandToQueue("update:=:FactionRank:=:add:=:" + PlayerUUID + ":=:add:=:nomad");
+                JedisTempStorage.AddCommandToQueue("update:=:FactionRank:=:add:=:" + PlayerUUID + ":=:add:=:" + Config.Nomad);
                 JedisTempStorage.AddCommandToQueue("update:=:PlayerFaction:=:remove:=:" + PlayerUUID + ":=:add:=:ddd");
             }
         }
@@ -165,7 +157,6 @@ public class FactionUtils {
                 p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&o&l[ &f국가채팅 &a&o&l] &r&f" + UserInfoUtils.getPlayerOrginName(UserInfoUtils.getPlayerName(UUID)) + " &7: &r&3") + message);
             }
         }
-
     }
 
     public static String getFactionByClaim(String ChunkKey) {
@@ -219,9 +210,38 @@ public class FactionUtils {
         if(FactionStorage.FactionRank.containsKey(UUID)) {
             return FactionStorage.FactionRank.get(UUID);
         } else {
-            return "nomad";
+            return Config.Nomad;
         }
+    }
 
+    public static String LangRankConvert(String Rank) {
+        if(Rank.equalsIgnoreCase(Config.Nomad)) {
+            return Config.Nomad_Lang;
+        } else
+        if(Rank.equalsIgnoreCase(Config.Member)) {
+            return Config.Member_Lang;
+        } else
+        if(Rank.equalsIgnoreCase(Config.Warrior)) {
+            return Config.Warrior_Lang;
+        } else
+        if(Rank.equalsIgnoreCase(Config.VipMember)) {
+            return Config.VipMember_Lang;
+        } else
+        if(Rank.equalsIgnoreCase(Config.CoLeader)) {
+            return Config.CoLeader_Lang;
+        } else
+        if(Rank.equalsIgnoreCase(Config.Leader)) {
+            return Config.Leader_Lang;
+        }
+        return null;
+    }
+
+    public static String getPlayerLangRank(String UUID) {
+        if(FactionStorage.FactionRank.containsKey(UUID)) {
+            return LangRankConvert(FactionStorage.FactionRank.get(UUID));
+        } else {
+            return LangRankConvert(Config.Nomad);
+        }
     }
 
     public static String getChunkKey(Location loc) {
@@ -250,4 +270,28 @@ public class FactionUtils {
         return null;
     }
 
+    public static Boolean HigherThenRank(String UUID, String Rank) {
+        String PlayerRank = FactionUtils.getPlayerRank(UUID);
+        if(RankPrio(PlayerRank) >= RankPrio(Rank)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static Integer RankPrio(String Rank) {
+        if(Rank.equalsIgnoreCase(Config.Leader)) {
+            return 6;
+        } else if(Rank.equalsIgnoreCase(Config.CoLeader)) {
+            return 5;
+        } else if(Rank.equalsIgnoreCase(Config.VipMember)) {
+            return 4;
+        } else if(Rank.equalsIgnoreCase(Config.Warrior)) {
+            return 3;
+        } else if(Rank.equalsIgnoreCase(Config.Member)) {
+            return 2;
+        } else {
+            return 1;
+        }
+    }
 }

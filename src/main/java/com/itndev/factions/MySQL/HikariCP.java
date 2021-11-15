@@ -35,7 +35,6 @@ public class HikariCP {
         dataSource.addDataSourceProperty("databaseName", database);
         dataSource.addDataSourceProperty("user", username);
         dataSource.addDataSourceProperty("password", password);
-
     }
 
     public Connection getHikariConnection() {
@@ -52,7 +51,7 @@ public class HikariCP {
         return null;
     }
 
-    public void createHikairTable() {
+    public void createHikariTable() {
         CreateFactionNameTable();
         CreateFactionDTRTable();
         CreateFactionBankTable();

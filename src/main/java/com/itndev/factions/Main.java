@@ -39,24 +39,18 @@ public class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        //sql.SetupMySQL();
-        try {
-            sql.connect();
 
-            hikariCP.setupHikariInfo();
-            hikariCP.ConnectHikari();
-        } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
-        }
-        sqlmanager.FactionDataInfoTableUpdate();
+        hikariCP.setupHikariInfo();
+        hikariCP.ConnectHikari();
+        hikariCP.createHikariTable();
 
         JedisManager.JedisFactory123();
 
         RegisterStuff.RegisterFactionCommands();
         RegisterStuff.RegisterListener();
         RegisterStuff.onStartup();
-        setupEconomy();
 
+        setupEconomy();
     }
 
     @Override

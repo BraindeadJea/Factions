@@ -2,6 +2,7 @@ package com.itndev.factions.Listener;
 
 import com.itndev.factions.Utils.FactionUtils;
 import com.itndev.factions.Utils.SystemUtils;
+import com.itndev.factions.Utils.TeleportInvisFix;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -13,8 +14,14 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
+
+import java.util.HashMap;
 
 public class PlayerListener implements Listener {
+
+    public static HashMap<String, Location> onJoinWarp = new HashMap<>();
 
     @EventHandler
     public void onChat(AsyncChatEvent e) {
@@ -64,4 +71,19 @@ public class PlayerListener implements Listener {
             }
         }
     }
+
+    @EventHandler
+    public void OnJoinWarp(PlayerJoinEvent e) {
+        Player p = e.getPlayer();
+        String uuid = p.getUniqueId().toString();
+        if(onJoinWarp.containsKey(uuid)) {
+            p.teleportAsync(onJoinWarp.get(uuid));
+            onJoinWarp.remove(uuid);
+        }
+    }
+
+    //@EventHandler
+    /*public void onTeleport(PlayerTeleportEvent e) {
+        TeleportInvisFix.onTeleport(e);
+    }*/
 }
