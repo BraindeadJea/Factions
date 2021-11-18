@@ -10,6 +10,8 @@ import java.sql.SQLException;
 public class MySQLConnection {
 
 
+    /*
+
     private String host = "db.itndev.com";
     private String port = "5567";
     private String database = "factioninfo";
@@ -19,14 +21,14 @@ public class MySQLConnection {
 
     private HikariDataSource dataSource;
 
-    /*public void SetupMySQL() {
+    public void SetupMySQL() {
         host = "db.itndev.com";
         port = "5567";
         database = "FactionInfo";
         username = "Skadi";
-        password = "l80oKGTFA#@fCRH75v5w6fefw";
+        password = "l80oKGTFA#@fCRH75v5w6few";
         useSSL = true;
-    }*/
+    }
 
     public void connecthikari() {
         dataSource = new HikariDataSource();
@@ -65,4 +67,5 @@ public class MySQLConnection {
     public Connection getConnection() {
         return connection;
     }
+    */
 }

@@ -12,13 +12,13 @@ public class JedisTempStorage {
 
 
     public static void AddCommandToQueue(String command) {
-        if(TempCommandQueue.isEmpty()) {
+        if(!TempCommandQueue.containsKey("MAXAMOUNT")) {
             TempCommandQueue.put("MAXAMOUNT", "1");
             TempCommandQueue.put("1", command);
         } else {
-            double num = Double.valueOf(TempCommandQueue.get("MAXAMOUNT"));
-            TempCommandQueue.put("MAXAMOUNT", String.valueOf(num));
-            TempCommandQueue.put(String.valueOf(num), command);
+            int num = Integer.valueOf(TempCommandQueue.get("MAXAMOUNT"));
+            TempCommandQueue.put("MAXAMOUNT", String.valueOf(num + 1));
+            TempCommandQueue.put(String.valueOf(num + 1), command);
         }
     }
 

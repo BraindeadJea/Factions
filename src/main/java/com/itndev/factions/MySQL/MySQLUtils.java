@@ -10,6 +10,8 @@ public class MySQLUtils {
 
 
 
+    /*
+
     public void CreateFactionNameAccount(String FactionUUID, String FactionOriginName) {
         String FactionName = FactionOriginName.toLowerCase(Locale.ROOT);
 
@@ -52,5 +54,6 @@ public class MySQLUtils {
             e.printStackTrace();
         }
     }
+     */
 
 }

@@ -34,6 +34,19 @@ public class FactionUtils {
         }
     }
 
+    public static String getFactionLeader(String FactionUUID) {
+        for(String UUID : FactionUtils.getFactionMember(FactionUUID)) {
+            if(FactionUtils.getPlayerRank(UUID).equalsIgnoreCase(Config.Leader)) {
+                return UUID;
+            }
+        }
+        return null;
+    }
+
+    public static Boolean isExistingFaction(String FactionName) {
+        return FactionStorage.FactionNameToFactionUUID.containsKey(FactionName.toLowerCase(Locale.ROOT));
+    }
+
     public static void SetPlayerFaction(String UUID, String FactionUUID) {
         if(FactionUUID == null) {
             JedisTempStorage.AddCommandToQueue("update:=:PlayerFaction:=:remove:=:" + UUID + ":=:add:=:ddd");
@@ -103,13 +116,14 @@ public class FactionUtils {
 
     }
 
+
     @Deprecated
     public static void FactionUUIDNotify(String FactionUUID, String Message) {
         for(String UUID : FactionUtils.getFactionMember(FactionUUID)) {
             OfflinePlayer op = Bukkit.getOfflinePlayer(UserInfoUtils.getPlayerName(UUID));
             if(op.isOnline()) {
                 Player p = (Player) op;
-                SystemUtils.sendmessage(p, Message);
+                SystemUtils.sendmessage(p, SystemUtils.colorize(Message));
             }
         }
     }

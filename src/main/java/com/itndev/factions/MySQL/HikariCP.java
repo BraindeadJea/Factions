@@ -25,11 +25,12 @@ public class HikariCP {
         password = "l80oKGTFA#@fCRH75v5w6fefw";
         useSSL = true;
     }
+    //com.mysql.jdbc.jdbc2.optional.MysqlDataSource
 
     public void ConnectHikari() {
         dataSource = new HikariDataSource();
         dataSource.setMaximumPoolSize(10);
-        dataSource.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
+        dataSource.setDataSourceClassName("com.mysql.cj.jdbc.MysqlDataSource");
         dataSource.addDataSourceProperty("serverName", host);
         dataSource.addDataSourceProperty("port", port);
         dataSource.addDataSourceProperty("databaseName", database);

@@ -7,15 +7,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class CreateProcedures {
-    public void setupProcedures() {
+    public static void setupProcedures() {
         new Thread( () -> {
-            try {
+            /*try {
                 //createbank
                 PreparedStatement ps = Main.hikariCP.getHikariConnection().prepareStatement("DELIMITER $$ " +
                         " CREATE PROCEDURE CREATEBANK(" +
-                        "    VALUE_FactionUUID CHAR," +
-                        "    VALUE_FactionName CHAR," +
-                        "    VALUE_DEFAULTBANK CHAR" +
+                        "    VALUE_FactionUUID CHAR(100)," +
+                        "    VALUE_FactionName CHAR(100)," +
+                        "    VALUE_DEFAULTBANK CHAR(100)" +
                         " )" +
                         " BEGIN " +
                         "    INSERT IGNORE INTO FactionBank (FactionUUID,FactionName) VALUES (VALUE_FactionUUID, VALUE_FactionName);" +
@@ -55,9 +55,9 @@ public class CreateProcedures {
                 //createdtr
                 PreparedStatement ps = Main.hikariCP.getHikariConnection().prepareStatement("DELIMITER $$" +
                         " CREATE PROCEDURE CREATEDTR(" +
-                        "    VALUE_FactionUUID CHAR," +
-                        "    VALUE_FactionName CHAR," +
-                        "    VALUE_DEFAULTDTR CHAR" +
+                        "    VALUE_FactionUUID CHAR(100)," +
+                        "    VALUE_FactionName CHAR(100)," +
+                        "    VALUE_DEFAULTDTR CHAR(100)" +
                         " )" +
                         " BEGIN" +
                         "    INSERT IGNORE INTO FactionDTR (FactionUUID,FactionName) VALUES (VALUE_FactionUUID, VALUE_FactionName);" +
@@ -109,20 +109,26 @@ public class CreateProcedures {
                 ps.executeQuery();
             } catch (SQLException e) {
                 e.printStackTrace();
-            }
+            } */
             try {
                 //updatename
-                PreparedStatement ps = Main.hikariCP.getHikariConnection().prepareStatement(" DELIMITER $$" +
-                        " CREATE PROCEDURE UPDATENAME(" +
-                        "     VALUE_FactionName CHAR(100)," +
-                        "     VALUE_FactionUUID CHAR(100)," +
-                        "     VALUE_FactionNameCap CHAR(100)" +
-                        " )" +
-                        " BEGIN" +
-                        "     UPDATE FactionName SET FactionName=VALUE_FactionName WHERE FactionUUID=VALUE_FactionUUID;" +
-                        "     UPDATE FactionName SET FactionNameCap=VALUE_FactionNameCap WHERE FactionUUID=VALUE_FactionUUID;" +
-                        " END$$" +
-                        " DELIMITER ;");
+                PreparedStatement ps = Main.hikariCP.getHikariConnection().prepareStatement("DELIMITER $$\n " +
+                        "CREATE PROCEDURE CHECKNAME(\n" +
+                        "\tVALUE_FactionName CHAR(100),\n" +
+                        "    VALUE_FactionUUID CHAR(100),\n" +
+                        "    VALUE_FactionCapName CHAR(100),\n" +
+                        "    VALUE_Boolean DOUBLE\n" +
+                        ")\n" +
+                        "BEGIN\n" +
+                        "\tIF EXISTS (SELECT * FROM FactionName WHERE FactionName=VALUE_FactionName) THEN\n" +
+                        "\t\tSET VALUE_Boolean = 1;\n" +
+                        "        SELECT VALUE_Boolean;\n" +
+                        "    ELSE\n" +
+                        "\t\tSET VALUE_Boolean = 0;\n" +
+                        "        SELECT VALUE_Boolean;\n" +
+                        "\tEND IF;\n" +
+                        "END$$\n" +
+                        "DELIMITER ;");
                 ps.executeQuery();
             } catch (SQLException e) {
                 e.printStackTrace();

@@ -37,7 +37,6 @@ public class CacheUtils {
         } else {
             try {
                 Double FinalDTR = Main.database.GetFactionDTR(FactionUUID).get(40, TimeUnit.MILLISECONDS);
-                //CachedStorage.CachedDTR.put(FactionUUID, FinalDTR);
                 UpdateCachedDTR(FactionUUID, FinalDTR);
                 return FinalDTR;
             } catch (InterruptedException | ExecutionException | TimeoutException e ){

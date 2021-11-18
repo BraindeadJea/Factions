@@ -16,6 +16,8 @@ public class MySQLManager {
 
 
 
+    /*
+
     public void FactionDataInfoTableUpdate() {
         CreateFactionNameTable();
         CreateFactionDTRTable();
@@ -190,4 +192,5 @@ public class MySQLManager {
         }
         return false;
     }
+    */
 }

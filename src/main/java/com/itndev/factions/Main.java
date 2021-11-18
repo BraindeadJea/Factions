@@ -7,15 +7,17 @@ import com.itndev.factions.Utils.RegisterStuff;
 
 import com.itndev.factions.Utils.ValidChecker;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.SQLException;
+import java.util.logging.Logger;
 
 public class Main extends JavaPlugin {
 
 
-    public static String ServerName = "dddd";
+    public static String ServerName = "client1";
 
     public static Main instance;
 
@@ -25,11 +27,8 @@ public class Main extends JavaPlugin {
 
     public static wtfDatabase database = new wtfDatabase();
 
-    public MySQLConnection sql = new MySQLConnection();
-
-    public MySQLManager sqlmanager = new MySQLManager();
-
-    public MySQLUtils sqlutils = new MySQLUtils();
+    FileConfiguration config = getConfig();
+    public final Logger logger = Logger.getLogger("Minecraft");
 
     public static Main getInstance() {
         return instance;
@@ -44,7 +43,7 @@ public class Main extends JavaPlugin {
         hikariCP.ConnectHikari();
         hikariCP.createHikariTable();
 
-        JedisManager.JedisFactory123();
+        JedisManager.jedisTest();
 
         RegisterStuff.RegisterFactionCommands();
         RegisterStuff.RegisterListener();
@@ -53,9 +52,15 @@ public class Main extends JavaPlugin {
         setupEconomy();
     }
 
+    @Deprecated
     @Override
     public void onDisable() {
-        sql.disconnect();
+        RegisterStuff.onShutdown();
+        try {
+            hikariCP.getHikariConnection().close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         instance = null;
     }
 

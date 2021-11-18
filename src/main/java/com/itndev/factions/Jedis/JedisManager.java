@@ -28,7 +28,7 @@ public class JedisManager {
     private static JedisPool jedisPool;
     public static void JedisFactory123() {
         JedisPoolConfig poolConfig = new JedisPoolConfig();
-        jedisPool = new JedisPool(poolConfig, "address", 6614, 300000, "passwordinhere", false);
+        jedisPool = new JedisPool(poolConfig, "127.0.0.1", 6614, 300000, "54rg46ujhy7ju57wujndt35ytgryeutwefer4rt34rd34rsfg6hdf43truhgfwgr348yfgcs", false);
     }
 
     public static JedisPool getJedisPool() {
@@ -338,7 +338,9 @@ public class JedisManager {
                         || args[1].equalsIgnoreCase("FactionUUIDToFactionName")
                         || args[1].equalsIgnoreCase("FactionInviteQueue")
                         || args[1].equalsIgnoreCase("FactionDTR")
-                        || args[1].equalsIgnoreCase("FactionDesc")) {
+                        || args[1].equalsIgnoreCase("FactionDesc")
+                        || args[1].equalsIgnoreCase("Timeout2")
+                        || args[1].equalsIgnoreCase("Timeout2info")) {
                     FactionStorage.FactionStorageUpdateHandler(args);
                 } else if(args[1].equalsIgnoreCase("namename")
                         || args[1].equalsIgnoreCase("nameuuid")

@@ -1,5 +1,6 @@
 package com.itndev.factions.Storage;
 
+import com.itndev.factions.Commands.FactionsCommands.FactionTimeOut;
 import com.itndev.factions.Config.Config;
 import com.itndev.factions.Main;
 
@@ -455,6 +456,96 @@ public class FactionStorage {
                 String key = args[3];
                 if(FactionStorage.FactionInviteQueue.containsKey(key)) {
                     FactionStorage.FactionInviteQueue.remove(key);
+                }
+            }
+
+        } else if(args[1].equalsIgnoreCase("Timeout2info")) {
+
+            if(args[2].equalsIgnoreCase("add")) {
+                String key = args[3];
+                String value = args[5];
+                if(args[4].equalsIgnoreCase("add")) {
+                    if (!FactionTimeOut.Timeout2info.isEmpty()) { //비어있지 않으면
+                        if (FactionTimeOut.Timeout2info.containsKey(key)) {
+
+                            //해당 키가 있으면
+                            ArrayList<String> updatelist = FactionTimeOut.Timeout2info.get(key);
+                            if(!updatelist.contains(value)) {
+                                updatelist.add(value);
+                            }
+                            FactionTimeOut.Timeout2info.put(key, updatelist);
+                        } else {
+
+                            //해당 키가 없으면
+                            ArrayList<String> updatelist2 = new ArrayList<>();
+                            if(!updatelist2.contains(value)) {
+                                updatelist2.add(value);
+                            }
+                            FactionTimeOut.Timeout2info.put(key, updatelist2);
+                        }
+                    } else { //만약 비어있으면
+                        ArrayList<String> updatelist3 = new ArrayList<>();
+                        updatelist3.add(value);
+                        FactionTimeOut.Timeout2info.put(key, updatelist3);;
+                    }
+                } else if(args[4].equalsIgnoreCase("remove")) {
+                    if (!FactionTimeOut.Timeout2info.isEmpty()) { //비어있지 않으면
+                        if (FactionTimeOut.Timeout2info.containsKey(key)) {
+
+                            //해당 키가 있으면
+                            ArrayList<String> updatelist = FactionTimeOut.Timeout2info.get(key);
+                            if(updatelist.contains(value)) {
+                                updatelist.remove(value);
+                            }
+                            FactionTimeOut.Timeout2info.put(key, updatelist);
+                        } else {
+
+                            //해당 키가 없으면
+                            //없으니까 하지 말자
+                        }
+                    } else { //만약 비어있으면
+                        //시발 존재하지도 않는데 어떻게 없애냐 뭔시발 병신이냐
+                    }
+                }
+            } else if(args[2].equalsIgnoreCase("remove")) {
+                String key = args[3];
+                if(FactionTimeOut.Timeout2info.containsKey(key)) {
+                    FactionTimeOut.Timeout2info.remove(key);
+                }
+            }
+
+        } else if(args[1].equalsIgnoreCase("Timeout2")) {
+
+            if(args[2].equalsIgnoreCase("add")) {
+                String key = args[3]; //키
+                String value = args[5]; //추가하고 싶은 값
+                int intvalue = Integer.parseInt(value);
+
+
+                if(args[4].equalsIgnoreCase("add")) {
+
+                    if(FactionTimeOut.Timeout2.containsKey(key)) {
+                        FactionTimeOut.Timeout2.remove(key);
+                        FactionTimeOut.Timeout2.put(key, intvalue);
+                    } else {
+                        FactionTimeOut.Timeout2.put(key, intvalue);
+                    }
+                } else if(args[4].equalsIgnoreCase("remove")) {
+
+                    if(FactionTimeOut.Timeout2.containsKey(key)) {
+
+                        FactionTimeOut.Timeout2.remove(key);
+
+                        //할거 없다
+                    } else {
+                        //할거 없다
+                    }
+                }
+
+            } else if(args[2].equalsIgnoreCase("remove")) {
+                String key = args[3];
+                if(FactionTimeOut.Timeout2.containsKey(key)) {
+                    FactionTimeOut.Timeout2.remove(key);
                 }
             }
 

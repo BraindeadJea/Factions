@@ -22,6 +22,15 @@ public class SystemUtils {
     }
 
     @Deprecated
+    public static void sendUUIDfactionmessage(String UUID, String Message) {
+        OfflinePlayer op = Bukkit.getOfflinePlayer(UserInfoUtils.getPlayerName(UUID));
+        if(op.isOnline()) {
+            Player p = (Player) op;
+            p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&o&l[ &r&f국가 &a&o&l] &r&f" + Message));
+        }
+    }
+
+    @Deprecated
     public static void sendUUIDmessage(String UUID, String Message) {
         OfflinePlayer op = Bukkit.getOfflinePlayer(UserInfoUtils.getPlayerName(UUID));
         if(op.isOnline()) {
@@ -42,14 +51,14 @@ public class SystemUtils {
 
     public static Location string2loc(String coords) {
         if(coords.contains("=")) {
-            String[] skadis = coords.split("=");
-            if(skadis.length == 6) {
-                int a = Integer.valueOf(skadis[0]);
-                int b = Integer.valueOf(skadis[1]);
-                String c = skadis[2];
-                double d = Double.valueOf(skadis[3]);
-                double e = Double.valueOf(skadis[4]);
-                double f = Double.valueOf(skadis[5]);
+            String[] skadi = coords.split("=");
+            if(skadi.length == 6) {
+                int a = Integer.valueOf(skadi[0]);
+                int b = Integer.valueOf(skadi[1]);
+                String c = skadi[2];
+                double d = Double.valueOf(skadi[3]);
+                double e = Double.valueOf(skadi[4]);
+                double f = Double.valueOf(skadi[5]);
                 Location loc = new Location(Bukkit.getWorld(c), d, e, f);
                 loc.setPitch(a);
                 loc.setYaw(b);
@@ -58,6 +67,8 @@ public class SystemUtils {
         }
         return null;
     }
+
+
 
     public static String colorize(String message) {
         return ChatColor.translateAlternateColorCodes('&', message);

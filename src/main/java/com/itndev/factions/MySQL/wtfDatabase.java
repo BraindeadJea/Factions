@@ -10,23 +10,54 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class wtfDatabase {
 
     public void AddNewFactionName(String FactionNameCapped, String FactionUUID) {
+        String FactionName = FactionNameCapped.toLowerCase(Locale.ROOT);
+        CompletableFuture<Boolean> isExistingNamefuture = Main.database.isExistingName(FactionName);
         new Thread(() -> {
-            String FactionName = FactionNameCapped.toLowerCase(Locale.ROOT);
-            if(!Main.getInstance().sqlmanager.FactionNameExists(FactionName)) {
-                try {
-                    PreparedStatement ps = Main.hikariCP.getHikariConnection().prepareStatement("Call CREATENAME('" +
-                            FactionName + "','" + FactionUUID + "','" + FactionNameCapped + "')");
-                    ps.executeQuery();
-                } catch (SQLException e) {
-                    e.printStackTrace();
+            try {
+                Boolean isExistingNamed = isExistingNamefuture.get(40, TimeUnit.MILLISECONDS);
+                if(!isExistingNamed) {
+                    try {
+                        PreparedStatement ps = Main.hikariCP.getHikariConnection().prepareStatement("Call CREATENAME('" +
+                                FactionName + "','" + FactionUUID + "','" + FactionNameCapped + "')");
+                        ps.executeQuery();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                 }
+            } catch (InterruptedException | TimeoutException | ExecutionException e) {
+                e.printStackTrace();
             }
         }).start();
+    }
 
+    public CompletableFuture<Boolean> TryClaimName(String FactionNameCapped, String FactionUUID) {
+        CompletableFuture<Boolean> hasSucceed = new CompletableFuture<>();
+        new Thread(() -> {
+            try {
+                PreparedStatement ps = Main.hikariCP.getHikariConnection().prepareStatement("Call TRYCLAIMNAME('" + FactionNameCapped.toLowerCase(Locale.ROOT) + "','" + FactionUUID + "','" + FactionNameCapped + "',0);");
+                //ps.setString(1, FactionUUID);
+                ResultSet rs = ps.executeQuery();
+                if(rs.next()) {
+                    double temp = rs.getDouble("VALUE_Boolean");
+                    if(temp == 0) {
+                        hasSucceed.complete(true);
+                    } else if(temp == 1) {
+                        hasSucceed.complete(false);
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                hasSucceed.complete(false);
+            }
+        }).start();
+        return hasSucceed;
     }
 
     public void DeleteFactionName(String FactionUUID) {
