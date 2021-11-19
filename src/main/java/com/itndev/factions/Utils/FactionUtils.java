@@ -103,6 +103,12 @@ public class FactionUtils {
                 JedisTempStorage.AddCommandToQueue("update:=:PlayerFaction:=:remove:=:" + PlayerUUID + ":=:add:=:ddd");
             }
         }
+        for(String Chunkkey : FactionStorage.FactionToLand.keySet()) {
+            FactionUtils.UnClaimLand(FactionUUID, Chunkkey);
+        }
+        JedisTempStorage.AddCommandToQueue("update:=:FactionToLand:=:remove:=:" + FactionUUID + ":=:add:=:" + "nothing");
+        JedisTempStorage.AddCommandToQueue("update:=:FactionOutPost:=:remove:=:" + FactionUUID + ":=:add:=:" + "nothing");
+        JedisTempStorage.AddCommandToQueue("update:=:FactionWarpLocations:=:remove:=:" + FactionUUID + ":=:add:=:" + "nothing");
     }
 
     public static void SendFactionMessage(String playeruuid, String targetuuid, String type, String message) {
@@ -140,6 +146,23 @@ public class FactionUtils {
             updatelist.remove(Chunkkey);
             FactionStorage.FactionToLand.put(FactionUUID, updatelist);
             JedisTempStorage.AddCommandToQueue("update:=:LandToFaction:=:add:=:" + FactionUUID + ":=:remove:=:" + Chunkkey + ":=:" + Main.ServerName);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static Boolean isAExistingLangRank(String LangRank) {
+        String lowcaserank = LangRank.toLowerCase(Locale.ROOT);
+        if(lowcaserank.equalsIgnoreCase(Config.Leader_Lang)) {
+            return true;
+        } else if(lowcaserank.equalsIgnoreCase(Config.CoLeader_Lang)) {
+            return true;
+        } else if(lowcaserank.equalsIgnoreCase(Config.VipMember_Lang)) {
+            return true;
+        } else if(lowcaserank.equalsIgnoreCase(Config.Warrior_Lang)) {
+            return true;
+        } else if(lowcaserank.equalsIgnoreCase(Config.Member_Lang)) {
             return true;
         } else {
             return false;
@@ -242,6 +265,14 @@ public class FactionUtils {
         return finalname;
     }
 
+    public static Boolean FactionSpawnExists(String FactionUUID) {
+        return FactionStorage.FactionInfo.containsKey(FactionUUID + "=spawn");
+    }
+
+    public static String getFactionSpawn(String FactionUUID) {
+        return FactionStorage.FactionInfo.get(FactionUUID + "=spawn");
+    }
+
     public static ArrayList<String> getFactionMember(String FactionUUID) {
         ArrayList<String> finallist = new ArrayList<>();
         if(FactionStorage.FactionMember.containsKey(FactionUUID)) {
@@ -276,6 +307,28 @@ public class FactionUtils {
         } else
         if(Rank.equalsIgnoreCase(Config.Leader)) {
             return Config.Leader_Lang;
+        }
+        return null;
+    }
+
+    public static String RankConvert(String Rank) {
+        if(Rank.equalsIgnoreCase(Config.Nomad_Lang)) {
+            return Config.Nomad;
+        } else
+        if(Rank.equalsIgnoreCase(Config.Member_Lang)) {
+            return Config.Member;
+        } else
+        if(Rank.equalsIgnoreCase(Config.Warrior_Lang)) {
+            return Config.Warrior;
+        } else
+        if(Rank.equalsIgnoreCase(Config.VipMember_Lang)) {
+            return Config.VipMember;
+        } else
+        if(Rank.equalsIgnoreCase(Config.CoLeader_Lang)) {
+            return Config.CoLeader;
+        } else
+        if(Rank.equalsIgnoreCase(Config.Leader_Lang)) {
+            return Config.Leader;
         }
         return null;
     }
@@ -353,5 +406,13 @@ public class FactionUtils {
         } else {
             return 1;
         }
+    }
+
+    public static void SetFactionSpawn(String FactionUUID, String ConvertLoc) {
+        JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:add:=:" + FactionUUID + "=spawn" + ":=:add:=:" + Main.ServerName + "=" + ConvertLoc);
+    }
+
+    public static void RemoveFactionSpawn(String FactionUUID) {
+        JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:remove:=:" + FactionUUID + "=spawn" + ":=:add:=:" + Main.ServerName);
     }
 }

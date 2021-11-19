@@ -10,8 +10,10 @@ import com.itndev.factions.Utils.FactionUtils;
 import com.itndev.factions.Utils.SystemUtils;
 import com.itndev.factions.Utils.UserInfoUtils;
 import com.itndev.factions.Utils.ValidChecker;
+import net.luckperms.api.model.user.User;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -254,29 +256,85 @@ public class FactionMainCommand implements CommandExecutor {
                     //=================설정=================
 
                     if(FactionUtils.isInFaction(UUID)) {
-                        if(args[0].equalsIgnoreCase("계급")) {
+                        if(args[1].equalsIgnoreCase("등급")) {
 
-                            //=================설정=================
+                            String name = args[3];
+                            Boolean RealRank = FactionUtils.isAExistingLangRank(args[2]);
+                            Boolean RealPlayer = UserInfoUtils.hasJoined(args[3].toLowerCase(Locale.ROOT));
 
-                            if(true) {
-
+                            //=================등급=================
+                            if(FactionUtils.HigherThenorSameRank(UUID, Config.VipMember)) {
+                                if(!RealRank) {
+                                    SystemUtils.sendfactionmessage(sender, "&r&f해당 등급 " + args[2] + "(은)는 존재하지 않습니다");
+                                    return;
+                                }
+                                String TheRank = FactionUtils.RankConvert(args[2]);
+                                if(!RealPlayer) {
+                                    SystemUtils.sendfactionmessage(sender, "&r&f해당 유저 " + name + "(은)는 서버에 접속한 적이 없습니다");
+                                    return;
+                                }
+                                String TargetUUID = UserInfoUtils.getPlayerUUID(name.toLowerCase(Locale.ROOT));
+                                String CasedTargetName = UserInfoUtils.getPlayerOrginName(name.toLowerCase(Locale.ROOT));
+                                if(TargetUUID.equals(UUID)) {
+                                    SystemUtils.sendfactionmessage(sender, "&r&f자신의 등급를 변경할 수 없습니다");
+                                    return;
+                                }
+                                if(!FactionUtils.HigherThenRank(UUID, FactionUtils.getPlayerRank(TargetUUID))) {
+                                    SystemUtils.sendfactionmessage(sender, "&r&f해당 유저 " + CasedTargetName + "(은)는 당신보다 등급이 높은 &r&c" + FactionUtils.getPlayerRank(TargetUUID) + " &r&f입니다. 자신보다 높은 등급인 멤버의 등급를 바꿀 수 없습니다");
+                                    return;
+                                }
+                                if(!FactionUtils.HigherThenRank(UUID, TheRank)) {
+                                    SystemUtils.sendfactionmessage(sender, "&r&f해당 유저 " + CasedTargetName + " 에게 지급할 등급은 자신의 등급보다 높거나 같아서는 안됩니다");
+                                    return;
+                                }
+                                //성공
+                                FactionUtils.SetPlayerRank(TargetUUID, TheRank);
+                                FactionUtils.SendFactionMessage(UUID, UUID, "single", "&r&f" + CasedTargetName + " 이의 등급을 " + FactionUtils.LangRankConvert(TheRank) + " 으로 변경하였습니다");
+                                FactionUtils.SendFactionMessage(TargetUUID, TargetUUID, "single", "&r&f당신의 등급이 " + FactionUtils.LangRankConvert(TheRank) + " 으로 변경되었습니다");
                             } else {
-
+                                SystemUtils.sendfactionmessage(sender, "&r&f권한이 없습니다. &r&c" + Config.VipMember_Lang + " &r&f등급 이상부터 사용이 가능합니다");
                             }
 
-                            //=================설정=================
+                            //=================등급=================
 
-                        } else if(args[0].equalsIgnoreCase("설명")) {
+                        } else if(args[1].equalsIgnoreCase("설명")) {
 
-                        } else if(args[0].equalsIgnoreCase("공지")) {
+                        } else if(args[1].equalsIgnoreCase("공지")) {
 
-                        } else if(args[0].equalsIgnoreCase("스폰")) {
+                        } else if(args[1].equalsIgnoreCase("스폰")) {
 
-                        } else if(args[0].equalsIgnoreCase("동맹")) {
+                            //=================스폰=================
+                            String FactionUUID = FactionUtils.getPlayerFactionUUID(UUID);
+                            CompletableFuture<Double> bal = Main.database.GetFactionBank(FactionUUID);
+                            if(FactionUtils.HigherThenorSameRank(UUID, Config.CoLeader)) {
 
-                        } else if(args[0].equalsIgnoreCase("적대")) {
+                                if(bal.get(40, TimeUnit.MILLISECONDS) > 500) {
+                                    CompletableFuture<Double> finalbank = Main.database.AddFactionBank(FactionUUID, 500);
+                                    double finalbankget = finalbank.get(20, TimeUnit.MILLISECONDS);
+                                    if(finalbankget > -1) {
+                                        Location loc = sender.getLocation();
+                                        String convertedloc = SystemUtils.loc2string(loc);
 
-                        } else if(args[0].equalsIgnoreCase("중립")) {
+                                        FactionUtils.SetFactionSpawn(FactionUUID, convertedloc);
+                                        SystemUtils.sendfactionmessage(sender, "&r&c성공! &r&f해당 위치로 국가 스폰을 설정했습니다.");
+
+                                    } else {
+                                        SystemUtils.sendfactionmessage(sender, "&r&f스폰을 재설정하려면 적어도 국가 금고에 500원 초과가 있어야 합니다");
+                                    }
+                                } else {
+                                    SystemUtils.sendfactionmessage(sender, "&r&f스폰을 재설정하려면 적어도 국가 금고에 500원 초과가 있어야 합니다");
+                                }
+                            } else {
+                                SystemUtils.sendfactionmessage(sender, "&r&f권한이 없습니다. &r&c" + Config.CoLeader_Lang + " &r&f등급 이상부터 사용이 가능합니다");
+                            }
+
+                            //=================스폰=================
+
+                        } else if(args[1].equalsIgnoreCase("동맹")) {
+
+                        } else if(args[1].equalsIgnoreCase("적대")) {
+
+                        } else if(args[1].equalsIgnoreCase("중립")) {
 
                         }
                     } else {
@@ -290,7 +348,15 @@ public class FactionMainCommand implements CommandExecutor {
                     //=================스폰=================
 
                     if(FactionUtils.isInFaction(UUID)) {
+                        String FactionUUID = FactionUtils.getPlayerFactionUUID(UUID);
+                        Boolean FactionSpawnExists = FactionUtils.FactionSpawnExists(FactionUUID);
+                        if(FactionSpawnExists) {
+                            String[] temp222 = FactionUtils.getFactionSpawn(FactionUUID).split("=");
+                            String TargetServerName = temp222[0];
+                            Location loc = SystemUtils.string2loc(temp222[1]);
 
+
+                        }
                     } else {
                         SystemUtils.sendfactionmessage(sender, "&r&f당신은 소속된 국가가 없습니다");
                     }
@@ -302,9 +368,9 @@ public class FactionMainCommand implements CommandExecutor {
                     //=================영토=================
 
                     if(FactionUtils.isInFaction(UUID)) {
-                        if(args[0].equalsIgnoreCase("구매")) {
+                        if(args[1].equalsIgnoreCase("구매")) {
 
-                        } else if(args[0].equalsIgnoreCase("해제")) {
+                        } else if(args[1].equalsIgnoreCase("해제")) {
 
                         }
                     } else {

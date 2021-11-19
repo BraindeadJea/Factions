@@ -6,6 +6,8 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
+
 public class SystemUtils {
 
     @Deprecated
@@ -19,6 +21,10 @@ public class SystemUtils {
 
     public static void sendfactionmessage(Player p, String Message) {
         p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&o&l[ &r&f국가 &a&o&l] &r&f" + Message));
+    }
+
+    public static UUID Convert2UUID(String UUID2) {
+        return UUID.fromString(UUID2);
     }
 
     @Deprecated

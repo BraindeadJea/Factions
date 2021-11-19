@@ -241,18 +241,18 @@ public class wtfDatabase {
         return futureDTR;
     }
 
-    public CompletableFuture<Double> AddFactionBank(String FactionUUID, double DTR) {
+    public CompletableFuture<Double> AddFactionBank(String FactionUUID, double Bank) {
         CompletableFuture<Double> futureBank = new CompletableFuture<>();
         new Thread( () ->{
             try {
 
-                String cmd = "Call UPDATEBANK(0," + String.valueOf(DTR) + ",0,'" + FactionUUID + "')";
+                String cmd = "Call UPDATEBANK(0," + String.valueOf(Bank) + ",0,'" + FactionUUID + "')";
                 PreparedStatement ps = Main.hikariCP.getHikariConnection().prepareStatement(cmd);
                 ResultSet rs = ps.executeQuery();
                 if(rs.next()) {
-                    double Bank = rs.getDouble("FINALBANK");
-                    CacheUtils.UpdateCachedBank(FactionUUID, Bank);
-                    futureBank.complete(Bank);
+                    double Bankf = rs.getDouble("FINALBANK");
+                    CacheUtils.UpdateCachedBank(FactionUUID, Bankf);
+                    futureBank.complete(Bankf);
                 } else {
                     futureBank.complete(-420D);
                 }
