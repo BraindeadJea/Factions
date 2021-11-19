@@ -206,8 +206,8 @@ public class FactionUtils {
 
     public static String getCappedFactionName(String FactionName) {
         String finalname = null;
-        if(FactionStorage.FactionNameToFactionName.containsKey(FactionName)) {
-            finalname = FactionStorage.FactionNameToFactionName.get(FactionName);
+        if(FactionStorage.FactionNameToFactionName.containsKey(FactionName.toLowerCase(Locale.ROOT))) {
+            finalname = FactionStorage.FactionNameToFactionName.get(FactionName.toLowerCase(Locale.ROOT));
         }
         return finalname;
     }

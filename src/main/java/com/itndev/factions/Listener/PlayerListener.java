@@ -1,5 +1,6 @@
 package com.itndev.factions.Listener;
 
+import com.itndev.factions.Storage.UserInfoStorage;
 import com.itndev.factions.Utils.FactionUtils;
 import com.itndev.factions.Utils.SystemUtils;
 import com.itndev.factions.Utils.TeleportInvisFix;
@@ -76,6 +77,7 @@ public class PlayerListener implements Listener {
     public void OnJoinWarp(PlayerJoinEvent e) {
         Player p = e.getPlayer();
         String uuid = p.getUniqueId().toString();
+        UserInfoStorage.onPlayerJoinEvent(e);
         if(onJoinWarp.containsKey(uuid)) {
             p.teleportAsync(onJoinWarp.get(uuid));
             onJoinWarp.remove(uuid);

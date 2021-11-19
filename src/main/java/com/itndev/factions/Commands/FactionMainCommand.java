@@ -1,9 +1,6 @@
 package com.itndev.factions.Commands;
 
-import com.itndev.factions.Commands.FactionsCommands.CreateFaction;
-import com.itndev.factions.Commands.FactionsCommands.DeleteFaction;
-import com.itndev.factions.Commands.FactionsCommands.FactionHelp;
-import com.itndev.factions.Commands.FactionsCommands.FactionTimeOut;
+import com.itndev.factions.Commands.FactionsCommands.*;
 import com.itndev.factions.Config.Config;
 import com.itndev.factions.Main;
 import com.itndev.factions.MySQL.MySQLManager;
@@ -200,6 +197,12 @@ public class FactionMainCommand implements CommandExecutor {
 
                 } else if(args[0].equalsIgnoreCase("추방")) {
 
+                } else if(args[0].equalsIgnoreCase("채팅")) {
+                    if(FactionUtils.isInFaction(UUID)) {
+                        FactionChatToggle.FactionChatToggle(sender);
+                    } else {
+                        SystemUtils.sendfactionmessage(sender, "&r&f당신은 소속된 국가가 없습니다");
+                    }
                 } else if(args[0].equalsIgnoreCase("설정")) {
 
                     if(args[0].equalsIgnoreCase("계급")) {

@@ -35,28 +35,19 @@ public class UserInfoStorageIOManager {
     }
 
     public static void SaveUserInfo() {
-        YamlConfig UserInfostorage = new YamlConfig();
-        UserInfostorage.SetTargetName("UserInfoStorage");
+        YamlConfig userinfostorage = new YamlConfig();
+        userinfostorage.SetTargetName("UserInfoStorage");
         try {
-            UserInfostorage.CreateStorage();
-            UserInfostorage.resetlocalstorage();
+            userinfostorage.CreateStorage();
+            userinfostorage.resetlocalstorage();
 
-            FileConfiguration Storage = UserInfostorage.getStorage();
+            FileConfiguration Storage = userinfostorage.getStorage();
 
             savenameuuid(Storage);
             saveuuidname(Storage);
             savenamename(Storage);
-            /*saveFactionNameToFactionName(Storage);
-            saveFactionNameToFactionUUID(Storage);
-            saveFactionUUIDToFactionName(Storage);
-            saveFactionMember(Storage);
-            saveFactionRank(Storage);
-            savePlayerFaction(Storage);
-            saveFactionOutPost(Storage);
-            saveFactionToLand(Storage);
-            saveFactionWarpLocations(Storage);
-            saveLandToFaction(Storage);
-            factionstorage.saveStorage();*/
+
+            userinfostorage.saveStorage();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -7,6 +7,7 @@ import com.itndev.factions.Listener.PlayerListener;
 import com.itndev.factions.Main;
 import com.itndev.factions.PlaceHolder.PlaceHolderManager;
 import com.itndev.factions.Storage.StorageIO.FactionStorageIOManager;
+import com.itndev.factions.Storage.StorageIO.UserInfoStorageIOManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.Plugin;
@@ -20,6 +21,7 @@ public class RegisterStuff {
     public static void onStartup() {
         StorageDir.SetupStorage();
         FactionStorageIOManager.restoreFactionInfo();
+        UserInfoStorageIOManager.restoreUserInfo();
         FactionTimeOut.TimeoutManager();
         ValidChecker.setvalid();
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
@@ -33,6 +35,7 @@ public class RegisterStuff {
     @Deprecated
     public static void onShutdown() {
         FactionStorageIOManager.SaveFactionInfo();
+        UserInfoStorageIOManager.SaveUserInfo();
     }
 
     public static void RegisterFactionCommands() {

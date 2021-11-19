@@ -18,17 +18,17 @@ public class UserInfoUtils {
         }
     }
     public static void setPlayerOrginName(String newName, String UUID) {
-        String oldname = UserInfoStorage.uuidname.get(UUID);
-        if(!newName.equalsIgnoreCase(oldname)) {
-            JedisTempStorage.AddCommandToQueue("update:=:namename:=:remove:=:" + oldname.toLowerCase(Locale.ROOT) + ":=:add:=:" + newName);
-            JedisTempStorage.AddCommandToQueue("update:=:namename:=:add:=:" + newName.toLowerCase(Locale.ROOT) + ":=:add:=:" + newName);
+        if(UserInfoStorage.uuidname.containsKey(UUID)) {
+            String oldname = UserInfoStorage.uuidname.get(UUID);
+            if (!newName.equalsIgnoreCase(oldname)) {
+                JedisTempStorage.AddCommandToQueue("update:=:namename:=:remove:=:" + oldname.toLowerCase(Locale.ROOT) + ":=:add:=:" + newName);
+                JedisTempStorage.AddCommandToQueue("update:=:namename:=:add:=:" + newName.toLowerCase(Locale.ROOT) + ":=:add:=:" + newName);
+            } else {
+                JedisTempStorage.AddCommandToQueue("update:=:namename:=:add:=:" + newName.toLowerCase(Locale.ROOT) + ":=:add:=:" + newName);
+            }
         } else {
             JedisTempStorage.AddCommandToQueue("update:=:namename:=:add:=:" + newName.toLowerCase(Locale.ROOT) + ":=:add:=:" + newName);
         }
-    }
-
-    public static void getPlayerUUID() {
-
     }
 
     public static Boolean hasJoined(String name) {
