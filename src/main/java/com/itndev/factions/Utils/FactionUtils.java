@@ -88,7 +88,7 @@ public class FactionUtils {
         JedisTempStorage.AddCommandToQueue("update:=:FactionNameToFactionName:=:add:=:" + FactionName + ":=:add:=:" + FactionOrginName);
         JedisTempStorage.AddCommandToQueue("update:=:FactionUUIDToFactionName:=:add:=:" + FactionUUID + ":=:add:=:" + FactionName);
         JedisTempStorage.AddCommandToQueue("update:=:FactionRank:=:add:=:" + LeaderUUID + ":=:add:=:" + Config.Leader);
-        JedisTempStorage.AddCommandToQueue("update:=:PlayerFaction:=:add:=:" + LeaderUUID + ":=:add:=:" + FactionName);
+        JedisTempStorage.AddCommandToQueue("update:=:PlayerFaction:=:add:=:" + LeaderUUID + ":=:add:=:" + FactionUUID);
     }
 
     public static void DeleteFaction(String FactionUUID) {
@@ -258,11 +258,10 @@ public class FactionUtils {
     }
 
     public static String getCappedFactionName(String FactionName) {
-        String finalname = null;
         if(FactionStorage.FactionNameToFactionName.containsKey(FactionName.toLowerCase(Locale.ROOT))) {
-            finalname = FactionStorage.FactionNameToFactionName.get(FactionName.toLowerCase(Locale.ROOT));
+            return FactionStorage.FactionNameToFactionName.get(FactionName.toLowerCase(Locale.ROOT));
         }
-        return finalname;
+        return null;
     }
 
     public static Boolean FactionSpawnExists(String FactionUUID) {

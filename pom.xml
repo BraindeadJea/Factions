@@ -6,7 +6,7 @@
 
     <groupId>com.itndev</groupId>
     <artifactId>Factions</artifactId>
-    <version>Beta-0.6.4</version>
+    <version>Beta-0.6.5</version>
     <packaging>jar</packaging>
 
     <name>Factions</name>

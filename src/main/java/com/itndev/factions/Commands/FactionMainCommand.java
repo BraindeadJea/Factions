@@ -81,7 +81,7 @@ public class FactionMainCommand implements CommandExecutor {
                             if (bal > Config.FactionCreateBalance) {
                                 if (args[1].length() <= 12) {
                                     String newFactionUUID = FactionUtils.newFactionUUID();
-                                    if (Main.database.TryClaimName(args[1], newFactionUUID).get(30, TimeUnit.MILLISECONDS)) {//try creating a faction name) {
+                                    if (Main.database.TryClaimName(args[1], newFactionUUID).get()) {//try creating a faction name) {
                                         Main.econ.withdrawPlayer(op, Config.FactionCreateBalance);
                                         CreateFaction.CreateFaction(sender, newFactionUUID, args[1]);
                                     } else {
