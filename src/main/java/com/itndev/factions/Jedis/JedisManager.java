@@ -309,8 +309,12 @@ public class JedisManager {
                         System.out.println(e.getMessage());
 
                     }*/
-
-
+                new Thread( () -> {
+                    HashMap<String, String> templands = FactionStorage.LandToFaction;
+                    for(String key : templands.keySet()) {
+                        FactionStorage.AsyncLandToFaction.put(key, templands.get(key));
+                    }
+                }).start();
 
 
             }
@@ -341,7 +345,7 @@ public class JedisManager {
                         || args[1].equalsIgnoreCase("FactionDesc")
                         || args[1].equalsIgnoreCase("Timeout2")
                         || args[1].equalsIgnoreCase("Timeout2info")) {
-                    FactionStorage.FactionStorageUpdateHandler(args);
+                    FactionStorage.FactionStorageUpdateHandler(args, ServerName);
                 } else if(args[1].equalsIgnoreCase("namename")
                         || args[1].equalsIgnoreCase("nameuuid")
                         || args[1].equalsIgnoreCase("uuidname")) {

@@ -1,6 +1,5 @@
 package com.itndev.factions.Utils;
 
-import com.itndev.factions.Commands.FactionsCommands.ClaimLand;
 import com.itndev.factions.Config.Config;
 import com.itndev.factions.Jedis.JedisTempStorage;
 import com.itndev.factions.Main;
@@ -114,6 +113,37 @@ public class FactionUtils {
             JedisTempStorage.AddCommandToQueue("notify:=:" + playeruuid + ":=:" + type + ":=:" + message + ":=:" + "true");
         }
 
+    }
+
+    public static Boolean ClaimLand(String FactionUUID, String Chunkkey) {
+        if(!FactionStorage.LandToFaction.containsKey(Chunkkey)) {
+            FactionStorage.LandToFaction.put(Chunkkey, FactionUUID);
+            JedisTempStorage.AddCommandToQueue("update:=:LandToFaction:=:add:=:" + Chunkkey + ":=:add:=:" + FactionUUID + ":=:" + Main.ServerName);
+            ArrayList<String> updatelist = new ArrayList<>();
+            if(FactionStorage.FactionToLand.containsKey(FactionUUID)) {
+                updatelist = FactionStorage.FactionToLand.get(FactionUUID);
+            }
+            updatelist.add(Chunkkey);
+            FactionStorage.FactionToLand.put(FactionUUID, updatelist);
+            JedisTempStorage.AddCommandToQueue("update:=:LandToFaction:=:add:=:" + FactionUUID + ":=:add:=:" + Chunkkey + ":=:" + Main.ServerName);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static Boolean UnClaimLand(String FactionUUID, String Chunkkey) {
+        if(FactionStorage.LandToFaction.containsKey(Chunkkey)) {
+            FactionStorage.LandToFaction.remove(Chunkkey);
+            JedisTempStorage.AddCommandToQueue("update:=:LandToFaction:=:add:=:" + Chunkkey + ":=:remove:=:" + FactionUUID + ":=:" + Main.ServerName);
+            ArrayList<String> updatelist = FactionStorage.FactionToLand.get(FactionUUID);
+            updatelist.remove(Chunkkey);
+            FactionStorage.FactionToLand.put(FactionUUID, updatelist);
+            JedisTempStorage.AddCommandToQueue("update:=:LandToFaction:=:add:=:" + FactionUUID + ":=:remove:=:" + Chunkkey + ":=:" + Main.ServerName);
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -277,11 +307,27 @@ public class FactionUtils {
         return false;
     }
 
+    public static String AsyncWhosClaim(Location loc) {
+        if(FactionStorage.AsyncLandToFaction.containsKey(getChunkKey(loc))) {
+            return FactionStorage.AsyncLandToFaction.get(getChunkKey(loc));
+        }
+        return null;
+    }
+
     public static String WhosClaim(Location loc) {
         if(FactionStorage.LandToFaction.containsKey(getChunkKey(loc))) {
             return FactionStorage.LandToFaction.get(getChunkKey(loc));
         }
         return null;
+    }
+
+    public static Boolean HigherThenorSameRank(String UUID, String Rank) {
+        String PlayerRank = FactionUtils.getPlayerRank(UUID);
+        if(RankPrio(PlayerRank) > RankPrio(Rank)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public static Boolean HigherThenRank(String UUID, String Rank) {

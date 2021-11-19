@@ -14,7 +14,7 @@ public class FactionStorage {
 
     public static HashMap<String, String> LandToFaction = new HashMap<>();
 
-    //public static ConcurrentHashMap<String, String> SyncedLandToFaction = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<String, String> AsyncLandToFaction = new ConcurrentHashMap<>();
 
     public static ConcurrentHashMap<String, String> PlayerFaction = new ConcurrentHashMap<>();
 
@@ -41,7 +41,7 @@ public class FactionStorage {
 
     public static ConcurrentHashMap<String, ArrayList<String>> FactionMember = new ConcurrentHashMap<>();
 
-    public static ConcurrentHashMap<String, String> FactionDTR = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<String, String> FactionInfo = new ConcurrentHashMap<>();
 
     public static HashMap<String, ArrayList<String>> FactionInviteQueue = new HashMap<>();
 
@@ -54,10 +54,12 @@ public class FactionStorage {
     // FactionUUID=Spawn=Spawn , Coords
     // FactionUUID=OutPost=ID , Coords
 
-    public static void FactionStorageUpdateHandler(String[] args) {
+    public static void FactionStorageUpdateHandler(String[] args, String ServerName) {
 
         if(args[1].equalsIgnoreCase("FactionToLand")) {
-
+            if(ServerName.equalsIgnoreCase(Main.ServerName)) {
+                return;
+            }
             if(args[2].equalsIgnoreCase("add")) {
                 String key = args[3];
                 String value = args[5];
@@ -112,7 +114,9 @@ public class FactionStorage {
             }
 
         } else if(args[1].equalsIgnoreCase("LandToFaction")) {
-
+            if(ServerName.equalsIgnoreCase(Main.ServerName)) {
+                return;
+            }
             if(args[2].equalsIgnoreCase("add")) {
                 String key = args[3]; //키
                 String value = args[5]; //추가하고 싶은 값
@@ -364,7 +368,7 @@ public class FactionStorage {
                 }
             }
 
-        } else if(args[1].equalsIgnoreCase("FactionDTR")) { //no longer used
+        } else if(args[1].equalsIgnoreCase("FactionInfo")) { //no longer used
 
             if(args[2].equalsIgnoreCase("add")) {
                 String key = args[3]; //키
@@ -372,35 +376,28 @@ public class FactionStorage {
 
                 if(args[4].equalsIgnoreCase("add")) {
 
-                    if(FactionStorage.FactionDTR.containsKey(key)) {
-                        double predtr = Double.valueOf(FactionStorage.FactionUUIDToFactionName.get(key));
-                        double finaldtr = predtr + Double.valueOf(value);
-                        int FactionMemNum = FactionStorage.FactionMember.get(key).size();
-                        double MaxDTR = FactionMemNum * Config.DTRperPlayer;
-                        if(finaldtr >= MaxDTR) {
-                            FactionStorage.FactionDTR.put(key, String.valueOf(MaxDTR));
-                            FactionStorage.DTRUpdateEvent(key, String.valueOf(MaxDTR));
-                        } else if (finaldtr < 0) {
-                            FactionStorage.FactionDTR.put(key, String.valueOf(finaldtr));
-                            FactionStorage.DTRUpdateEvent(key, String.valueOf(finaldtr));
-
-                            //Freeze Faction
-                            //and make it raidable
-
-                        } else {
-                            FactionStorage.FactionDTR.put(key, String.valueOf(finaldtr));
-                            FactionStorage.DTRUpdateEvent(key, String.valueOf(finaldtr));
-                        }
+                    if(FactionStorage.FactionInfo.containsKey(key)) {
+                        FactionStorage.FactionInfo.remove(key);
+                        FactionStorage.FactionInfo.put(key, value);
                     } else {
-                        FactionStorage.FactionDTR.put(key, value);
-                        FactionStorage.DTRUpdateEvent(key, value);
+                        FactionStorage.FactionInfo.put(key, value);
+                    }
+                } else if(args[4].equalsIgnoreCase("remove")) {
+
+                    if(FactionStorage.FactionInfo.containsKey(key)) {
+
+                        FactionStorage.FactionInfo.remove(key);
+
+                        //할거 없다
+                    } else {
+                        //할거 없다
                     }
                 }
 
             } else if(args[2].equalsIgnoreCase("remove")) {
                 String key = args[3];
-                if(FactionStorage.FactionDTR.containsKey(key)) {
-                    FactionStorage.FactionDTR.remove(key);
+                if(FactionStorage.FactionInfo.containsKey(key)) {
+                    FactionStorage.FactionInfo.remove(key);
                 }
             }
 

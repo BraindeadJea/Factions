@@ -36,7 +36,7 @@ public class PlayerListener implements Listener {
             Location loc = e.getBlock().getLocation();
             String UUID = p.getUniqueId().toString();
             if(FactionUtils.isClaimed(loc)) {
-                if(!FactionUtils.getPlayerFactionUUID(UUID).equalsIgnoreCase(FactionUtils.WhosClaim(loc))) {
+                if(!FactionUtils.getPlayerFactionUUID(UUID).equalsIgnoreCase(FactionUtils.AsyncWhosClaim(loc))) {
                     e.setCancelled(true);
                     return;
                 }

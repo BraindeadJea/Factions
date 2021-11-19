@@ -5,6 +5,7 @@ import com.itndev.factions.Config.Config;
 import com.itndev.factions.Main;
 import com.itndev.factions.MySQL.MySQLManager;
 import com.itndev.factions.MySQL.MySQLUtils;
+import com.itndev.factions.Storage.FactionStorage;
 import com.itndev.factions.Utils.FactionUtils;
 import com.itndev.factions.Utils.SystemUtils;
 import com.itndev.factions.Utils.UserInfoUtils;
@@ -139,7 +140,7 @@ public class FactionMainCommand implements CommandExecutor {
                     //=================초대=================
 
                     if (FactionUtils.isInFaction(UUID)) {
-                        if (FactionUtils.HigherThenRank(UUID, Config.VipMember)) {
+                        if (FactionUtils.HigherThenorSameRank(UUID, Config.VipMember)) {
                             if(UserInfoUtils.hasJoined(args[1])) {
                                 String InviteUUID = UserInfoUtils.getPlayerUUID(args[1].toLowerCase(Locale.ROOT));
                                 String CasedName = UserInfoUtils.getPlayerOrginName(InviteUUID);
@@ -164,16 +165,20 @@ public class FactionMainCommand implements CommandExecutor {
 
                     //=================초대취소=================
 
-                    if (FactionUtils.HigherThenRank(UUID, Config.VipMember)) {
-                        if(UserInfoUtils.hasJoined(args[1])) {
-                            String InviteUUID = UserInfoUtils.getPlayerUUID(args[1].toLowerCase(Locale.ROOT));
-                            String CasedName = UserInfoUtils.getPlayerOrginName(InviteUUID);
-                            FactionTimeOut.cancelInvite(sender, FactionUtils.getPlayerFactionUUID(UUID), InviteUUID);
+                    if (FactionUtils.isInFaction(UUID)) {
+                        if (FactionUtils.HigherThenorSameRank(UUID, Config.VipMember)) {
+                            if (UserInfoUtils.hasJoined(args[1])) {
+                                String InviteUUID = UserInfoUtils.getPlayerUUID(args[1].toLowerCase(Locale.ROOT));
+                                String CasedName = UserInfoUtils.getPlayerOrginName(InviteUUID);
+                                FactionTimeOut.cancelInvite(sender, FactionUtils.getPlayerFactionUUID(UUID), InviteUUID);
+                            } else {
+                                SystemUtils.sendfactionmessage(sender, "&r&c" + args[1] + "&r&f(은)는 존재하지 않는 유저입니다");
+                            }
                         } else {
-                            SystemUtils.sendfactionmessage(sender,   "&r&c" + args[1] + "&r&f(은)는 존재하지 않는 유저입니다");
+                            SystemUtils.sendfactionmessage(sender, "&r&f권한이 없습니다. &c" + Config.VipMember_Lang + " &r&f랭크 이상부터 사용이 가능합니다");
                         }
                     } else {
-                        SystemUtils.sendfactionmessage(sender, "&r&f권한이 없습니다. &c" + Config.VipMember_Lang + " &r&f랭크 이상부터 사용이 가능합니다");
+                        SystemUtils.sendfactionmessage(sender, "&r&f당신은 소속된 국가가 없습니다");
                     }
 
                     //=================초대취소=================
@@ -197,32 +202,116 @@ public class FactionMainCommand implements CommandExecutor {
 
                 } else if(args[0].equalsIgnoreCase("추방")) {
 
+                    //=================추방=================
+
+                    if (FactionUtils.isInFaction(UUID)) {
+                        if (FactionUtils.HigherThenorSameRank(UUID, Config.VipMember)) {
+                            String name = args[1];
+                            if(UserInfoUtils.hasJoined(args[1].toLowerCase(Locale.ROOT))) {
+                                String KICKUUID = UserInfoUtils.getPlayerUUID(args[1].toLowerCase(Locale.ROOT));
+                                String OriginName = UserInfoUtils.getPlayerOrginName(args[1].toLowerCase(Locale.ROOT));
+                                if(FactionUtils.isInFaction(KICKUUID) && FactionUtils.isSameFaction(UUID, KICKUUID)) {
+                                    if(FactionUtils.HigherThenRank(UUID, FactionUtils.getPlayerRank(KICKUUID))) {
+                                        String FactionUUID = FactionUtils.getPlayerFactionUUID(UUID);
+                                        SystemUtils.sendfactionmessage(sender, "&r&f해당 유저 " + OriginName + " 이를 국가에서 추방했습니다.");
+                                        FactionUtils.SetPlayerFaction(KICKUUID, null);
+                                        FactionUtils.SetFactionMember(KICKUUID, FactionUUID, true);
+                                        FactionUtils.SetPlayerRank(KICKUUID, Config.Nomad);
+                                        FactionUtils.SendFactionMessage(KICKUUID, KICKUUID, "single", "&r&f당신은 " + FactionUtils.getCappedFactionName(FactionUtils.getFactionName(FactionUUID)) + " 에서 추방했습니다.");
+                                        FactionUtils.SendFactionMessage(UUID, UUID, UUID, "&r&f" + sender.getName() + " 이가 " + OriginName + " 이를 국가에서 추방했습니다.");
+                                    } else {
+                                        SystemUtils.sendfactionmessage(sender, "&r&f해당 유저 " + OriginName + "(은)는 당신보다 등급이 높은 &r&c" + FactionUtils.getPlayerRank(KICKUUID) + " &r&f입니다. 자신보다 높은 등급인 멤버를 추방할수 없습니다");
+                                    }
+                                } else {
+                                    SystemUtils.sendfactionmessage(sender, "&r&f해당 유저 " + OriginName + "(은)는 당신의 팀이 아닙니다");
+                                }
+                            } else {
+                                SystemUtils.sendfactionmessage(sender, "&r&f해당 유저 " + name + "(은)는 서버에 접속한 적이 없습니다");
+                            }
+                        } else {
+                            SystemUtils.sendfactionmessage(sender, "&r&f권한이 없습니다. &r&c" + Config.VipMember_Lang + " &r&f랭크 이상부터 사용이 가능합니다");
+                        }
+                    } else {
+                        SystemUtils.sendfactionmessage(sender, "&r&f당신은 소속된 국가가 없습니다");
+                    }
+
+                    //=================추방=================
+
                 } else if(args[0].equalsIgnoreCase("채팅")) {
+
+                    //=================채팅=================
+
                     if(FactionUtils.isInFaction(UUID)) {
                         FactionChatToggle.FactionChatToggle(sender);
                     } else {
                         SystemUtils.sendfactionmessage(sender, "&r&f당신은 소속된 국가가 없습니다");
                     }
+
+                    //=================채팅=================
+
                 } else if(args[0].equalsIgnoreCase("설정")) {
 
-                    if(args[0].equalsIgnoreCase("계급")) {
+                    //=================설정=================
 
-                    } else if(args[0].equalsIgnoreCase("설명")) {
+                    if(FactionUtils.isInFaction(UUID)) {
+                        if(args[0].equalsIgnoreCase("계급")) {
 
-                    } else if(args[0].equalsIgnoreCase("공지")) {
+                            //=================설정=================
 
-                    } else if(args[0].equalsIgnoreCase("스폰")) {
+                            if(true) {
 
-                    } else if(args[0].equalsIgnoreCase("동맹")) {
+                            } else {
 
-                    } else if(args[0].equalsIgnoreCase("적대")) {
+                            }
 
-                    } else if(args[0].equalsIgnoreCase("중립")) {
+                            //=================설정=================
 
+                        } else if(args[0].equalsIgnoreCase("설명")) {
+
+                        } else if(args[0].equalsIgnoreCase("공지")) {
+
+                        } else if(args[0].equalsIgnoreCase("스폰")) {
+
+                        } else if(args[0].equalsIgnoreCase("동맹")) {
+
+                        } else if(args[0].equalsIgnoreCase("적대")) {
+
+                        } else if(args[0].equalsIgnoreCase("중립")) {
+
+                        }
+                    } else {
+                        SystemUtils.sendfactionmessage(sender, "&r&f당신은 소속된 국가가 없습니다");
                     }
+
+                    //=================설정=================
+
                 } else if(args[0].equalsIgnoreCase("스폰")) {
 
+                    //=================스폰=================
+
+                    if(FactionUtils.isInFaction(UUID)) {
+
+                    } else {
+                        SystemUtils.sendfactionmessage(sender, "&r&f당신은 소속된 국가가 없습니다");
+                    }
+
+                    //=================스폰=================
+
                 } else if(args[0].equalsIgnoreCase("영토")) {
+
+                    //=================영토=================
+
+                    if(FactionUtils.isInFaction(UUID)) {
+                        if(args[0].equalsIgnoreCase("구매")) {
+
+                        } else if(args[0].equalsIgnoreCase("해제")) {
+
+                        }
+                    } else {
+                        SystemUtils.sendfactionmessage(sender, "&r&f당신은 소속된 국가가 없습니다");
+                    }
+
+                    //=================영토=================
 
                 } else if(args[0].equalsIgnoreCase("정보")) {
 
@@ -231,6 +320,16 @@ public class FactionMainCommand implements CommandExecutor {
                 } else if(args[0].equalsIgnoreCase("목록")) {
 
                 } else if(args[0].equalsIgnoreCase("공지")) {
+
+                    //=================공지=================
+
+                    if(FactionUtils.isInFaction(UUID)) {
+
+                    } else {
+                        SystemUtils.sendfactionmessage(sender, "&r&f당신은 소속된 국가가 없습니다");
+                    }
+
+                    //=================공지=================
 
                 }
 
