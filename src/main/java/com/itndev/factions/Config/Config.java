@@ -14,6 +14,14 @@ public class Config {
     public static String Member = "member";
     public static String Nomad = "nomad";
 
+    public static String Ally = "ally";
+    public static String Enemy = "enemy";
+    public static String Neutral = "neutral";
+
+    public static String Ally_Lang = "동맹";
+    public static String Enemy_Lang = "적대";
+    public static String Neutral_Lang = "중립";
+
     public static String Leader_Lang = "왕";
     public static String CoLeader_Lang = "영주";
     public static String VipMember_Lang = "귀족";

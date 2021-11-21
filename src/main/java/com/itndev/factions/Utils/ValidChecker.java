@@ -10,6 +10,8 @@ public class ValidChecker {
 
     public static ArrayList<String> valid = new ArrayList<>();
 
+    public static ArrayList<String> validnumber = new ArrayList<>();
+
     public static CompletableFuture<Boolean> ValidCheck(String k) {
         CompletableFuture<Boolean> futureboolean = new CompletableFuture<>();
         new Thread( () -> {
@@ -26,9 +28,17 @@ public class ValidChecker {
                 futureboolean.complete(true);
             }
         }).start();
-
         return futureboolean;
+    }
 
+    public static Boolean instanceofNumber(String k) {
+        String[] temp = k.split("");
+        for(String l : temp) {
+            if(!validnumber.contains(l)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public static void setvalid() {
@@ -408,6 +418,7 @@ public class ValidChecker {
             valid.addAll(Arrays.asList(words2));
             valid.addAll(Arrays.asList(words3));
             valid.addAll(Arrays.asList(words4));
+            validnumber.addAll(Arrays.asList(words4));
         }).start();
 
     }

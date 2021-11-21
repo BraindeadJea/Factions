@@ -74,6 +74,22 @@ public class SystemUtils {
         return null;
     }
 
+    public static String Args2String(String[] args, int Start) {
+        String FinalString = "";
+        for(int k = Start; k < args.length; k++) {
+            if(args[k] == null) {
+                break;
+            }
+            if(k == args.length - 1) {
+                FinalString = FinalString + args[k];
+            } else {
+                FinalString = FinalString + args[k] + " ";
+            }
+
+        }
+        return FinalString;
+    }
+
 
 
     public static String colorize(String message) {

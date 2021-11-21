@@ -1,6 +1,7 @@
 package com.itndev.factions.Utils;
 
 import com.itndev.factions.Config.Config;
+import com.itndev.factions.Config.Lang;
 import com.itndev.factions.Jedis.JedisTempStorage;
 import com.itndev.factions.Main;
 import com.itndev.factions.Storage.FactionStorage;
@@ -118,7 +119,6 @@ public class FactionUtils {
         } else {
             JedisTempStorage.AddCommandToQueue("notify:=:" + playeruuid + ":=:" + type + ":=:" + message + ":=:" + "true");
         }
-
     }
 
     public static Boolean ClaimLand(String FactionUUID, String Chunkkey) {
@@ -264,14 +264,6 @@ public class FactionUtils {
         return null;
     }
 
-    public static Boolean FactionSpawnExists(String FactionUUID) {
-        return FactionStorage.FactionInfo.containsKey(FactionUUID + "=spawn");
-    }
-
-    public static String getFactionSpawn(String FactionUUID) {
-        return FactionStorage.FactionInfo.get(FactionUUID + "=spawn");
-    }
-
     public static ArrayList<String> getFactionMember(String FactionUUID) {
         ArrayList<String> finallist = new ArrayList<>();
         if(FactionStorage.FactionMember.containsKey(FactionUUID)) {
@@ -330,6 +322,30 @@ public class FactionUtils {
             return Config.Leader;
         }
         return null;
+    }
+
+    public static String FactionStatusConvert(String Status) {
+        if(Status.equalsIgnoreCase(Config.Ally_Lang)) {
+            return Config.Ally;
+        } else if(Status.equalsIgnoreCase(Config.Enemy_Lang)) {
+            return Config.Enemy;
+        } else if(Status.equalsIgnoreCase(Config.Neutral_Lang)) {
+            return Config.Neutral;
+        } else {
+            return null;
+        }
+    }
+
+    public static String FactionLangStatusConvert(String Status) {
+        if(Status.equalsIgnoreCase(Config.Ally)) {
+            return Config.Ally_Lang;
+        } else if(Status.equalsIgnoreCase(Config.Enemy)) {
+            return Config.Enemy_Lang;
+        } else if(Status.equalsIgnoreCase(Config.Neutral)) {
+            return Config.Neutral_Lang;
+        } else {
+            return null;
+        }
     }
 
     public static String getPlayerLangRank(String UUID) {
@@ -411,7 +427,47 @@ public class FactionUtils {
         JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:add:=:" + FactionUUID + "=spawn" + ":=:add:=:" + Main.ServerName + "=" + ConvertLoc);
     }
 
+    public static Boolean FactionSpawnExists(String FactionUUID) {
+        return FactionStorage.FactionInfo.containsKey(FactionUUID + "=spawn");
+    }
+
+    public static String getFactionSpawn(String FactionUUID) {
+        return FactionStorage.FactionInfo.get(FactionUUID + "=spawn");
+    }
+
     public static void RemoveFactionSpawn(String FactionUUID) {
         JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:remove:=:" + FactionUUID + "=spawn" + ":=:add:=:" + Main.ServerName);
+    }
+
+    public static void SetFactionNotice(String FactionUUID, String factionnotice) {
+        JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:add:=:" + FactionUUID + "=notice" + ":=:add:=:" + factionnotice);
+    }
+
+    public static String GetFactionNotice(String FactionUUID) {
+        if(!FactionStorage.FactionInfo.containsKey(FactionUUID + "=notice")) {
+            return Lang.FACTION_DEFAULT_NOTICE;
+        } else {
+            return FactionStorage.FactionInfo.get(FactionUUID + "=notice");
+        }
+    }
+
+    public static void RemoveFactionNotice(String FactionUUID) {
+        JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:remove:=:" + FactionUUID + "=notice" + ":=:add:=:" + "D");
+    }
+
+    public static void SetFactionDesc(String FactionUUID, String factionDesc) {
+        JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:add:=:" + FactionUUID + "=desc" + ":=:add:=:" + factionDesc);
+    }
+
+    public static String GetFactionDesc(String FactionUUID) {
+        if(!FactionStorage.FactionInfo.containsKey(FactionUUID + "=desc")) {
+            return Lang.FACTION_DEFAULT_DESC;
+        } else {
+            return FactionStorage.FactionInfo.get(FactionUUID + "=desc");
+        }
+    }
+
+    public static void RemoveFactionDesc(String FactionUUID) {
+        JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:remove:=:" + FactionUUID + "=desc" + ":=:add:=:" + "D");
     }
 }
