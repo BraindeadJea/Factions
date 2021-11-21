@@ -2,10 +2,12 @@ package com.itndev.factions.Commands;
 
 import com.itndev.factions.Commands.FactionsCommands.*;
 import com.itndev.factions.Config.Config;
+import com.itndev.factions.Jedis.JedisTempStorage;
 import com.itndev.factions.Main;
 import com.itndev.factions.MySQL.MySQLManager;
 import com.itndev.factions.MySQL.MySQLUtils;
 import com.itndev.factions.Storage.FactionStorage;
+import com.itndev.factions.Storage.TempStorage;
 import com.itndev.factions.Utils.FactionUtils;
 import com.itndev.factions.Utils.SystemUtils;
 import com.itndev.factions.Utils.UserInfoUtils;
@@ -19,6 +21,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -71,7 +74,7 @@ public class FactionMainCommand implements CommandExecutor {
                 } else if(args[0].equalsIgnoreCase("생성")) {
 
                     //=================생성=================
-                    if(args[1] == null) {
+                    if(args.length < 2) {
                         SystemUtils.sendfactionmessage(sender, "&r&f명령어 사용법 : &f/국가 생성 &7(국가이름)");
                         return;
                     }
@@ -144,7 +147,7 @@ public class FactionMainCommand implements CommandExecutor {
                 } else if(args[0].equalsIgnoreCase("초대")) {
 
                     //=================초대=================
-                    if(args[1] == null) {
+                    if(args.length < 2) {
                         SystemUtils.sendfactionmessage(sender, "&r&f명령어 사용법 : &f/국가 초대 &7(이름)");
                         return;
                     }
@@ -175,7 +178,7 @@ public class FactionMainCommand implements CommandExecutor {
 
                     //=================초대취소=================
 
-                    if(args[1] == null) {
+                    if(args.length < 2) {
                         SystemUtils.sendfactionmessage(sender, "&r&f명령어 사용법 : &f/국가 초대취소 &7(이름)");
                         return;
                     }
@@ -202,7 +205,7 @@ public class FactionMainCommand implements CommandExecutor {
 
                     //=================수락=================
 
-                    if(args[1] == null) {
+                    if(args.length < 2) {
                         SystemUtils.sendfactionmessage(sender, "&r&f명령어 사용법 : &f/국가 수락 &7(국가이름)");
                         return;
                     }
@@ -224,7 +227,7 @@ public class FactionMainCommand implements CommandExecutor {
 
                     //=================추방=================
 
-                    if(args[1] == null) {
+                    if(args.length < 2) {
                         SystemUtils.sendfactionmessage(sender, "&r&f명령어 사용법 : &f/국가 추방 &7(이름)");
                         return;
                     }
@@ -278,7 +281,7 @@ public class FactionMainCommand implements CommandExecutor {
 
                     //=================설정=================
 
-                    if(args[1] == null) {
+                    if(args.length < 2) {
                         SystemUtils.sendfactionmessage(sender, "&r&f명령어 사용법 : &f/국가 설정 &7(설정)\n" +
                                 "&a&o&l[ &r&f국가 &a&o&l] &r&f설정으로는 &7등급&8, &7설명&8, &7공지&8, &7스폰&8, &f(&7동맹&8, &7적대&8, &7중립&f) 이 있습니다.");
                         return;
@@ -287,7 +290,7 @@ public class FactionMainCommand implements CommandExecutor {
                     if(FactionUtils.isInFaction(UUID)) {
                         if(args[1].equalsIgnoreCase("등급")) {
 
-                            if(args[2] == null || args[3] == null) {
+                            if(args.length < 4) {
                                 SystemUtils.sendfactionmessage(sender, "&r&f명령어 사용법 : &f/국가 설정 등급 &7(등급이름) &7(이름)\n" +
                                         "&a&o&l[ &r&f국가 &a&o&l] &r&등급으로는 &7" + Config.CoLeader_Lang + "&8, &7" + Config.VipMember_Lang + "&8, &7" + Config.Warrior_Lang + "&8, &7" + Config.Member_Lang + " &f이 있습니다.");
                                 return;
@@ -346,7 +349,7 @@ public class FactionMainCommand implements CommandExecutor {
                                 return;
                             }
 
-                            if(args[2] == null) {
+                            if(args.length < 3) {
                                 SystemUtils.sendfactionmessage(sender, "&r&f명령어 사용법 : &f/국가 설정 설명 &7(설명)");
                                 return;
                             }
@@ -368,7 +371,7 @@ public class FactionMainCommand implements CommandExecutor {
                                 return;
                             }
 
-                            if(args[2] == null) {
+                            if(args.length < 3) {
                                 SystemUtils.sendfactionmessage(sender, "&r&f명령어 사용법 : &f/국가 설정 공지 &7(공지)");
                                 return;
                             }
@@ -415,7 +418,7 @@ public class FactionMainCommand implements CommandExecutor {
 
                             //=================동맹/적대/중립=================
 
-                            if(args[2] == null) {
+                            if(args.length < 3) {
                                 SystemUtils.sendfactionmessage(sender, "&r&f명령어 사용법 : &f/국가 설정 &7(동맹/적대/중립) &7(국가이름)\n");
                                 return;
                             }
@@ -452,8 +455,26 @@ public class FactionMainCommand implements CommandExecutor {
                             if(TargetServerName.equalsIgnoreCase(Main.ServerName)) {
 
                                 //wait and teleport to location
+                                SystemUtils.sendfactionmessage(sender, "&r&c5초&r&f후 국가 스폰으로 이동됩니다");
+                                Long time = System.currentTimeMillis();
+                                TempStorage.TeleportLocation.put(sender.getUniqueId().toString(), time);
+                                new BukkitRunnable() {
+                                    @Override
+                                    public void run() {
+                                        if(TempStorage.TeleportLocation.containsKey(UUID)) {
+                                            if(TempStorage.TeleportLocation.get(UUID).equals(time)) {
+                                                SystemUtils.sendfactionmessage(sender, "&r&f국가 스폰으로 이동합니다");
+                                                sender.teleport(loc);
+                                                return;
+                                            }
+                                        }
+                                        SystemUtils.sendfactionmessage(sender, "&r&f이동이 취소되었습니다");
+                                    }
+                                }.runTaskLater(Main.getInstance(), 100L);
                             } else {
-
+                                //
+                                //서버로 이동
+                                //그다음에 텔레포트
                             }
 
                         } else {
@@ -469,12 +490,61 @@ public class FactionMainCommand implements CommandExecutor {
 
                     //=================영토=================
 
+                    if(args.length < 2) {
+                        SystemUtils.sendfactionmessage(sender, "&r&f명령어 사용법 : &f/국가 영토 &7(구매/해제)\n" +
+                                "&7(영토는 청크단위로 구매하며 청크당 가격이 " + Config.LandClaimPrice + "원 입니다. 또한 한 청크의 경계는 F3 + G 로 확인 가능합니다)");
+                        return;
+                    }
+
                     if(FactionUtils.isInFaction(UUID)) {
-                        if(args[1].equalsIgnoreCase("구매")) {
 
-                        } else if(args[1].equalsIgnoreCase("해제")) {
-
+                        if(!FactionUtils.HigherThenorSameRank(UUID, Config.VipMember)) {
+                            SystemUtils.sendfactionmessage(sender, "&r&f권한이 없습니다. &r&c" + Config.VipMember_Lang + " &r&f등급 이상부터 사용이 가능합니다");
+                            return;
                         }
+
+                        Boolean Buy = null;
+                        if(args[1].equalsIgnoreCase("구매")) {
+                            Buy = true;
+                        } else if(args[1].equalsIgnoreCase("해제")) {
+                            Buy = false;
+                        } else {
+                            SystemUtils.sendfactionmessage(sender, "&r&f명령어 사용법 : &f/국가 영토 &7(구매/해제)\n" +
+                                    "&7(영토는 청크단위로 구매하며 청크당 가격이 " + Config.LandClaimPrice + "원 입니다. 또한 한 청크의 경계는 F3 + G 로 확인 가능합니다)");
+                            return;
+                        }
+                        String FactionUUID = FactionUtils.getPlayerFactionUUID(UUID);
+                        Location loc = sender.getLocation();
+                        String Chunkkey = FactionUtils.getChunkKey(loc);
+
+                        if(Buy) {
+                            if(FactionUtils.isClaimed(loc)) {
+                                if(FactionUtils.WhosClaim(loc).equalsIgnoreCase(FactionUUID)) {
+                                    SystemUtils.sendfactionmessage(sender, "&r&f해당 영토는 이미 당신의 국가가 점령을 했습니다");
+                                } else {
+                                    SystemUtils.sendfactionmessage(sender, "&r&f해당 영토는 다른 국가에 의해 점령되있습니다");
+                                }
+                            } else {
+                                CompletableFuture<Double> futurebank = Main.database.AddFactionBank(FactionUUID, Config.LandClaimPrice);
+                                double FinalBank = futurebank.get(30, TimeUnit.MILLISECONDS);
+                                if(FinalBank >= 0) {
+                                    FactionUtils.ClaimLand(FactionUUID, Chunkkey);
+                                    SystemUtils.sendfactionmessage(sender, "&r&f성공적으로 해당 영토&r&7(청크)&r&f를 구매했습니다. \n" +
+                                            "&r&7(남은금액 : " + FinalBank + "원)");
+                                } else {
+                                    SystemUtils.sendfactionmessage(sender, "&r&f영토를 구매하려면 적어도 국가 금고에 " + Config.LandClaimPrice + "원 초과가 있어야 합니다");
+                                }
+                            }
+                        } else {
+                            if(!FactionUtils.WhosClaim(loc).equalsIgnoreCase(FactionUUID)) {
+                                SystemUtils.sendfactionmessage(sender, "&r&f해당 영토는 당신의 국가의 소유가 아닙니다");
+                                return;
+                            }
+                            FactionUtils.UnClaimLand(FactionUUID, Chunkkey);
+                            SystemUtils.sendfactionmessage(sender, "&r&f성공적으로 해당 영토&r&7(청크)&r&f에 대한 점령을 해제했습니다. \n");
+                        }
+
+
                     } else {
                         SystemUtils.sendfactionmessage(sender, "&r&f당신은 소속된 국가가 없습니다");
                     }
@@ -482,13 +552,16 @@ public class FactionMainCommand implements CommandExecutor {
                     //=================영토=================
 
                 } else if(args[0].equalsIgnoreCase("금고")) {
+
+                    //=================금고=================
+
                     if(FactionUtils.isInFaction(UUID)) {
                         if(!FactionUtils.HigherThenorSameRank(UUID, Config.VipMember)) {
                             SystemUtils.sendfactionmessage(sender, "&r&f권한이 없습니다. &r&c" + Config.VipMember_Lang + " &r&f등급 이상부터 사용이 가능합니다");
                             return;
                         }
 
-                        if(args[1] == null || args[2] == null) {
+                        if(args.length < 3) {
                             SystemUtils.sendfactionmessage(sender, "&r&f명령어 사용법 : &f/국가 금고 &7(입금/출금) &7(금액)\n");
                             return;
                         }
@@ -551,9 +624,110 @@ public class FactionMainCommand implements CommandExecutor {
                     } else {
                         SystemUtils.sendfactionmessage(sender, "&r&f당신은 소속된 국가가 없습니다");
                     }
+
+                    //=================금고=================
+
                 } else if(args[0].equalsIgnoreCase("정보")) {
 
+                    //=================정보=================
+
+                    if(args.length < 2) {
+                        SystemUtils.sendfactionmessage(sender, "&r&f명령어 사용법 : &f/국가 정보 &7(국가이름)\n");
+                        return;
+                    }
+
+                    //=================정보=================
+
                 } else if(args[0].equalsIgnoreCase("소속")) {
+
+                    //=================소속=================
+
+                    if(args.length < 2) {
+                        SystemUtils.sendfactionmessage(sender, "&r&f명령어 사용법 : &f/국가 소속 &7(이름)\n");
+                        return;
+                    }
+
+                    if(!UserInfoUtils.hasJoined(args[1])) {
+                        SystemUtils.sendfactionmessage(sender, "&r&f해당 유저는 서버에 접속한 적이 없습니다\n");
+                        return;
+                    }
+
+                    String TargetUUID = UserInfoUtils.getPlayerUUID(args[1].toLowerCase(Locale.ROOT));
+                    String TargetOriginName = UserInfoUtils.getPlayerOrginName(args[1].toLowerCase(Locale.ROOT));
+
+                    if(!FactionUtils.isInFaction(TargetUUID)) {
+                        SystemUtils.sendfactionmessage(sender, "&r&f해당 유저 " + TargetOriginName + " (은)는 소속된 국가가 없습니다\n");
+                        return;
+                    }
+
+                    String TargetFactionName = FactionUtils.getCappedFactionName(FactionUtils.getFactionName(FactionUtils.getPlayerFactionUUID(TargetUUID)));
+
+                    SystemUtils.sendfactionmessage(sender, "&r&f해당 유저 " + TargetOriginName + " 이의 소속국가 &7: &r&f" + TargetFactionName + " \n");
+                    //=================소속=================
+
+                } else if(args[0].equalsIgnoreCase("나가기")) {
+
+                    //=================나가기=================
+
+                    if(!FactionUtils.isInFaction(UUID)) {
+                        SystemUtils.sendfactionmessage(sender, "&r&f당신은 소속된 국가가 없습니다");
+                        return;
+                    }
+
+                    if(FactionUtils.getPlayerRank(UUID).equalsIgnoreCase(Config.Leader)) {
+                        SystemUtils.sendfactionmessage(sender, "&r&f국가의 " + Config.Leader_Lang + " 은 국가를 나갈 수 없습니다. 국가의 소유권을 양도하거나 해체해야 합니다.\n" +
+                                "&f(&7/국가 양도 (이름)&8, &7/국가 해체&f)");
+                        return;
+                    }
+                    String FactionUUID = FactionUtils.getPlayerFactionUUID(UUID);
+                    FactionUtils.SetFactionMember(UUID, FactionUUID, true);
+                    FactionUtils.SetPlayerFaction(UUID, null);
+                    FactionUtils.SetPlayerRank(UUID, Config.Nomad);
+                    SystemUtils.sendfactionmessage(sender, "&r&f성공적으로 국가 " + FactionUtils.getCappedFactionName(FactionUtils.getFactionName(FactionUUID)) + " 에서 나왔습니다.");
+                    JedisTempStorage.AddCommandToQueue("notify:=:" + FactionUtils.getFactionLeader(FactionUUID) + ":=:" + "SIBAL" + ":=:" + "&r&f" + sender.getName() + " 이가 당신의 국가에서 나갔습니다" + ":=:" + "true");
+
+                    //=================나가기=================
+
+                } else if(args[0].equalsIgnoreCase("양도")) {
+
+                    //=================양도=================
+
+
+                    if(args.length < 2) {
+                        SystemUtils.sendfactionmessage(sender, "&r&f명령어 사용법 : &f/국가 소속 &7(이름)\n");
+                        return;
+                    }
+                    String name = args[1];
+                    if(!FactionUtils.isInFaction(UUID)) {
+                        SystemUtils.sendfactionmessage(sender, "&r&f당신은 소속된 국가가 없습니다");
+                        return;
+                    }
+
+                    if(!FactionUtils.getPlayerRank(UUID).equalsIgnoreCase(Config.Leader)) {
+                        SystemUtils.sendfactionmessage(sender, "&r&f국가의 " + Config.Leader_Lang + " 만 이 명령어를 사용할수 있습니다\n");
+                        return;
+                    }
+
+                    if(!UserInfoUtils.hasJoined(args[1].toLowerCase(Locale.ROOT))) {
+                        SystemUtils.sendfactionmessage(sender, "&r&f해당 유저 " + name + "(은)는 서버에 접속한 적이 없습니다");
+                        return;
+                    }
+
+                    String TargetUUID = UserInfoUtils.getPlayerUUID(name.toLowerCase(Locale.ROOT));
+                    if(!FactionUtils.isSameFaction(UUID, TargetUUID)) {
+                        SystemUtils.sendfactionmessage(sender, "&r&f해당 유저 " + UserInfoUtils.getPlayerOrginName(UserInfoUtils.getPlayerName(TargetUUID)) + "(은)는 당신의 국가 소속이 아닙니다");
+                        return;
+                    }
+
+                    FactionUtils.SetPlayerRank(TargetUUID, Config.Leader);
+                    FactionUtils.SetPlayerRank(UUID, Config.CoLeader);
+                    SystemUtils.sendfactionmessage(sender, "&r&f해당 유저 " + UserInfoUtils.getPlayerOrginName(UserInfoUtils.getPlayerName(TargetUUID)) + " 에게 국가의 소유권을 양도하였습니다\n" +
+                            "변경된 당신의 등급 &7&l: &r&f" + Config.CoLeader_Lang);
+                    FactionUtils.SendFactionMessage(TargetUUID, TargetUUID, "single", "&r&f국가의 " + Config.Leader_Lang + "인 " + sender.getName() + " 이가 당신에게 국가의 소유권을 양도하였습니다\n" +
+                            "변경된 당신의 등급 &7&l: &r&f" + Config.Leader_Lang);
+                    JedisTempStorage.AddCommandToQueue("notify:=:" + UUID + ":=:" + "SIBAL" + ":=:" + "&r&f" + sender.getName() + " 이가 국가의 소유권을 " + UserInfoUtils.getPlayerOrginName(UserInfoUtils.getPlayerName(TargetUUID)) + " 에게 넘겨주었습니다" + ":=:" + "true");
+
+                    //=================양도=================
 
                 } else if(args[0].equalsIgnoreCase("목록")) {
 

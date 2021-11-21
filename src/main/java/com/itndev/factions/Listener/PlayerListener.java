@@ -1,5 +1,6 @@
 package com.itndev.factions.Listener;
 
+import com.itndev.factions.Storage.TempStorage;
 import com.itndev.factions.Storage.UserInfoStorage;
 import com.itndev.factions.Utils.FactionUtils;
 import com.itndev.factions.Utils.SystemUtils;
@@ -10,12 +11,14 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.HashMap;
@@ -24,12 +27,29 @@ public class PlayerListener implements Listener {
 
     public static HashMap<String, Location> onJoinWarp = new HashMap<>();
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onChat(AsyncChatEvent e) {
 
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onMove(PlayerMoveEvent e) {
+        new Thread( () -> {
+            Location from = e.getFrom();
+            Location to = e.getTo();
+            if(from != to) {
+                if(!from.getChunk().equals(to.getChunk())) {
+                    if(!FactionUtils.isSameClaimFaction(from, to)) {
+                        String fromname = FactionUtils.GetClaimFaction(from);
+                        String toname = FactionUtils.GetClaimFaction(to);
+                        SystemUtils.sendfactionmessage(e.getPlayer(), "&r&f이동 &7: &r" + fromname + " &8->&r&f " + toname);
+                    }
+                }
+            }
+        }).start();
+    }
+
+    @EventHandler(ignoreCancelled = true)
     public void onBreak(BlockBreakEvent e) {
         Player p = e.getPlayer();
         if(!p.getGameMode().equals(GameMode.CREATIVE)) {
@@ -60,7 +80,7 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPVP(EntityDamageByEntityEvent e) {
         if(e.getEntity() instanceof Player && e.getDamager() instanceof Player) {
             Player attacker = (Player) e.getDamager();
@@ -69,6 +89,9 @@ public class PlayerListener implements Listener {
                 e.setCancelled(true);
                 SystemUtils.sendmessage(attacker, "&4&l⚠ &r&c국가원들끼리의 전투는 금지되어 있습니다");
                 return;
+            } else {
+                TempStorage.TeleportLocation.remove(attacker.getUniqueId().toString());
+                TempStorage.TeleportLocation.remove(victem.getUniqueId().toString());
             }
         }
     }

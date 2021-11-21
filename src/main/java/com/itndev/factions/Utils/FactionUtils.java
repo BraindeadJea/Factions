@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 
 public class FactionUtils {
@@ -149,6 +150,24 @@ public class FactionUtils {
             return true;
         } else {
             return false;
+        }
+    }
+
+    public static Boolean isSameClaimFaction(Location loc1, Location loc2) {
+        if(!isClaimed(loc1) && !isClaimed(loc2)) {
+            return true;
+        } else if(Objects.equals(FactionUtils.AsyncWhosClaim(loc1), FactionUtils.AsyncWhosClaim(loc2))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static String GetClaimFaction(Location loc) {
+        if(!isClaimed(loc)) {
+            return "&2야생";
+        } else {
+            return "&a" + FactionUtils.getCappedFactionName(FactionUtils.getFactionName(FactionUtils.AsyncWhosClaim(loc)));
         }
     }
 

@@ -3,6 +3,7 @@ package com.itndev.factions.Config;
 public class Config {
     public static double FactionCreateBalance = 50000.0;
     public static double DTRperPlayer = 1.5;
+    public static double LandClaimPrice = 12000;
 
     public static String command_message_not_in_faction = "&r&f소속된 국가가 없습니다";
     public static String command_message_not_in_faction_other = "&r&f해당 유저는 소속된 국가가 없습니다";

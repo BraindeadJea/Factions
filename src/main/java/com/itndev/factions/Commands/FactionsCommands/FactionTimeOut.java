@@ -94,6 +94,9 @@ public class FactionTimeOut {
         SystemUtils.sendfactionmessage(sender, "&r&f해당 유저 " + UserInfoUtils.getPlayerOrginName(UserInfoUtils.getPlayerName(UUID)) + " 을 당신의 국가에 초대하였습니다");
         JedisTempStorage.AddCommandToQueue("update:=:Timeout2:=:add:=:" + UUID + "%" + FactionUUID + ":=:add:=:" + 30);
         JedisTempStorage.AddCommandToQueue("update:=:Timeout2info:=:add:=:" + UUID + ":=:add:=:" + FactionUUID);
+        String FactionName = FactionUtils.getCappedFactionName(FactionUtils.getFactionName(FactionUUID));
+        FactionUtils.SendFactionMessage(UUID, UUID, "single", "&r&f" + FactionName + " 에서 당신을 초대했습니다.\n" +
+                "&7(/국가 수락 " + FactionName + ")");
     }
 
     public static void AcceptInvite(Player sender, String UUID, String FactionUUID) {
