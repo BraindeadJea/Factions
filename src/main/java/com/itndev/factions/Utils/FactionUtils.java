@@ -106,8 +106,9 @@ public class FactionUtils {
             }
         }
         for(String Chunkkey : FactionStorage.FactionToLand.keySet()) {
-            FactionUtils.UnClaimLand(FactionUUID, Chunkkey);
+            UnClaimLand(FactionUUID, Chunkkey);
         }
+        JedisTempStorage.AddCommandToQueue("update:=:FactionToLand:=:remove:=:" + FactionUUID + ":=:remove:=:" + FactionUUID + ":=:bulk");
         JedisTempStorage.AddCommandToQueue("update:=:FactionToLand:=:remove:=:" + FactionUUID + ":=:add:=:" + "nothing");
         JedisTempStorage.AddCommandToQueue("update:=:FactionOutPost:=:remove:=:" + FactionUUID + ":=:add:=:" + "nothing");
         JedisTempStorage.AddCommandToQueue("update:=:FactionWarpLocations:=:remove:=:" + FactionUUID + ":=:add:=:" + "nothing");
@@ -122,35 +123,30 @@ public class FactionUtils {
         }
     }
 
-    public static Boolean ClaimLand(String FactionUUID, String Chunkkey) {
-        if(!FactionStorage.LandToFaction.containsKey(Chunkkey)) {
-            FactionStorage.LandToFaction.put(Chunkkey, FactionUUID);
-            JedisTempStorage.AddCommandToQueue("update:=:LandToFaction:=:add:=:" + Chunkkey + ":=:add:=:" + FactionUUID + ":=:" + Main.ServerName);
-            ArrayList<String> updatelist = new ArrayList<>();
-            if(FactionStorage.FactionToLand.containsKey(FactionUUID)) {
-                updatelist = FactionStorage.FactionToLand.get(FactionUUID);
-            }
-            updatelist.add(Chunkkey);
-            FactionStorage.FactionToLand.put(FactionUUID, updatelist);
-            JedisTempStorage.AddCommandToQueue("update:=:LandToFaction:=:add:=:" + FactionUUID + ":=:add:=:" + Chunkkey + ":=:" + Main.ServerName);
-            return true;
-        } else {
-            return false;
+    public static void ClaimLand(String FactionUUID, String Chunkkey) {
+        FactionStorage.LandToFaction.put(Chunkkey, FactionUUID);
+        JedisTempStorage.AddCommandToQueue("update:=:LandToFaction:=:add:=:" + Chunkkey + ":=:add:=:" + FactionUUID + ":=:" + Main.ServerName);
+        ArrayList<String> updatelist = new ArrayList<>();
+        if(FactionStorage.FactionToLand.containsKey(FactionUUID)) {
+            updatelist = FactionStorage.FactionToLand.get(FactionUUID);
         }
+        updatelist.add(Chunkkey);
+        FactionStorage.FactionToLand.put(FactionUUID, updatelist);
+        JedisTempStorage.AddCommandToQueue("update:=:FactionToLand:=:add:=:" + FactionUUID + ":=:add:=:" + Chunkkey + ":=:" + Main.ServerName);
     }
 
-    public static Boolean UnClaimLand(String FactionUUID, String Chunkkey) {
-        if(FactionStorage.LandToFaction.containsKey(Chunkkey)) {
-            FactionStorage.LandToFaction.remove(Chunkkey);
-            JedisTempStorage.AddCommandToQueue("update:=:LandToFaction:=:add:=:" + Chunkkey + ":=:remove:=:" + FactionUUID + ":=:" + Main.ServerName);
-            ArrayList<String> updatelist = FactionStorage.FactionToLand.get(FactionUUID);
-            updatelist.remove(Chunkkey);
-            FactionStorage.FactionToLand.put(FactionUUID, updatelist);
-            JedisTempStorage.AddCommandToQueue("update:=:LandToFaction:=:add:=:" + FactionUUID + ":=:remove:=:" + Chunkkey + ":=:" + Main.ServerName);
-            return true;
+    public static void UnClaimLand(String FactionUUID, String Chunkkey) {
+        FactionStorage.LandToFaction.remove(Chunkkey);
+        JedisTempStorage.AddCommandToQueue("update:=:LandToFaction:=:remove:=:" + Chunkkey + ":=:remove:=:" + FactionUUID + ":=:" + Main.ServerName);
+        ArrayList<String> updatelist = FactionStorage.FactionToLand.get(FactionUUID);
+        updatelist.remove(Chunkkey);
+        if(updatelist.isEmpty()) {
+            FactionStorage.FactionToLand.remove(FactionUUID);
         } else {
-            return false;
+            FactionStorage.FactionToLand.put(FactionUUID, updatelist);
         }
+
+        JedisTempStorage.AddCommandToQueue("update:=:FactionToLand:=:add:=:" + FactionUUID + ":=:remove:=:" + Chunkkey + ":=:" + Main.ServerName);
     }
 
     public static Boolean isSameClaimFaction(Location loc1, Location loc2) {
@@ -496,5 +492,13 @@ public class FactionUtils {
 
     public static void RemoveFactionDesc(String FactionUUID) {
         JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:remove:=:" + FactionUUID + "=desc" + ":=:add:=:" + "D");
+    }
+
+    public static void WarpLocation(String UUID, String ServerName, String Location, Boolean isExpire) {
+        if(!isExpire) {
+            JedisTempStorage.AddCommandToQueue("warplocation:=:" + UUID + ":=:" + ServerName + ":=:" + Location + ":=:notexpired");
+        } else {
+            JedisTempStorage.AddCommandToQueue("warplocation:=:" + UUID + ":=:" + ServerName + ":=:" + Location + ":=:expired");
+        }
     }
 }

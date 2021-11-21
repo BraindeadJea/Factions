@@ -473,13 +473,36 @@ public class FactionMainCommand implements CommandExecutor {
                                     }
                                 }.runTaskLater(Main.getInstance(), 100L);
                             } else {
+                                SystemUtils.sendfactionmessage(sender, "&r&c5초&r&f후 국가 스폰으로 이동됩니다");
+                                Long time = System.currentTimeMillis();
+                                TempStorage.TeleportLocation.put(sender.getUniqueId().toString(), time);
+                                new BukkitRunnable() {
+                                    @Override
+                                    public void run() {
+                                        if(TempStorage.TeleportLocation.containsKey(UUID)) {
+                                            if(TempStorage.TeleportLocation.get(UUID).equals(time)) {
+                                                SystemUtils.SendtoServer(sender, Main.ServerName);
+                                                FactionUtils.WarpLocation(UUID, TargetServerName, temp222[1], false);
+                                                new BukkitRunnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        FactionUtils.WarpLocation(UUID, TargetServerName, temp222[1], true);
+                                                    }
+                                                }.runTaskLaterAsynchronously(Main.getInstance(), 400L);
+                                                return;
+                                            }
+                                        }
+                                        SystemUtils.sendfactionmessage(sender, "&r&f이동이 취소되었습니다");
+                                    }
+                                }.runTaskLater(Main.getInstance(), 100L);
+
                                 //
                                 //서버로 이동
                                 //그다음에 텔레포트
                             }
 
                         } else {
-
+                            SystemUtils.sendfactionmessage(sender, "&r&f국가 스폰이 설정되어 있지 않습니다");
                         }
                     } else {
                         SystemUtils.sendfactionmessage(sender, "&r&f당신은 소속된 국가가 없습니다");
@@ -604,6 +627,8 @@ public class FactionMainCommand implements CommandExecutor {
 
                         CompletableFuture<Double> futurebank = Main.database.AddFactionBank(FactionUUID, amount);
 
+                        OfflinePlayer op = Bukkit.getOfflinePlayer(sender.getUniqueId());
+
                         double finalbank = futurebank.get();
 
                         if(finalbank < 0) {
@@ -615,8 +640,10 @@ public class FactionMainCommand implements CommandExecutor {
 
                         if(Take) {
                             TakeorGet = "&a출금";
+                            Main.econ.depositPlayer(op, amount);
                         } else {
                             TakeorGet = "&a입금";
+                            Main.econ.withdrawPlayer(op, amount);
                         }
 
                         SystemUtils.sendfactionmessage(sender, "&r&f성공적으로 해당 금액만큼을 국가 금고에서 " + TakeorGet + " &r했습니다. \n" +

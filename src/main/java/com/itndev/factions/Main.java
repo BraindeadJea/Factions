@@ -1,6 +1,7 @@
 package com.itndev.factions;
 
 import com.itndev.factions.Jedis.JedisManager;
+import com.itndev.factions.Listener.BungeeListener;
 import com.itndev.factions.MySQL.*;
 import com.itndev.factions.Utils.SystemUtils;
 import com.itndev.factions.Utils.RegisterStuff;
@@ -50,6 +51,9 @@ public class Main extends JavaPlugin {
         RegisterStuff.onStartup();
 
         setupEconomy();
+
+        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new BungeeListener());
     }
 
     @Deprecated
@@ -62,6 +66,9 @@ public class Main extends JavaPlugin {
             e.printStackTrace();
         }
         instance = null;
+
+        this.getServer().getMessenger().unregisterOutgoingPluginChannel(this);
+        this.getServer().getMessenger().unregisterIncomingPluginChannel(this);
     }
 
     private boolean setupEconomy() {

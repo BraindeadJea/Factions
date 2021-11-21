@@ -77,9 +77,7 @@ public class FactionStorage {
 
                             //해당 키가 없으면
                             ArrayList<String> updatelist2 = new ArrayList<>();
-                            if(!updatelist2.contains(value)) {
-                                updatelist2.add(value);
-                            }
+                            updatelist2.add(value);
                             FactionStorage.FactionToLand.put(key, updatelist2);
                         }
                     } else { //만약 비어있으면
@@ -93,10 +91,12 @@ public class FactionStorage {
 
                             //해당 키가 있으면
                             ArrayList<String> updatelist = FactionStorage.FactionToLand.get(key);
-                            if(updatelist.contains(value)) {
-                                updatelist.remove(value);
+                            updatelist.remove(value);
+                            if(updatelist.isEmpty()) {
+                                FactionStorage.FactionToLand.remove(key);
+                            } else {
+                                FactionStorage.FactionToLand.put(key, updatelist);
                             }
-                            FactionStorage.FactionToLand.put(key, updatelist);
                         } else {
 
                             //해당 키가 없으면
@@ -108,9 +108,7 @@ public class FactionStorage {
                 }
             } else if(args[2].equalsIgnoreCase("remove")) {
                 String key = args[3];
-                if(FactionStorage.FactionToLand.containsKey(key)) {
-                    FactionStorage.FactionToLand.remove(key);
-                }
+                FactionStorage.FactionToLand.remove(key);
             }
 
         } else if(args[1].equalsIgnoreCase("LandToFaction")) {
@@ -143,9 +141,7 @@ public class FactionStorage {
 
             } else if(args[2].equalsIgnoreCase("remove")) {
                 String key = args[3];
-                if(FactionStorage.LandToFaction.containsKey(key)) {
-                    FactionStorage.LandToFaction.remove(key);
-                }
+                FactionStorage.LandToFaction.remove(key);
             }
 
         } else if(args[1].equalsIgnoreCase("FactionRank")) {

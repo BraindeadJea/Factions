@@ -105,6 +105,7 @@ public class PlayerListener implements Listener {
         if(onJoinWarp.containsKey(uuid)) {
             p.teleportAsync(onJoinWarp.get(uuid));
             onJoinWarp.remove(uuid);
+            SystemUtils.sendfactionmessage(p, "&r&f국가 스폰으로 이동합니다");
         }
     }
 

@@ -32,8 +32,8 @@ public class YamlConfig {
 
     public void resetlocalstorage() throws IOException {
         //file = new File(main.getInstance().getDataFolder(), "LocalStorage.yml");
-        file.delete();
-        file.createNewFile();
+        //file.delete();
+        //file.createNewFile();
         customlocalstorage.getKeys(false).forEach(key ->{
             customlocalstorage.set(key, null);
         });

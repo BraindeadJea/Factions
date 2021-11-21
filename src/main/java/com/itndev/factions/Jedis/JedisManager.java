@@ -384,9 +384,14 @@ public class JedisManager {
                 String targetuuid = args[1];
                 String Server = args[2];
                 String stringlocation = args[3];
+                String expired = args[4];
                 if(Main.ServerName.equalsIgnoreCase(Server)) {
-                    Location loc = SystemUtils.string2loc(stringlocation);
-                    PlayerListener.onJoinWarp.put(targetuuid, loc);
+                    if(!expired.equalsIgnoreCase("expired")) {
+                        Location loc = SystemUtils.string2loc(stringlocation);
+                        PlayerListener.onJoinWarp.put(targetuuid, loc);
+                    } else {
+                        PlayerListener.onJoinWarp.remove(targetuuid);
+                    }
                 }
             } else {
                 System.out.println("[WARNING (REDIS)] WRONG COMMAND USAGE FROM REDIS" + " ( '" + k + "' )");

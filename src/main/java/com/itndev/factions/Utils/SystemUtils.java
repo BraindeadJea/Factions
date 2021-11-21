@@ -1,5 +1,8 @@
 package com.itndev.factions.Utils;
 
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+import com.itndev.factions.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -99,7 +102,12 @@ public class SystemUtils {
         return FinalString;
     }
 
-
+    public static void SendtoServer(Player p, String ServerName) {
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF("Connect");
+        out.writeUTF(ServerName);
+        p.sendPluginMessage(Main.getInstance(), "BungeeCord", out.toByteArray());
+    }
 
     public static String colorize(String message) {
         return ChatColor.translateAlternateColorCodes('&', message);
