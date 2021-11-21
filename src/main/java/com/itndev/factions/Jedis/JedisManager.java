@@ -342,7 +342,7 @@ public class JedisManager {
                         || args[1].equalsIgnoreCase("FactionUUIDToFactionName")
                         || args[1].equalsIgnoreCase("FactionInviteQueue")
                         || args[1].equalsIgnoreCase("FactionDTR")
-                        || args[1].equalsIgnoreCase("FactionDesc")
+                        || args[1].equalsIgnoreCase("FactionInfo")
                         || args[1].equalsIgnoreCase("Timeout2")
                         || args[1].equalsIgnoreCase("Timeout2info")) {
                     FactionStorage.FactionStorageUpdateHandler(args, ServerName);

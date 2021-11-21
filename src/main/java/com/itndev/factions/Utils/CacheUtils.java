@@ -5,6 +5,7 @@ import com.itndev.factions.Jedis.JedisTempStorage;
 import com.itndev.factions.Main;
 import com.itndev.factions.Storage.CachedStorage;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -31,34 +32,23 @@ public class CacheUtils {
         CachedStorage.CachedBank.remove(FactionUUID);
     }
 
-    public static Double getCachedDTR(String FactionUUID) {
+    public static CompletableFuture<Double> getCachedDTR(String FactionUUID) {
+        CompletableFuture<Double> FinalDTR = new CompletableFuture<>();
         if(CachedStorage.CachedDTR.containsKey(FactionUUID)) {
-            return CachedStorage.CachedDTR.get(FactionUUID);
+            FinalDTR.complete(CachedStorage.CachedDTR.get(FactionUUID));
         } else {
-            try {
-                Double FinalDTR = Main.database.GetFactionDTR(FactionUUID).get(40, TimeUnit.MILLISECONDS);
-                UpdateCachedDTR(FactionUUID, FinalDTR);
-                return FinalDTR;
-            } catch (InterruptedException | ExecutionException | TimeoutException e ){
-                e.printStackTrace();
-                return null;
-            }
-
+            FinalDTR = Main.database.GetFactionDTR(FactionUUID);
         }
+        return FinalDTR;
     }
 
-    public static Double getCachedBank(String FactionUUID) {
+    public static CompletableFuture<Double> getCachedBank(String FactionUUID) {
+        CompletableFuture<Double> FinalBank = new CompletableFuture<>();
         if(CachedStorage.CachedBank.containsKey(FactionUUID)) {
-            return CachedStorage.CachedBank.get(FactionUUID);
+            FinalBank.complete(CachedStorage.CachedBank.get(FactionUUID));
         } else {
-            try {
-                Double FinalBank = Main.database.GetFactionBank(FactionUUID).get(40, TimeUnit.MILLISECONDS);
-                UpdateCachedBank(FactionUUID, FinalBank);
-                return FinalBank;
-            } catch (InterruptedException | ExecutionException | TimeoutException e ){
-                e.printStackTrace();
-                return null;
-            }
+            FinalBank = Main.database.GetFactionBank(FactionUUID);
         }
+        return FinalBank;
     }
 }

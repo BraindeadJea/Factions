@@ -37,7 +37,8 @@ public class PlayerListener implements Listener {
         new Thread( () -> {
             Location from = e.getFrom();
             Location to = e.getTo();
-            if(from != to) {
+            if(!(from.getZ() == to.getZ() && from.getX() == to.getX() && from.getY() == to.getY())) {
+                TempStorage.TeleportLocation.remove(e.getPlayer().getUniqueId().toString());
                 if(!from.getChunk().equals(to.getChunk())) {
                     if(!FactionUtils.isSameClaimFaction(from, to)) {
                         String fromname = FactionUtils.GetClaimFaction(from);

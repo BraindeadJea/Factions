@@ -6,9 +6,13 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 public class SystemUtils {
+
+    public static SimpleDateFormat timeformat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
 
     @Deprecated
     public static void warning(String Message) {
@@ -72,6 +76,11 @@ public class SystemUtils {
             }
         }
         return null;
+    }
+
+    public static String FactionUUIDToDate(String FactionUUID) {
+        Long time = Long.valueOf(FactionUUID.split("=")[0]);
+        return timeformat.format(new Date(time));
     }
 
     public static String Args2String(String[] args, int Start) {

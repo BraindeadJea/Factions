@@ -443,7 +443,7 @@ public class FactionUtils {
     }
 
     public static void SetFactionSpawn(String FactionUUID, String ConvertLoc) {
-        JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:add:=:" + FactionUUID + "=spawn" + ":=:add:=:" + Main.ServerName + "=" + ConvertLoc);
+        JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:add:=:" + FactionUUID + "=spawn" + ":=:add:=:" + Main.ServerName + "===" + ConvertLoc);
     }
 
     public static Boolean FactionSpawnExists(String FactionUUID) {
@@ -462,6 +462,10 @@ public class FactionUtils {
         JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:add:=:" + FactionUUID + "=notice" + ":=:add:=:" + factionnotice);
     }
 
+    public static Boolean FactionNoticeExists(String FactionUUID) {
+        return FactionStorage.FactionInfo.containsKey(FactionUUID + "=notice");
+    }
+
     public static String GetFactionNotice(String FactionUUID) {
         if(!FactionStorage.FactionInfo.containsKey(FactionUUID + "=notice")) {
             return Lang.FACTION_DEFAULT_NOTICE;
@@ -476,6 +480,10 @@ public class FactionUtils {
 
     public static void SetFactionDesc(String FactionUUID, String factionDesc) {
         JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:add:=:" + FactionUUID + "=desc" + ":=:add:=:" + factionDesc);
+    }
+
+    public static Boolean FactionDescExists(String FactionUUID) {
+        return FactionStorage.FactionInfo.containsKey(FactionUUID + "=desc");
     }
 
     public static String GetFactionDesc(String FactionUUID) {
