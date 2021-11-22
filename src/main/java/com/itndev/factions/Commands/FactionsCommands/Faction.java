@@ -6,6 +6,7 @@ import com.itndev.factions.Storage.FactionStorage;
 import com.itndev.factions.Utils.CacheUtils;
 import com.itndev.factions.Utils.FactionUtils;
 import com.itndev.factions.Utils.UserInfoUtils;
+import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
@@ -80,20 +81,27 @@ public class Faction {
         return ClaimLand;
     }
 
-    public String getFormattedMembers() {
+    public String getFormattedMembers(String Rank) {
         if(!isBuilt) {
             return null;
         }
         String Formatted = "";
         int num = 0;
+        //) {
+        ArrayList<String> RankedMemebers = new ArrayList<>();
         for(String uuids : FactionMembers) {
+            if(FactionUtils.getPlayerRank(uuids).equalsIgnoreCase(Rank)) {
+                RankedMemebers.add(uuids);
+            }
+
+        }
+        for(String uuids : RankedMemebers) {
             num = num + 1;
-            if(FactionMembers.size() != num) {
+            if (FactionMembers.size() != num) {
                 Formatted = Formatted + "&7" + UserInfoUtils.getPlayerOrginName(UserInfoUtils.getPlayerName(uuids)) + "&8&l, &r";
             } else {
                 Formatted = Formatted + "&7" + UserInfoUtils.getPlayerOrginName(UserInfoUtils.getPlayerName(uuids)) + "&r";
             }
-
         }
         return Formatted;
     }

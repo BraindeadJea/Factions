@@ -114,6 +114,58 @@ public class FactionUtils {
         JedisTempStorage.AddCommandToQueue("update:=:FactionWarpLocations:=:remove:=:" + FactionUUID + ":=:add:=:" + "nothing");
     }
 
+    public static Boolean NearByChunksAreOwned(Location loc) {
+        Location temploc1 = loc;
+        Location temploc2 = loc;
+        Location temploc3 = loc;
+        Location temploc4 = loc;
+        Location templocC1 = loc;
+        Location templocC2 = loc;
+        Location templocC3 = loc;
+        Location templocC4 = loc;
+
+        temploc1.setX(loc.getX() + 16);
+
+        temploc2.setZ(loc.getZ() + 16);
+
+        temploc3.setX(loc.getX() - 16);
+
+        temploc2.setZ(loc.getZ() - 16);
+
+        templocC1.setX(loc.getX() + 16);
+        templocC1.setZ(loc.getZ() + 16);
+
+        templocC2.setX(loc.getX() - 16);
+        templocC2.setZ(loc.getZ() + 16);
+
+        templocC3.setX(loc.getX() + 16);
+        templocC3.setZ(loc.getZ() - 16);
+
+        templocC4.setX(loc.getX() - 16);
+        templocC4.setZ(loc.getZ() - 16);
+
+        if(FactionUtils.isClaimed(temploc1)) {
+            return false;
+        } else if(FactionUtils.isClaimed(temploc2)) {
+            return false;
+        } else if(FactionUtils.isClaimed(temploc3)) {
+            return false;
+        } else if(FactionUtils.isClaimed(temploc4)) {
+            return false;
+        } else if(FactionUtils.isClaimed(templocC1)) {
+            return false;
+        } else if(FactionUtils.isClaimed(templocC2)) {
+            return false;
+        } else if(FactionUtils.isClaimed(templocC3)) {
+            return false;
+        } else if(FactionUtils.isClaimed(templocC4)) {
+            return false;
+        } else {
+            return true;
+        }
+
+    }
+
     public static void SendFactionMessage(String playeruuid, String targetuuid, String type, String message) {
         if(type.equalsIgnoreCase("single")) {
             //type : SIBAL, TeamChat, all

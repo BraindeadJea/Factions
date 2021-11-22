@@ -25,6 +25,7 @@ public class FactionStorage {
     public static ConcurrentHashMap<String, String> FactionNameToFactionName = new ConcurrentHashMap<>();
 
     public static ConcurrentHashMap<String, String> FactionRank = new ConcurrentHashMap<>();
+
     /*
     * Faction Rank Explain
     *
@@ -38,7 +39,6 @@ public class FactionStorage {
     *
     */
 
-
     public static ConcurrentHashMap<String, ArrayList<String>> FactionMember = new ConcurrentHashMap<>();
 
     public static ConcurrentHashMap<String, String> FactionInfo = new ConcurrentHashMap<>();
@@ -48,6 +48,7 @@ public class FactionStorage {
     public static ConcurrentHashMap<String, String> FactionOutPost = new ConcurrentHashMap<>(); //do not trust this
 
     public static ConcurrentHashMap<String, String> FactionWarpLocations = new ConcurrentHashMap<>();
+
     // key : FactionUUID + Type + id
     // if Type is Spawn id is Spawn
     // -- example --
@@ -55,7 +56,6 @@ public class FactionStorage {
     // FactionUUID=OutPost=ID , Coords
 
     public static void FactionStorageUpdateHandler(String[] args, String ServerName) {
-
         if(args[1].equalsIgnoreCase("FactionToLand")) {
             if(ServerName.equalsIgnoreCase(Main.ServerName)) {
                 return;

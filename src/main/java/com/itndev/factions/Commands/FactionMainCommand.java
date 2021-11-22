@@ -643,7 +643,7 @@ public class FactionMainCommand implements CommandExecutor {
                             Main.econ.depositPlayer(op, amount);
                         } else {
                             TakeorGet = "&a입금";
-                            Main.econ.withdrawPlayer(op, amount);
+                            Main.econ.withdrawPlayer(op, amount * -1);
                         }
 
                         SystemUtils.sendfactionmessage(sender, "&r&f성공적으로 해당 금액만큼을 국가 금고에서 " + TakeorGet + " &r했습니다. \n" +
@@ -691,7 +691,11 @@ public class FactionMainCommand implements CommandExecutor {
                             "&r&7&l> &r 설립일 &r&8&l: &7" + SystemUtils.FactionUUIDToDate(TargetFactionUUID) + "\n" +
                             "&r&7&l> &r 영토 &r&8&l: &7" + faction.getClaimLand() + " 청크\n" +
                             "&r\n" +
-                            "&r&7&l> &r 멤버 &r&8&l: &7" + faction.getFormattedMembers() + "\n" +
+                            "&r&7&l> &r " + Config.Leader_Lang + " &r&8&l: &7" + faction.getFormattedMembers(Config.Leader) + "\n" +
+                            "&r&7&l> &r " + Config.CoLeader_Lang + " &r&8&l: &7" + faction.getFormattedMembers(Config.CoLeader) + "\n" +
+                            "&r&7&l> &r " + Config.VipMember_Lang + " &r&8&l: &7" + faction.getFormattedMembers(Config.VipMember) + "\n" +
+                            "&r&7&l> &r " + Config.Warrior_Lang + " &r&8&l: &7" + faction.getFormattedMembers(Config.Warrior) + "\n" +
+                            "&r&7&l> &r " + Config.Member_Lang + " &r&8&l: &7" + faction.getFormattedMembers(Config.Member) + "\n" +
                             "&r\n" +
                             "&r&f&m-----------------&r&a&o&l[ &r&f국가 &r&a&o&l]&r&f&m-----------------\n");
 

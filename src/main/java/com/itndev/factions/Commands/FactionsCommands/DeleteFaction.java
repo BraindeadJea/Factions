@@ -13,7 +13,7 @@ public class DeleteFaction {
         String OriginFactionName = FactionUtils.getCappedFactionName(FactionName);
         SystemUtils.sendmessage(p, "&a&o&l[ &r&f국가 &a&o&l] &r&f국가 &c" + OriginFactionName + " 을(를) 해체했습니다");
         JedisTempStorage.AddCommandToQueue("notify:=:" + p.getUniqueId() + ":=:" + "SIBAL" + ":=:" + "&r&f당신의 국가가 &c몰락&f했습니다" + ":=:" + "true");
-        JedisTempStorage.AddCommandToQueue("notify:=:" + p.getUniqueId() + ":=:" + "all" + ":=:" + "&a&o&l[ &r&f국가 &a&o&l] &r&f국가 &c" + OriginFactionName + " (이)가 &c몰락r&f했습니다" + ":=:" + "true");
+        JedisTempStorage.AddCommandToQueue("notify:=:" + p.getUniqueId() + ":=:" + "all" + ":=:" + "&a&o&l[ &r&f국가 &a&o&l] &r&f국가 &c" + OriginFactionName + " (이)가 &c몰락&r&f했습니다" + ":=:" + "true");
         FactionUtils.DeleteFaction(FactionUtils.getPlayerFactionUUID(p.getUniqueId().toString()));
         Main.database.DeleteFactionName(FactionUUID);
         Main.database.DeleteFactionBank(FactionUUID);
