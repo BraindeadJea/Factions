@@ -35,6 +35,22 @@ public class FactionUtils {
         }
     }
 
+    public static String getFormattedFaction(String UUID) {
+        if(FactionUtils.getPlayerRank(UUID).equalsIgnoreCase(Config.Nomad)) {
+            return "";
+        } else {
+            return "&f[ &r&a" + FactionUtils.getFactionName(FactionUtils.getPlayerFactionUUID(UUID)) + " &r&f]";
+        }
+    }
+
+    public static String getFormattedRank(String UUID) {
+        if(FactionUtils.getPlayerRank(UUID).equalsIgnoreCase(Config.Nomad)) {
+            return "";
+        } else {
+            return "&r&7" + FactionUtils.getPlayerLangRank(UUID);
+        }
+    }
+
     public static String getFactionLeader(String FactionUUID) {
         for(String UUID : FactionUtils.getFactionMember(FactionUUID)) {
             if(FactionUtils.getPlayerRank(UUID).equalsIgnoreCase(Config.Leader)) {

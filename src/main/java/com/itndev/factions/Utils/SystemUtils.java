@@ -3,15 +3,26 @@ package com.itndev.factions.Utils;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.itndev.factions.Main;
+import io.papermc.paper.text.PaperComponents;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.format.Style;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class SystemUtils {
 
@@ -19,7 +30,7 @@ public class SystemUtils {
 
     @Deprecated
     public static void warning(String Message) {
-        Bukkit.broadcastMessage(colorize("&c&lERROR &7" + Message));
+        Bukkit.broadcast(Convert(colorize("&c&lERROR &7" + Message)));
     }
 
     public static void sendmessage(Player p, String Message) {
@@ -111,5 +122,10 @@ public class SystemUtils {
 
     public static String colorize(String message) {
         return ChatColor.translateAlternateColorCodes('&', message);
+    }
+
+    public static TextComponent Convert(String message) {
+        TextComponent text = new TextComponent(message);
+        return text;
     }
 }

@@ -28,6 +28,8 @@ public class Main extends JavaPlugin {
 
     public static wtfDatabase database = new wtfDatabase();
 
+    public static Boolean chattoggle = false;
+
     FileConfiguration config = getConfig();
     public final Logger logger = Logger.getLogger("Minecraft");
 

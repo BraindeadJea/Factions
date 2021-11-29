@@ -1,9 +1,14 @@
 package com.itndev.factions.PlaceHolder;
 
 import com.itndev.factions.Config.Config;
+import com.itndev.factions.Utils.CacheUtils;
 import com.itndev.factions.Utils.FactionUtils;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class PlaceHolderManager extends PlaceholderExpansion {
     @Override
@@ -18,7 +23,7 @@ public class PlaceHolderManager extends PlaceholderExpansion {
 
     @Override
     public String getVersion() {
-        return "0.4.8";
+        return "0.8.5";
     }
 
     @Override
@@ -52,6 +57,38 @@ public class PlaceHolderManager extends PlaceholderExpansion {
                 return "&7무소속";
             } else {
                 return "&a" + FactionUtils.getFactionName(FactionUtils.getPlayerFactionUUID(UUID));
+            }
+        } else if(params.equalsIgnoreCase("formatfactionname")) {
+            if(FactionUtils.getPlayerRank(UUID).equalsIgnoreCase(Config.Nomad)) {
+                return "";
+            } else {
+                return "&f[ &r&a" + FactionUtils.getFactionName(FactionUtils.getPlayerFactionUUID(UUID)) + " &r&f] ";
+            }
+        } else if(params.equalsIgnoreCase("formatrank")) {
+            if(FactionUtils.getPlayerRank(UUID).equalsIgnoreCase(Config.Nomad)) {
+                return "";
+            } else {
+                return "&r&7" + FactionUtils.getPlayerLangRank(UUID) + " ";
+            }
+        } else if(params.equalsIgnoreCase("factiondtr")) {
+            if(FactionUtils.getPlayerRank(UUID).equalsIgnoreCase(Config.Nomad)) {
+                return "";
+            } else {
+                try {
+                    return "" + CacheUtils.getCachedDTR(FactionUtils.getPlayerFactionUUID(UUID)).get(40, TimeUnit.MILLISECONDS);
+                } catch (TimeoutException | InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else if(params.equalsIgnoreCase("factionbank")) {
+            if(FactionUtils.getPlayerRank(UUID).equalsIgnoreCase(Config.Nomad)) {
+                return "";
+            } else {
+                try {
+                    return "" + CacheUtils.getCachedBank(FactionUtils.getPlayerFactionUUID(UUID)).get(40, TimeUnit.MILLISECONDS);
+                } catch (TimeoutException | InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return null;
