@@ -229,7 +229,7 @@ public class PlayerListener implements Listener {
                 ArrayList<Player> closeplayer = new ArrayList<>();
                 for(Player online : Bukkit.getOnlinePlayers()) {
                     closeplayer.add(online);
-                    if(online.getLocation().getWorld().getName().equals(p.getLocation().getWorld().getName()) && online.getLocation().distanceSquared(p.getLocation()) <= 30 * 30) {
+                    if(online.getLocation().getWorld().getName().equals(p.getLocation().getWorld().getName()) && online.getLocation().distanceSquared(p.getLocation()) <= 300 * 300) {
                         closeplayer.add(online);
                     }
                 }

@@ -43,13 +43,14 @@ public class HikariCP {
             return connection;
         } else {
             try {
+                ConnectHikari();
                 connection = dataSource.getConnection();
                 return connection;
             } catch (SQLException e) {
                 e.printStackTrace();
+                return connection;
             }
         }
-        return null;
     }
 
     public void createHikariTable() {

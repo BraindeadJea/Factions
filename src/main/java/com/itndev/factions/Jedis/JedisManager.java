@@ -14,6 +14,8 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.Pipeline;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -317,6 +319,7 @@ public class JedisManager {
                 }).start();
 
 
+
             }
 
         }.runTaskTimerAsynchronously(Main.getInstance(), 1L, 1L);//runTaskTimer(main.getInstance(), 5L, 5L);
@@ -363,6 +366,7 @@ public class JedisManager {
             } else if(args[0].equalsIgnoreCase("chat")) {
                 String playeruuid = args[1];
                 String message = args[2];
+                FactionUtils.FactionChat(playeruuid, message);
                 //utils.teamchat(playeruuid, message);
             } else if(args[0].equalsIgnoreCase("proxyuserupdate")) {
 
@@ -400,6 +404,7 @@ public class JedisManager {
 
         } else if(c <= 600) {
             String warn = "data update failed... trying to update data that should already been processed or update has been duplicated / processed delayed (" + String.valueOf(c) + ")";
+            SystemUtils.warning(warn);
             //utils.broadcastwarn(warn);
         }
         //example command "update:=:hashmap1~4:=:add/remove:=:key:=:add/remove/(앞에 remove일 경우 여기랑 이 뒤는 쓸 필요 없다):=:value"
