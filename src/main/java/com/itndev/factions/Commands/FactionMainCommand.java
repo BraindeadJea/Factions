@@ -7,6 +7,7 @@ import com.itndev.factions.Faction;
 import com.itndev.factions.Jedis.JedisTempStorage;
 import com.itndev.factions.Main;
 import com.itndev.factions.Storage.TempStorage;
+import com.itndev.factions.Utils.FactionList.FactionList;
 import com.itndev.factions.Utils.FactionUtils;
 import com.itndev.factions.Utils.SystemUtils;
 import com.itndev.factions.Utils.UserInfoUtils;
@@ -771,6 +772,16 @@ public class FactionMainCommand implements CommandExecutor {
                     //=================목록=================
 
                     //d
+                    if(args.length < 2) {
+                        FactionList.FactionTopExecute(sender, 1);
+                        return;
+                    }
+                    if(!ValidChecker.instanceofNumber(args[1])) {
+                        SystemUtils.sendfactionmessage(sender, "&r&f명령어 사용법 : &f/국가 목록 &7(페이지번호)\n");
+                        return;
+                    }
+                    int page = Integer.parseInt(args[1]);
+                    FactionList.FactionTopExecute(sender, page);
 
                     //=================목록=================
 

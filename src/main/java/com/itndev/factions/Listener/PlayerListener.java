@@ -167,9 +167,11 @@ public class PlayerListener implements Listener {
         }
     }
 
+
+    @Deprecated
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onChat(AsyncChatEvent e) {
-        String k = e.message().toString();
+    public void onChat(AsyncPlayerChatEvent e) {
+        String k = e.getMessage();
         Player p = e.getPlayer();
         String UUID = p.getUniqueId().toString();
         e.setCancelled(true);
@@ -228,7 +230,6 @@ public class PlayerListener implements Listener {
                         groupMeta(group).getMetaValue("message-color") : "")));
                 ArrayList<Player> closeplayer = new ArrayList<>();
                 for(Player online : Bukkit.getOnlinePlayers()) {
-                    closeplayer.add(online);
                     if(online.getLocation().getWorld().getName().equals(p.getLocation().getWorld().getName()) && online.getLocation().distanceSquared(p.getLocation()) <= 300 * 300) {
                         closeplayer.add(online);
                     }

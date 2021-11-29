@@ -53,6 +53,13 @@ public class Faction {
         return FactionName;
     }
 
+    public String getFactionUUID() {
+        if(!isBuilt) {
+            return null;
+        }
+        return FactionUUID;
+    }
+
     public String getFactionCapName() {
         if(!isBuilt) {
             return null;
