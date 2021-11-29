@@ -12,7 +12,7 @@ import java.util.concurrent.*;
 
 public class FactionList {
 
-    public static ConcurrentHashMap<Integer, Faction> FactionTop = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<Integer, String> FactionTop = new ConcurrentHashMap<>();
     public static ConcurrentHashMap<String, Double> FactionBalCashTop = new ConcurrentHashMap<>();
     public static Integer FactionTopSize = 0;
     public static Long FactionTopLastRefresh = System.currentTimeMillis();
@@ -21,11 +21,11 @@ public class FactionList {
         if(FactionTopSize == 0) {
             new Thread( () -> {
                 try {
-                    if(BuildFactionTop().get(10000, TimeUnit.MILLISECONDS)) {
+                    if(BuildFactionTop().get()) {
                         //Send Top
                         SendFactionTop(p, page);
                     }
-                } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
             }).start();
@@ -60,8 +60,11 @@ public class FactionList {
                 page = maxpage;
             }
             for(int b = scan; b < scan + 100; b++) {
-                Faction faction = FactionTop.get(b);
-                temp = temp + "&r&f" + faction.getFactionCapName() + " &8&l- &7" + FactionBalCashTop.get(faction.getFactionUUID()) + "원\n";
+                if(FactionTop.containsKey(b)) {
+                    break;
+                }
+                String factionuuid = FactionTop.get(b);
+                temp = temp + "&r&f" + FactionUtils.getCappedFactionName(FactionUtils.getFactionName(factionuuid)) + " &8&l- &7" + FactionBalCashTop.get(factionuuid) + "원\n";
             }
             SystemUtils.sendmessage(p,"&r&m&l------------&r&3&l[ &f&o국가 목록 &3&l]&r&m&l------------\n" +
                     temp + "&8 - &f" + page + "&7/&f" + maxpage + "&8 -&r \n&r&m&l------------&r&3&l[ &f&o국가 목록 &3&l]&r&m&l------------\n");
@@ -75,6 +78,7 @@ public class FactionList {
         CompletableFuture<Boolean> isFinished = new CompletableFuture<>();
         new Thread( () -> {
             HashMap<String, Double> FactionBalTop = new HashMap<>();
+            HashMap<Integer, String> FactionToptemp = new HashMap<>();
             for(String FactionUUID : FactionStorage.FactionUUIDToFactionName.keySet()) {
                 try {
                     Double tempcash = CacheUtils.getCachedBank(FactionUUID).get();
@@ -86,29 +90,27 @@ public class FactionList {
                 }
             }
             for(String FactionUUID2 : FactionBalTop.keySet()) {
-                Faction faction = new Faction();
-                try {
-                    faction.BuildFactionInfo(FactionUUID2);
-                } catch (ExecutionException | InterruptedException | TimeoutException e) {
-                    e.printStackTrace();
-                    isFinished.complete(false);
-                }
-                if(FactionTop.isEmpty()) {
-                    FactionTop.put(1, faction);
+                if(FactionToptemp.isEmpty()) {
+                    FactionToptemp.put(1, FactionUUID2);
                     FactionTopSize = 1;
                 }
-                for(int k : FactionTop.keySet()) {
-                    if(FactionBalTop.get(FactionTop.get(k).getFactionUUID()) < FactionBalTop.get(FactionUUID2)) {
+                for(int k : FactionToptemp.keySet()) {
+                    Double bank1 = FactionBalTop.get(FactionToptemp.get(k));
+                    Double bank2 = FactionBalTop.get(FactionUUID2);
+                    if(bank1 < bank2) {
                         for(int v = k; v <= FactionTopSize; v++) {
-                            FactionTop.put(v + 1, FactionTop.get(v));
+                            FactionToptemp.put(v + 1, FactionToptemp.get(v));
+                            FactionToptemp.remove(v);
                         }
-                        FactionTop.put(k, faction);
-                        FactionTopSize = FactionTopSize + 1;
+                        FactionToptemp.put(k, FactionUUID2);
                     } else {
-                        FactionTop.put(FactionTopSize + 1, faction);
-                        FactionTopSize = FactionTopSize + 1;
+                        FactionToptemp.put(FactionTopSize + 1, FactionUUID2);
                     }
+                    FactionTopSize = FactionTopSize + 1;
                 }
+            }
+            for(int temp : FactionToptemp.keySet()) {
+                FactionTop.put(temp, FactionToptemp.get(temp));
             }
             FactionTopLastRefresh = System.currentTimeMillis();
             isFinished.complete(true);

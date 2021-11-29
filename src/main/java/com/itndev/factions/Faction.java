@@ -46,6 +46,25 @@ public class Faction {
         isBuilt = true;
     }
 
+    public void DangerousBuildFactionInfo(String FactionUUID2) throws ExecutionException, InterruptedException, TimeoutException {
+        CompletableFuture<Double> FutureBank = CacheUtils.getCachedBank(FactionUUID2);
+        CompletableFuture<Double> FutureDTR = CacheUtils.getCachedDTR(FactionUUID2);
+
+        FactionName = FactionUtils.getFactionName(FactionUUID2);
+        FactionUUID = FactionUUID2;
+        FactionCapName = FactionUtils.getCappedFactionName(FactionName);
+
+        FactionMembers = FactionUtils.getFactionMember(FactionUUID);
+        Bank = FutureBank.get();
+        DTR = FutureDTR.get();
+        if(FactionStorage.FactionToLand.containsKey(FactionUUID2)) {
+            ClaimLand = FactionStorage.FactionToLand.get(FactionUUID2).size();
+        } else {
+            ClaimLand = 0;
+        }
+        isBuilt = true;
+    }
+
     public String getFactionName() {
         if(!isBuilt) {
             return null;
