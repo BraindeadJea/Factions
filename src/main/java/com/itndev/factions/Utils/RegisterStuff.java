@@ -1,7 +1,8 @@
 package com.itndev.factions.Utils;
 
-import com.itndev.factions.Commands.FactionMainCommand;
-import com.itndev.factions.Commands.FactionsCommands.FactionTimeOut;
+import com.itndev.factions.AdminCommands.AdminMainCommand;
+import com.itndev.factions.FactionCommands.FactionMainCommand;
+import com.itndev.factions.FactionCommands.FactionsCommands.FactionTimeOut;
 import com.itndev.factions.Config.StorageDir;
 import com.itndev.factions.Listener.PlayerListener;
 import com.itndev.factions.Main;
@@ -40,6 +41,7 @@ public class RegisterStuff {
 
     public static void RegisterFactionCommands() {
         ((PluginCommand) Objects.<PluginCommand>requireNonNull(Main.getInstance().getCommand("국가"))).setExecutor(new FactionMainCommand());
+        ((PluginCommand) Objects.<PluginCommand>requireNonNull(Main.getInstance().getCommand("factionadmin"))).setExecutor(new AdminMainCommand());
     }
 
     public static void RegisterListener() {

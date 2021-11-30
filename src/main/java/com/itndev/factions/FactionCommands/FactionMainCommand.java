@@ -1,6 +1,6 @@
-package com.itndev.factions.Commands;
+package com.itndev.factions.FactionCommands;
 
-import com.itndev.factions.Commands.FactionsCommands.*;
+import com.itndev.factions.FactionCommands.FactionsCommands.*;
 import com.itndev.factions.Config.Config;
 import com.itndev.factions.Config.Lang;
 import com.itndev.factions.Faction;
@@ -353,7 +353,7 @@ public class FactionMainCommand implements CommandExecutor {
                             }
 
                             String FactionUUID = FactionUtils.getPlayerFactionUUID(UUID);
-                            String Message = SystemUtils.Args2String(args, 2);
+                            String Message = SystemUtils.Args2String(args, 2).replace("&", "&.");
                             FactionUtils.SetFactionDesc(FactionUUID, Message);
 
                             SystemUtils.sendfactionmessage(sender, "&r&f국가 설명을 &7( " + Message + " ) &r&f으로 변경했습니다");
@@ -376,7 +376,7 @@ public class FactionMainCommand implements CommandExecutor {
 
                             String FactionUUID = FactionUtils.getPlayerFactionUUID(UUID);
                             String Message = SystemUtils.Args2String(args, 2);
-                            FactionUtils.SetFactionNotice(FactionUUID, Message);
+                            FactionUtils.SetFactionNotice(FactionUUID, Message.replace("&", "&."));
 
                             SystemUtils.sendfactionmessage(sender, "&r&f국가 공지를 &7( " + Message + " ) &r&f으로 변경했습니다");
 
@@ -773,7 +773,8 @@ public class FactionMainCommand implements CommandExecutor {
 
                     //d
                     if(args.length < 2) {
-                        FactionList.FactionTopExecute(sender, 1);
+                        //FactionList.FactionTopExecute(sender, 1);
+                        FactionList.SendFactionTop(sender, 1);
                         return;
                     }
                     if(!ValidChecker.instanceofNumber(args[1])) {
@@ -781,7 +782,8 @@ public class FactionMainCommand implements CommandExecutor {
                         return;
                     }
                     int page = Integer.parseInt(args[1]);
-                    FactionList.FactionTopExecute(sender, page);
+                    FactionList.SendFactionTop(sender, page);
+                    //FactionList.FactionTopExecute(sender, page);
 
                     //=================목록=================
 
@@ -795,7 +797,7 @@ public class FactionMainCommand implements CommandExecutor {
                             SystemUtils.sendfactionmessage(sender, "&a&o&l[ &f공지 &a&o&l] &r&f" + Lang.FACTION_DEFAULT_NOTICE);
                             return;
                         }
-                        SystemUtils.sendfactionmessage(sender, "&a&o&l[ &r&f공지 &a&o&l] &r&f" + FactionUtils.GetFactionNotice(FactionUUID));
+                        SystemUtils.sendrawfactionmessage(sender, SystemUtils.colorize("&a&o&l[ &r&f공지 &a&o&l] &r&f") + FactionUtils.GetFactionNotice(FactionUUID));
                     } else {
                         SystemUtils.sendfactionmessage(sender, "&r&f당신은 소속된 국가가 없습니다");
                     }

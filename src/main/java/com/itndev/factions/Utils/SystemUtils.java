@@ -41,6 +41,10 @@ public class SystemUtils {
         p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&o&l[ &r&f국가 &a&o&l] &r&f" + Message));
     }
 
+    public static void sendrawfactionmessage(Player p, String Message) {
+        p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&o&l[ &r&f국가 &a&o&l] &r&f") + Message);
+    }
+
     public static UUID Convert2UUID(String UUID2) {
         return UUID.fromString(UUID2);
     }

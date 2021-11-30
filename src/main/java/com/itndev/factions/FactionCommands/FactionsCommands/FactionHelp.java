@@ -1,4 +1,4 @@
-package com.itndev.factions.Commands.FactionsCommands;
+package com.itndev.factions.FactionCommands.FactionsCommands;
 
 import com.itndev.factions.Config.Config;
 import com.itndev.factions.Utils.SystemUtils;

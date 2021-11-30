@@ -1,8 +1,7 @@
-package com.itndev.factions.Commands.FactionsCommands;
+package com.itndev.factions.FactionCommands.FactionsCommands;
 
 import com.itndev.factions.Jedis.JedisTempStorage;
 import com.itndev.factions.Main;
-import com.itndev.factions.Storage.FactionStorage;
 import com.itndev.factions.Utils.FactionUtils;
 import com.itndev.factions.Utils.SystemUtils;
 import org.bukkit.entity.Player;

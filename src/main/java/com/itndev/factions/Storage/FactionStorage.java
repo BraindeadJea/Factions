@@ -1,7 +1,6 @@
 package com.itndev.factions.Storage;
 
-import com.itndev.factions.Commands.FactionsCommands.FactionTimeOut;
-import com.itndev.factions.Config.Config;
+import com.itndev.factions.FactionCommands.FactionsCommands.FactionTimeOut;
 import com.itndev.factions.Main;
 
 import java.util.ArrayList;

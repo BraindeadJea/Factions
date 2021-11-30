@@ -1,14 +1,12 @@
 package com.itndev.factions.Listener;
 
-import com.itndev.factions.Commands.FactionsCommands.FactionChatToggle;
+import com.itndev.factions.FactionCommands.FactionsCommands.FactionChatToggle;
 import com.itndev.factions.Jedis.JedisTempStorage;
 import com.itndev.factions.Main;
 import com.itndev.factions.Storage.TempStorage;
 import com.itndev.factions.Storage.UserInfoStorage;
 import com.itndev.factions.Utils.FactionUtils;
 import com.itndev.factions.Utils.SystemUtils;
-import com.itndev.factions.Utils.TeleportInvisFix;
-import io.papermc.paper.event.player.AsyncChatEvent;
 import me.leoko.advancedban.Universal;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.cacheddata.CachedMetaData;
@@ -21,61 +19,11 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.scheduler.BukkitRunnable;
-import io.papermc.paper.event.player.AsyncChatEvent;
-import me.leoko.advancedban.Universal;
-import net.kyori.adventure.text.Component;
-import net.luckperms.api.LuckPerms;
-import net.luckperms.api.cacheddata.CachedMetaData;
-import net.luckperms.api.model.group.Group;
-import net.luckperms.api.model.user.User;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.Validate;
-import org.bukkit.*;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.Sign;
-import org.bukkit.block.data.Bisected;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.type.WallSign;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityPotionEffectEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.inventory.*;
-import org.bukkit.event.player.*;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.material.Door;
-import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -196,7 +144,15 @@ public class PlayerListener implements Listener {
                 }
                 chatevent.put(p.getName(), Long.valueOf(System.currentTimeMillis()));
             }
-            if(FactionChatToggle.FactionChatToggled.containsKey(p)) {
+            if(k.startsWith("@")) {
+                if(FactionUtils.isInFaction(UUID)) {
+
+                    //utils.teamchat(e.getPlayer().getUniqueId().toString(), k);
+                    JedisTempStorage.AddCommandToQueueFix("chat" + ":=:" + p.getUniqueId().toString() + ":=:" + k.replaceFirst("@", ""), "chat" + ":=:" + p.getUniqueId().toString() + ":=:" + k.replaceFirst("@", ""));
+                } else {
+                    SystemUtils.sendmessage(p, "&c&l(!) &7소속된 팀이 없습니다");
+                }
+            } else if(FactionChatToggle.FactionChatToggled.containsKey(p)) {
                 if(FactionUtils.isInFaction(UUID)) {
 
                     //utils.teamchat(e.getPlayer().getUniqueId().toString(), k);

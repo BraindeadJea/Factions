@@ -1,4 +1,4 @@
-package com.itndev.factions.Commands.FactionsCommands;
+package com.itndev.factions.FactionCommands.FactionsCommands;
 
 import com.itndev.factions.Config.Config;
 import com.itndev.factions.Jedis.JedisTempStorage;
@@ -9,7 +9,6 @@ import com.itndev.factions.Utils.UserInfoUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 

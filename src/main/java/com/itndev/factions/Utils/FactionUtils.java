@@ -304,7 +304,7 @@ public class FactionUtils {
             OfflinePlayer op = Bukkit.getOfflinePlayer(UserInfoUtils.getPlayerName(UUIDs));
             if(op.isOnline()) {
                 Player p = (Player) op;
-                p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&o&l[ &f국가채팅 &a&o&l] &r&f" + UserInfoUtils.getPlayerOrginName(UserInfoUtils.getPlayerName(UUID)) + " &7: &r&3") + message);
+                p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&o&l[ &f국가채팅 &a&o&l] &r&f" + UserInfoUtils.getPlayerOrginName(UserInfoUtils.getPlayerName(UUID)) + " &7: &r&7") + message);
             }
         }
     }
