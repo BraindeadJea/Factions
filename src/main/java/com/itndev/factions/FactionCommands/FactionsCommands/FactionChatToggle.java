@@ -10,13 +10,8 @@ public class FactionChatToggle {
 
     public static void FactionChatToggle(Player p) {
         if(FactionChatToggled.containsKey(p)) {
-            if(FactionChatToggled.get(p)) {
-                FactionChatToggled.put(p, false);
-                FactionChatToggleMsg(p, false);
-            } else {
-                FactionChatToggled.put(p, true);
-                FactionChatToggleMsg(p, true);
-            }
+            FactionChatToggled.remove(p);
+            FactionChatToggleMsg(p, false);
         } else {
             FactionChatToggled.put(p, true);
             FactionChatToggleMsg(p, true);

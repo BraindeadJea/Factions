@@ -190,11 +190,11 @@ public class PlayerListener implements Listener {
                         closeplayer.add(online);
                     }
                 }
-                String tagonfront = "&7[ " + String.valueOf(closeplayer.size()) + "명 ]&r ";
+                String tagonfront = "&7[ " + String.valueOf(closeplayer.size()) + "명 ]&r";
 
                 String Dformat = colorize(tagonfront) + colorize(format.replace("{message}", (player.hasPermission("lpc.colorcodes") && player.hasPermission("lpc.rgbcodes")) ?
                         translateHexColorCodes(colorize(message)) : (player.hasPermission("lpc.colorcodes") ? colorize(message) : (player.hasPermission("lpc.rgbcodes") ?
-                        translateHexColorCodes(message) : message))).replace("%itndevfactions_formatfactionname%", FactionUtils.getFormattedFaction(UUID) + " ").replace("%itndevfaction_formatrank%", FactionUtils.getFormattedRank(UUID) + " "));
+                        translateHexColorCodes(message) : message))).replace("%itndevfactions_formatfactionname%",  " " + FactionUtils.getFormattedFaction(UUID) + " ").replace("%itndevfaction_formatrank%", FactionUtils.getFormattedRank(UUID) + " "));
                 for(Player finalonlinecloseplayers : closeplayer) {
                     finalonlinecloseplayers.sendMessage(Dformat);
                 }

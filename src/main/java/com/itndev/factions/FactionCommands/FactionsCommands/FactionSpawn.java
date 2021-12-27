@@ -2,10 +2,12 @@ package com.itndev.factions.FactionCommands.FactionsCommands;
 
 import com.itndev.factions.Config.Config;
 import com.itndev.factions.Main;
+import com.itndev.factions.Storage.TempStorage;
 import com.itndev.factions.Utils.FactionUtils;
 import com.itndev.factions.Utils.SystemUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -15,8 +17,68 @@ import java.util.concurrent.TimeoutException;
 public class FactionSpawn {
 
 
-    public static void WarpFactionSpawn(Player sender) {
+    public static void FactionSpawn(Player sender, String UUID, String[] args) {
+        if(FactionUtils.isInFaction(UUID)) {
+            String FactionUUID = FactionUtils.getPlayerFactionUUID(UUID);
+            if(FactionUtils.FactionSpawnExists(FactionUUID)) {
+                String[] temp222 = FactionUtils.getFactionSpawn(FactionUUID).split("===");
+                String TargetServerName = temp222[0];
+                Location loc = SystemUtils.string2loc(temp222[1]);
 
+                if(TargetServerName.equalsIgnoreCase(Main.ServerName)) {
+
+                    //wait and teleport to location
+                    SystemUtils.sendfactionmessage(sender, "&r&c5초&r&f후 국가 스폰으로 이동됩니다");
+                    Long time = System.currentTimeMillis();
+                    TempStorage.TeleportLocation.put(sender.getUniqueId().toString(), time);
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            if(TempStorage.TeleportLocation.containsKey(UUID)) {
+                                if(TempStorage.TeleportLocation.get(UUID).equals(time)) {
+                                    SystemUtils.sendfactionmessage(sender, "&r&f국가 스폰으로 이동합니다");
+                                    sender.teleport(loc);
+                                    return;
+                                }
+                            }
+                            SystemUtils.sendfactionmessage(sender, "&r&f이동이 취소되었습니다");
+                        }
+                    }.runTaskLater(Main.getInstance(), 100L);
+                } else {
+                    SystemUtils.sendfactionmessage(sender, "&r&c5초&r&f후 국가 스폰으로 이동됩니다");
+                    Long time = System.currentTimeMillis();
+                    TempStorage.TeleportLocation.put(sender.getUniqueId().toString(), time);
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            if(TempStorage.TeleportLocation.containsKey(UUID)) {
+                                if(TempStorage.TeleportLocation.get(UUID).equals(time)) {
+                                    SystemUtils.SendtoServer(sender, Main.ServerName);
+                                    FactionUtils.WarpLocation(UUID, TargetServerName, temp222[1], false);
+                                    new BukkitRunnable() {
+                                        @Override
+                                        public void run() {
+                                            FactionUtils.WarpLocation(UUID, TargetServerName, temp222[1], true);
+                                        }
+                                    }.runTaskLaterAsynchronously(Main.getInstance(), 400L);
+                                    return;
+                                }
+                            }
+                            SystemUtils.sendfactionmessage(sender, "&r&f이동이 취소되었습니다");
+                        }
+                    }.runTaskLater(Main.getInstance(), 100L);
+
+                    //
+                    //서버로 이동
+                    //그다음에 텔레포트
+                }
+
+            } else {
+                SystemUtils.sendfactionmessage(sender, "&r&f국가 스폰이 설정되어 있지 않습니다");
+            }
+        } else {
+            SystemUtils.sendfactionmessage(sender, "&r&f당신은 소속된 국가가 없습니다");
+        }
     }
 
     public static void SetFactionSpawn(Player sender) {

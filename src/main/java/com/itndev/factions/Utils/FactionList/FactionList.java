@@ -24,41 +24,6 @@ public class FactionList {
 
     public static void FactionTopExecute() {
         new Thread( () -> {
-            /*
-            if(FactionTopSize == 0) {
-                new Thread( () -> {
-                    try {
-                        if(BuildFactionTop().get()) {
-                            //Send Top
-                            SendFactionTop(p, page);
-                        } else {
-                            System.out.println("=================================실패");
-                        }
-                    } catch (InterruptedException | ExecutionException e) {
-                        e.printStackTrace();
-                    }
-                }).start();
-                return;
-            }
-            int time = (int) (System.currentTimeMillis()/1000);
-            int lastrefresh = (int) (FactionTopLastRefresh/1000);
-            if(time - lastrefresh > 3600) {
-                new Thread( () -> {
-                    try {
-                        if(BuildFactionTop().get()) {
-                            //Send Top
-                            SendFactionTop(p, page);
-                        } else {
-                            System.out.println("=================================실패");
-                        }
-                    } catch (InterruptedException | ExecutionException e) {
-                        e.printStackTrace();
-                    }
-                }).start();
-            } else {
-                SendFactionTop(p, page);
-            }
-            */
             try {
                 ResultSet rs = Main.hikariCP.getHikariConnection().prepareStatement("SELECT * FROM FactionBank").executeQuery();
                 while (rs.next()) {
@@ -100,43 +65,6 @@ public class FactionList {
             @Override
             public void run() {
                 sortByValue(FactionBalTop);
-
-                /*HashMap<Integer, String> FactionToptemp = new HashMap<>();
-                HashMap<String, Double> FactionBalToptemp = FactionBalTop;
-                Integer FactionTopSizeTemp = 0;
-                for(String FactionUUID2 : FactionBalToptemp.keySet()) {
-                    try {
-                        Thread.sleep(20);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    if(FactionToptemp.isEmpty()) {
-                        FactionToptemp.put(1, FactionUUID2);
-                        FactionTopSizeTemp = 1;
-                    } else {
-                        for (int k = 1; k <= FactionTopSizeTemp; k++) {
-                            Double bank1 = FactionBalToptemp.get(FactionToptemp.get(k));
-                            Double bank2 = FactionBalToptemp.get(FactionUUID2);
-                            if (bank1 < bank2) {
-                                HashMap<Integer, String> temp32u48 = FactionToptemp;
-                                for (int v = k; v <= FactionTopSizeTemp; v++) {
-                                    FactionToptemp.put(v + 1, temp32u48.get(v));
-                                }
-                                FactionToptemp.put(k, FactionUUID2);
-                            } else {
-                                FactionToptemp.put(FactionTopSizeTemp + 1, FactionUUID2);
-                            }
-                            FactionTopSizeTemp = FactionTopSizeTemp + 1;
-                        }
-                    }
-                }
-                for(int temp = 1; temp <= FactionTopSizeTemp; temp++) {
-                    FactionTop.put(temp, FactionToptemp.get(temp));
-                }
-                FactionTopSize = FactionTopSizeTemp;
-                FactionTopLastRefresh = System.currentTimeMillis();*/
-
-
             }
         }.runTaskAsynchronously(Main.getInstance());
     }

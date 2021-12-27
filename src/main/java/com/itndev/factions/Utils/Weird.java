@@ -11,7 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
-public class TeleportInvisFix {
+public class Weird {
 
     public static void onTeleport(PlayerTeleportEvent e) {
         Location loc = e.getTo();

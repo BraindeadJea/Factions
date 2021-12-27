@@ -101,6 +101,10 @@ public class SystemUtils {
         return timeformat.format(new Date(time));
     }
 
+    public static String getDate(Long timedata) {
+        return timeformat.format(new Date(timedata));
+    }
+
     public static String Args2String(String[] args, int Start) {
         String FinalString = "";
         for(int k = Start; k < args.length; k++) {
