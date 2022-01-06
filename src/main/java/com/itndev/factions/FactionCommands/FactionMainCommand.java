@@ -3,31 +3,23 @@ package com.itndev.factions.FactionCommands;
 import com.itndev.factions.FactionCommands.FactionsCommands.*;
 import com.itndev.factions.Config.Config;
 import com.itndev.factions.Config.Lang;
-import com.itndev.factions.Faction;
+import com.itndev.factions.Faction.Faction;
 import com.itndev.factions.Jedis.JedisTempStorage;
-import com.itndev.factions.Main;
-import com.itndev.factions.Storage.TempStorage;
 import com.itndev.factions.Utils.FactionList.FactionList;
 import com.itndev.factions.Utils.FactionUtils;
 import com.itndev.factions.Utils.SystemUtils;
 import com.itndev.factions.Utils.UserInfoUtils;
 import com.itndev.factions.Utils.ValidChecker;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class FactionMainCommand implements CommandExecutor {
@@ -330,8 +322,7 @@ public class FactionMainCommand implements CommandExecutor {
                         }
                         TargetFactionUUID = FactionUtils.getFactionUUID(args[1]);
                     }
-                    Faction faction = new Faction();
-                    faction.BuildFactionInfo(TargetFactionUUID);
+                    Faction faction = new Faction(TargetFactionUUID);
                     SystemUtils.sendmessage(sender, "&r&f&m-----------------&r&a&o&l[ &r&f국가 &r&a&o&l]&r&f&m-----------------\n" +
                             "&r\n" +
                             "&r&7&l> &r 국가이름 &r&8&l: &f" + faction.getFactionCapName() + "\n" +

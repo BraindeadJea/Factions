@@ -1,4 +1,4 @@
-package com.itndev.factions;
+package com.itndev.factions.Faction;
 
 import com.itndev.factions.Config.Lang;
 import com.itndev.factions.Main;
@@ -27,7 +27,19 @@ public class Faction {
     private Double DTR = null;
     private Integer ClaimLand = null;
 
+    public Faction(String factionUUID2) {
+        FactionUUID = factionUUID2;
+        try {
+            BuildFactionInfo(null);
+        } catch (ExecutionException | InterruptedException | TimeoutException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void BuildFactionInfo(String FactionUUID2) throws ExecutionException, InterruptedException, TimeoutException {
+        if(FactionUUID2 == null) {
+            FactionUUID2 = FactionUUID;
+        }
         CompletableFuture<Double> FutureBank = CacheUtils.getCachedBank(FactionUUID2);
         CompletableFuture<Double> FutureDTR = CacheUtils.getCachedDTR(FactionUUID2);
 
