@@ -2,6 +2,7 @@ package com.itndev.factions.AdminCommands;
 
 import com.itndev.factions.Utils.FactionList.FactionList;
 import com.itndev.factions.Utils.SystemUtils;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -9,6 +10,12 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class AdminMainCommand implements CommandExecutor {
+
+    private static Location loc = null;
+
+    public static Location getCopyLocation() {
+        return loc;
+    }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] strings) {
@@ -33,6 +40,16 @@ public class AdminMainCommand implements CommandExecutor {
         } else if(args[0].equalsIgnoreCase("buildfactionbaltop")) {
             FactionList.BuildFactionTop();
             SystemUtils.sendmessage(p, "&c&lSUCESS &r&7국가 목록 빌드 중...");
+        } else if(args[0].equalsIgnoreCase("setlocation")) {
+            loc = p.getLocation();
+            SystemUtils.sendmessage(p, "&c&lSUCESS &r&7복사 위치 설정완료");
+        } else if(args[0].equalsIgnoreCase("pastechunk")) {
+            if(loc != null) {
+                SystemUtils.ReplaceChunk(loc, p.getLocation());
+                SystemUtils.sendmessage(p, "&c&lSUCESS &r&7청크 붙여넣는중");
+            } else {
+                SystemUtils.sendmessage(p, "&c&lERROR &r&7설정된 위치가 존재하지 않음");
+            }
         }
     }
 

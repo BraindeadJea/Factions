@@ -10,17 +10,18 @@ import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.format.Style;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.graalvm.compiler.lir.alloc.lsra.LinearScan;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -135,5 +136,39 @@ public class SystemUtils {
     public static TextComponent Convert(String message) {
         TextComponent text = new TextComponent(message);
         return text;
+    }
+
+    public static Location ReplaceChunk(Location From, Location To) {
+        ChunkSnapshot SnapShot = From.getChunk().getChunkSnapshot();
+        int height = 0;
+        To.getChunk().getBlock(8, height, 8).getLocation();
+        Random random = new Random();
+        int c = random.nextInt(8) + 1;
+        int amount = 0;
+
+        for(int x = 0; x <= 15; x++) {
+            for(int z = 0; z <= 15; z++) {
+                for(int y = 1; y <= 255; y++) {
+                    BlockData block = SnapShot.getBlockData(x, y, z);
+                    Boolean cu = false;
+                    if(block.getMaterial() == Material.BEACON) {
+                        amount = amount++;
+                        if(amount == c) {
+                            cu = true;
+                        }
+                    }
+                    To.getChunk().getBlock(x, y, z).setBlockData(block);
+                    if(cu) {
+                        return To.getChunk().getBlock(x, y, z).getLocation();
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public static void RemoveHeldItem(Player p, int Amount) {
+        ItemStack item = p.getInventory().getItemInMainHand();
+        item.setAmount(item.getAmount() - Amount);
     }
 }

@@ -316,6 +316,10 @@ public class JedisManager {
                     for(String key : templands.keySet()) {
                         FactionStorage.AsyncLandToFaction.put(key, templands.get(key));
                     }
+                    HashMap<String, String> tempoutposts = FactionStorage.OutPostToFaction;
+                    for(String key : tempoutposts.keySet()) {
+                        FactionStorage.AsyncOutPostToFaction.put(key, tempoutposts.get(key));
+                    }
                 }).start();
 
 

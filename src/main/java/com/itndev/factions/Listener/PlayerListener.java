@@ -18,10 +18,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.apache.commons.lang.Validate;
 
@@ -54,6 +56,30 @@ public class PlayerListener implements Listener {
                 }
             }
         }).start();
+    }
+
+    @Deprecated
+    @EventHandler(ignoreCancelled = true)
+    public void onPlace(BlockPlaceEvent e) {
+        Player p = e.getPlayer();
+        if(!p.getGameMode().equals(GameMode.CREATIVE)) {
+            Location loc = e.getBlock().getLocation();
+            ItemStack holding = p.getInventory().getItemInMainHand();
+            String UUID = p.getUniqueId().toString();
+            Boolean tempwefjw = FactionUtils.isOutPost(loc);
+            if(FactionUtils.isClaimed(loc)) {
+                if(!FactionUtils.getPlayerFactionUUID(UUID).equalsIgnoreCase(FactionUtils.AsyncWhosClaim(loc))) {
+                    e.setCancelled(true);
+                    return;
+                }
+            } else if(!tempwefjw) {
+                if(holding.getType() == Material.BEACON && holding.hasItemMeta() && holding.getItemMeta().getDisplayName().contains("전초기지")) {
+                    //try claim outpost
+                }
+            } else {
+
+            }
+        }
     }
 
     @EventHandler(ignoreCancelled = true)

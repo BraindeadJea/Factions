@@ -1,5 +1,6 @@
 package com.itndev.factions.Utils;
 
+import com.itndev.factions.AdminCommands.AdminMainCommand;
 import com.itndev.factions.Config.Config;
 import com.itndev.factions.Config.Lang;
 import com.itndev.factions.Jedis.JedisTempStorage;
@@ -16,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class FactionUtils {
 
@@ -130,6 +133,93 @@ public class FactionUtils {
         JedisTempStorage.AddCommandToQueue("update:=:FactionWarpLocations:=:remove:=:" + FactionUUID + ":=:add:=:" + "nothing");
     }
 
+    public static CompletableFuture<Boolean> AsyncNearByChunksAreOwned5(Location loc) {
+        CompletableFuture<Boolean> Finalbool = new CompletableFuture<>();
+        new Thread( () -> {
+            ArrayList<Location> checklist = new ArrayList<>();
+            ArrayList<CompletableFuture<Boolean>> checkfinishlist = new ArrayList<>();
+            int x = loc.getBlockX();
+            int z = loc.getBlockZ();
+            int amount = 48;
+            Location temploc1 = loc;
+            temploc1.setX(x + amount);
+            temploc1.setZ(z + amount);
+            checklist.add(temploc1);
+            Location temploc2 = loc;
+            temploc2.setX(x - amount);
+            temploc2.setZ(z - amount);
+            checklist.add(temploc2);
+            Location temploc3 = loc;
+            temploc3.setX(x + amount);
+            temploc3.setZ(z - amount);
+            checklist.add(temploc3);
+            Location temploc4 = loc;
+            temploc4.setX(x - amount);
+            temploc4.setZ(z + amount);
+            checklist.add(temploc4);
+            Location temploc5 = loc;
+            temploc5.setX(x + amount);
+            checklist.add(temploc5);
+            Location temploc6 = loc;
+            temploc6.setX(x - amount);
+            checklist.add(temploc6);
+            Location temploc7 = loc;
+            temploc7.setZ(z + amount);
+            checklist.add(temploc7);
+            Location temploc8 = loc;
+            temploc8.setZ(z - amount);
+            checklist.add(temploc8);
+            Location temploc9 = loc;
+            checklist.add(temploc9);
+            for(Location temploc : checklist) {
+                checkfinishlist.add(AsyncNearByChunksAreOwned(temploc));
+            }
+            Boolean isfinished = false;
+            for(CompletableFuture<Boolean> finalboolean : checkfinishlist) {
+                try {
+                    if(!finalboolean.get()) {
+                        Finalbool.complete(false);
+                        isfinished = true;
+                    }
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                    Finalbool.complete(false);
+                    isfinished = true;
+                }
+            }
+            if(!isfinished) {
+                Finalbool.complete(true);
+            }
+
+        }).start();
+        return Finalbool;
+    }
+
+    public static void TryClaimOutPost(Player p) {
+        Location loc = p.getLocation();
+        CompletableFuture<Boolean> AreNotOwned = AsyncNearByChunksAreOwned5(loc);
+        try {
+            if(AreNotOwned.get() && !AreNearByPlayersEnemies(p, 30)) {
+                SystemUtils.RemoveHeldItem(p, 1);
+                Location beaconloc = SystemUtils.ReplaceChunk(AdminMainCommand.getCopyLocation(), p.getLocation());
+                String k = "X:" + beaconloc.getBlockX() + " Y:" + beaconloc.getBlockY() + " Z:" + beaconloc.getBlockZ();
+                SystemUtils.sendfactionmessage(p, "&r&f참 신호기 위치 &r&7: &r&c" + k);
+                //FactionUtils.
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Boolean AreNearByPlayersEnemies(Player p, double Radius) {
+        for(Player near : p.getLocation().getNearbyPlayers(Radius)) {
+            if(!isSameFaction(p.getUniqueId().toString(), near.getUniqueId().toString())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static Boolean NearByChunksAreOwned(Location loc) {
         Location temploc1 = loc;
         Location temploc2 = loc;
@@ -182,6 +272,63 @@ public class FactionUtils {
 
     }
 
+    public static CompletableFuture<Boolean> AsyncNearByChunksAreOwned(Location loc) {
+        CompletableFuture<Boolean> Finalbool = new CompletableFuture<>();
+        new Thread( () -> {
+            Location temploc1 = loc;
+            Location temploc2 = loc;
+            Location temploc3 = loc;
+            Location temploc4 = loc;
+            Location templocC1 = loc;
+            Location templocC2 = loc;
+            Location templocC3 = loc;
+            Location templocC4 = loc;
+
+            temploc1.setX(loc.getX() + 16);
+
+            temploc2.setZ(loc.getZ() + 16);
+
+            temploc3.setX(loc.getX() - 16);
+
+            temploc2.setZ(loc.getZ() - 16);
+
+            templocC1.setX(loc.getX() + 16);
+            templocC1.setZ(loc.getZ() + 16);
+
+            templocC2.setX(loc.getX() - 16);
+            templocC2.setZ(loc.getZ() + 16);
+
+            templocC3.setX(loc.getX() + 16);
+            templocC3.setZ(loc.getZ() - 16);
+
+            templocC4.setX(loc.getX() - 16);
+            templocC4.setZ(loc.getZ() - 16);
+
+            if(FactionUtils.isClaimed(temploc1)) {
+                Finalbool.complete(false);
+            } else if(FactionUtils.isClaimed(temploc2)) {
+                Finalbool.complete(false);
+            } else if(FactionUtils.isClaimed(temploc3)) {
+                Finalbool.complete(false);
+            } else if(FactionUtils.isClaimed(temploc4)) {
+                Finalbool.complete(false);
+            } else if(FactionUtils.isClaimed(templocC1)) {
+                Finalbool.complete(false);
+            } else if(FactionUtils.isClaimed(templocC2)) {
+                Finalbool.complete(false);
+            } else if(FactionUtils.isClaimed(templocC3)) {
+                Finalbool.complete(false);
+            } else if(FactionUtils.isClaimed(templocC4)) {
+                Finalbool.complete(false);
+            } else {
+                Finalbool.complete(true);
+            }
+        }).start();
+
+        return Finalbool;
+
+    }
+
     public static void SendFactionMessage(String playeruuid, String targetuuid, String type, String message) {
         if(type.equalsIgnoreCase("single")) {
             //type : SIBAL, TeamChat, all
@@ -215,6 +362,40 @@ public class FactionUtils {
         }
 
         JedisTempStorage.AddCommandToQueue("update:=:FactionToLand:=:add:=:" + FactionUUID + ":=:remove:=:" + Chunkkey + ":=:" + Main.ServerName);
+    }
+
+    public static void ClaimOutPost(String FactionUUID, String Chunkkey) {
+        FactionStorage.OutPostToFaction.put(Chunkkey, FactionUUID);
+        JedisTempStorage.AddCommandToQueue("update:=:OutPostToFaction:=:add:=:" + Chunkkey + ":=:add:=:" + FactionUUID + ":=:" + Main.ServerName);
+        ArrayList<String> updatelist = new ArrayList<>();
+        if(FactionStorage.FactionToOutPost.containsKey(FactionUUID)) {
+            updatelist = FactionStorage.FactionToOutPost.get(FactionUUID);
+        }
+        updatelist.add(Chunkkey);
+        FactionStorage.FactionToOutPost.put(FactionUUID, updatelist);
+        JedisTempStorage.AddCommandToQueue("update:=:FactionToOutPost:=:add:=:" + FactionUUID + ":=:add:=:" + Chunkkey + ":=:" + Main.ServerName);
+    }
+
+    public static void UnClaimOutPost(String FactionUUID, String Chunkkey) {
+        FactionStorage.OutPostToFaction.remove(Chunkkey);
+        JedisTempStorage.AddCommandToQueue("update:=:OutPostToFaction:=:remove:=:" + Chunkkey + ":=:remove:=:" + FactionUUID + ":=:" + Main.ServerName);
+        ArrayList<String> updatelist = FactionStorage.FactionToOutPost.get(FactionUUID);
+        updatelist.remove(Chunkkey);
+        if(updatelist.isEmpty()) {
+            FactionStorage.FactionToOutPost.remove(FactionUUID);
+        } else {
+            FactionStorage.FactionToOutPost.put(FactionUUID, updatelist);
+        }
+        JedisTempStorage.AddCommandToQueue("update:=:FactionToOutPost:=:add:=:" + FactionUUID + ":=:remove:=:" + Chunkkey + ":=:" + Main.ServerName);
+    }
+
+    public static Boolean isOutPost(Location loc) {
+        String Chunkkey = FactionUtils.getChunkKey(loc);
+        return FactionStorage.OutPostToFaction.containsKey(Chunkkey);
+    }
+
+    public static Boolean isMyOutPost(String FactionUUID, Location loc) {
+        return FactionStorage.AsyncOutPostToFaction.get(FactionUtils.getChunkKey(loc)).equals(FactionUUID);
     }
 
     public static Boolean isSameClaimFaction(Location loc1, Location loc2) {
