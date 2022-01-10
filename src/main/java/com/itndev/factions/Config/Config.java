@@ -29,4 +29,7 @@ public class Config {
     public static String Warrior_Lang = "기사";
     public static String Member_Lang = "백성";
     public static String Nomad_Lang = "방랑자";
+
+    public static String DiscordLink = "https://discord.gg/";
+    public static String CafeLink = "https://cafe.naver.com/";
 }

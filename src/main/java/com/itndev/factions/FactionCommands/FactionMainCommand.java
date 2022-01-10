@@ -303,44 +303,7 @@ public class FactionMainCommand implements CommandExecutor {
 
                     //=================정보=================
 
-                    Boolean MyFaction = false;
-                    String TargetFactionUUID;
-                    if(args.length < 2) {
-                        MyFaction = true;
-                        if(!FactionUtils.isInFaction(UUID)) {
-                            SystemUtils.sendfactionmessage(sender, "&r&f명령어 사용법 : &f/국가 정보 &7(국가이름)\n");
-                            return;
-                        }
-                    }
-
-                    if(MyFaction) {
-                        TargetFactionUUID = FactionUtils.getPlayerFactionUUID(UUID);
-                    } else {
-                        if(!FactionUtils.isExistingFaction(args[1])) {
-                            SystemUtils.sendfactionmessage(sender,   "&r&f해당 국가 " + args[1] + " &r&f(은)는 존재하지 않는 국가입니다");
-                            return;
-                        }
-                        TargetFactionUUID = FactionUtils.getFactionUUID(args[1]);
-                    }
-                    Faction faction = new Faction(TargetFactionUUID);
-                    SystemUtils.sendmessage(sender, "&r&f&m-----------------&r&a&o&l[ &r&f국가 &r&a&o&l]&r&f&m-----------------\n" +
-                            "&r\n" +
-                            "&r&7&l> &r 국가이름 &r&8&l: &f" + faction.getFactionCapName() + "\n" +
-                            "&r\n" +
-                            "&r&7&l> &r 설명 &r&8&l: &7" + faction.getFactionDesc() + "&r\n" +
-                            "&r\n" +
-                            "&r&7&l> &r 금고잔액 &r&8&l: &7" + df.format(faction.getBank()) + "\n" +
-                            "&r&7&l> &r 남은파워 &r&8&l: &7" + faction.getDTR() + "&f/&7100.0\n" +
-                            "&r&7&l> &r 설립일 &r&8&l: &7" + SystemUtils.FactionUUIDToDate(TargetFactionUUID) + "\n" +
-                            "&r&7&l> &r 영토 &r&8&l: &7" + faction.getClaimLand() + " 청크\n" +
-                            "&r\n" +
-                            "&r&7&l> &r " + Config.Leader_Lang + " &r&8&l: &7" + faction.getFormattedMembers(Config.Leader) + "\n" +
-                            "&r&7&l> &r " + Config.CoLeader_Lang + " &r&8&l: &7" + faction.getFormattedMembers(Config.CoLeader) + "\n" +
-                            "&r&7&l> &r " + Config.VipMember_Lang + " &r&8&l: &7" + faction.getFormattedMembers(Config.VipMember) + "\n" +
-                            "&r&7&l> &r " + Config.Warrior_Lang + " &r&8&l: &7" + faction.getFormattedMembers(Config.Warrior) + "\n" +
-                            "&r&7&l> &r " + Config.Member_Lang + " &r&8&l: &7" + faction.getFormattedMembers(Config.Member) + "\n" +
-                            "&r\n" +
-                            "&r&f&m-----------------&r&a&o&l[ &r&f국가 &r&a&o&l]&r&f&m-----------------\n");
+                    FactionInfo.FactionInfo(sender, UUID, args);
 
                     //=================정보=================
 
@@ -348,49 +311,15 @@ public class FactionMainCommand implements CommandExecutor {
 
                     //=================소속=================
 
-                    if(args.length < 2) {
-                        SystemUtils.sendfactionmessage(sender, "&r&f명령어 사용법 : &f/국가 소속 &7(이름)\n");
-                        return;
-                    }
+                    PlayerFaction.PlayerFaction(sender, UUID, args);
 
-                    if(!UserInfoUtils.hasJoined(args[1])) {
-                        SystemUtils.sendfactionmessage(sender, "&r&f해당 유저는 서버에 접속한 적이 없습니다\n");
-                        return;
-                    }
-
-                    String TargetUUID = UserInfoUtils.getPlayerUUID(args[1].toLowerCase(Locale.ROOT));
-                    String TargetOriginName = UserInfoUtils.getPlayerOrginName(args[1].toLowerCase(Locale.ROOT));
-
-                    if(!FactionUtils.isInFaction(TargetUUID)) {
-                        SystemUtils.sendfactionmessage(sender, "&r&f해당 유저 " + TargetOriginName + " (은)는 소속된 국가가 없습니다\n");
-                        return;
-                    }
-
-                    String TargetFactionName = FactionUtils.getCappedFactionName(FactionUtils.getFactionName(FactionUtils.getPlayerFactionUUID(TargetUUID)));
-
-                    SystemUtils.sendfactionmessage(sender, "&r&f해당 유저 " + TargetOriginName + " 이의 소속국가 &7: &r&f" + TargetFactionName + " \n");
                     //=================소속=================
 
                 } else if(args[0].equalsIgnoreCase("나가기")) {
 
                     //=================나가기=================
 
-                    if(!FactionUtils.isInFaction(UUID)) {
-                        SystemUtils.sendfactionmessage(sender, "&r&f당신은 소속된 국가가 없습니다");
-                        return;
-                    }
-
-                    if(FactionUtils.getPlayerRank(UUID).equalsIgnoreCase(Config.Leader)) {
-                        SystemUtils.sendfactionmessage(sender, "&r&f국가의 " + Config.Leader_Lang + " 은 국가를 나갈 수 없습니다. 국가의 소유권을 양도하거나 해체해야 합니다.\n" +
-                                "&f(&7/국가 양도 (이름)&8, &7/국가 해체&f)");
-                        return;
-                    }
-                    String FactionUUID = FactionUtils.getPlayerFactionUUID(UUID);
-                    FactionUtils.SetFactionMember(UUID, FactionUUID, true);
-                    FactionUtils.SetPlayerFaction(UUID, null);
-                    FactionUtils.SetPlayerRank(UUID, Config.Nomad);
-                    SystemUtils.sendfactionmessage(sender, "&r&f성공적으로 국가 " + FactionUtils.getCappedFactionName(FactionUtils.getFactionName(FactionUUID)) + " 에서 나왔습니다.");
-                    JedisTempStorage.AddCommandToQueue("notify:=:" + FactionUtils.getFactionLeader(FactionUUID) + ":=:" + "SIBAL" + ":=:" + "&r&f" + sender.getName() + " 이가 당신의 국가에서 나갔습니다" + ":=:" + "true");
+                    FactionLeave.FactionLeave(sender, UUID, args);
 
                     //=================나가기=================
 
@@ -398,39 +327,7 @@ public class FactionMainCommand implements CommandExecutor {
 
                     //=================양도=================
 
-                    if(args.length < 2) {
-                        SystemUtils.sendfactionmessage(sender, "&r&f명령어 사용법 : &f/국가 소속 &7(이름)\n");
-                        return;
-                    }
-                    String name = args[1];
-                    if(!FactionUtils.isInFaction(UUID)) {
-                        SystemUtils.sendfactionmessage(sender, "&r&f당신은 소속된 국가가 없습니다");
-                        return;
-                    }
-
-                    if(!FactionUtils.getPlayerRank(UUID).equalsIgnoreCase(Config.Leader)) {
-                        SystemUtils.sendfactionmessage(sender, "&r&f국가의 " + Config.Leader_Lang + " 만 이 명령어를 사용할수 있습니다\n");
-                        return;
-                    }
-
-                    if(!UserInfoUtils.hasJoined(args[1].toLowerCase(Locale.ROOT))) {
-                        SystemUtils.sendfactionmessage(sender, "&r&f해당 유저 " + name + "(은)는 서버에 접속한 적이 없습니다");
-                        return;
-                    }
-
-                    String TargetUUID = UserInfoUtils.getPlayerUUID(name.toLowerCase(Locale.ROOT));
-                    if(!FactionUtils.isSameFaction(UUID, TargetUUID)) {
-                        SystemUtils.sendfactionmessage(sender, "&r&f해당 유저 " + UserInfoUtils.getPlayerOrginName(UserInfoUtils.getPlayerName(TargetUUID)) + "(은)는 당신의 국가 소속이 아닙니다");
-                        return;
-                    }
-
-                    FactionUtils.SetPlayerRank(TargetUUID, Config.Leader);
-                    FactionUtils.SetPlayerRank(UUID, Config.CoLeader);
-                    SystemUtils.sendfactionmessage(sender, "&r&f해당 유저 " + UserInfoUtils.getPlayerOrginName(UserInfoUtils.getPlayerName(TargetUUID)) + " 에게 국가의 소유권을 양도하였습니다\n" +
-                            "변경된 당신의 등급 &7&l: &r&f" + Config.CoLeader_Lang);
-                    FactionUtils.SendFactionMessage(TargetUUID, TargetUUID, "single", "&r&f국가의 " + Config.Leader_Lang + "인 " + sender.getName() + " 이가 당신에게 국가의 소유권을 양도하였습니다\n" +
-                            "변경된 당신의 등급 &7&l: &r&f" + Config.Leader_Lang);
-                    JedisTempStorage.AddCommandToQueue("notify:=:" + UUID + ":=:" + "SIBAL" + ":=:" + "&r&f" + sender.getName() + " 이가 국가의 소유권을 " + UserInfoUtils.getPlayerOrginName(UserInfoUtils.getPlayerName(TargetUUID)) + " 에게 넘겨주었습니다" + ":=:" + "true");
+                    FactionLeaderPromote.FactionLeaderPromote(sender, UUID, args);
 
                     //=================양도=================
 
@@ -438,19 +335,7 @@ public class FactionMainCommand implements CommandExecutor {
 
                     //=================목록=================
 
-                    //d
-                    if(args.length < 2) {
-                        //FactionList.FactionTopExecute(sender, 1);
-                        FactionList.SendFactionTop(sender, 1);
-                        return;
-                    }
-                    if(!ValidChecker.instanceofNumber(args[1])) {
-                        SystemUtils.sendfactionmessage(sender, "&r&f명령어 사용법 : &f/국가 목록 &7(페이지번호)\n");
-                        return;
-                    }
-                    int page = Integer.parseInt(args[1]);
-                    FactionList.SendFactionTop(sender, page);
-                    //FactionList.FactionTopExecute(sender, page);
+                    com.itndev.factions.FactionCommands.FactionsCommands.FactionList.FactionList(sender, UUID, args);
 
                     //=================목록=================
 
@@ -458,21 +343,12 @@ public class FactionMainCommand implements CommandExecutor {
 
                     //=================공지=================
 
-                    if(FactionUtils.isInFaction(UUID)) {
-                        String FactionUUID = FactionUtils.getPlayerFactionUUID(UUID);
-                        if(!FactionUtils.FactionNoticeExists(FactionUUID)) {
-                            SystemUtils.sendfactionmessage(sender, "&a&o&l[ &f공지 &a&o&l] &r&f" + Lang.FACTION_DEFAULT_NOTICE);
-                            return;
-                        }
-                        SystemUtils.sendrawfactionmessage(sender, SystemUtils.colorize("&a&o&l[ &r&f공지 &a&o&l] &r&f") + FactionUtils.GetFactionNotice(FactionUUID));
-                    } else {
-                        SystemUtils.sendfactionmessage(sender, "&r&f당신은 소속된 국가가 없습니다");
-                    }
+                    FactionAnnounce.FactionAnnounce(sender, UUID, args);
 
                     //=================공지=================
 
                 }
-            } catch (ExecutionException | InterruptedException | TimeoutException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

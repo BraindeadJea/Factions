@@ -2,6 +2,7 @@ package com.itndev.factions.Utils;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
+import com.itndev.factions.Config.Config;
 import com.itndev.factions.Main;
 import io.papermc.paper.text.PaperComponents;
 import net.kyori.adventure.text.Component;
@@ -131,6 +132,23 @@ public class SystemUtils {
 
     public static String colorize(String message) {
         return ChatColor.translateAlternateColorCodes('&', message);
+    }
+
+    public static void SendErrorMessage(String Error, Player p) {
+        if(p != null) {
+            SystemUtils.sendmessage(p, "&c&lERROR &r&7오류가 발생한듯 합니다. 커뮤니티에 오류를 제보해주시기 바랍니다\n" +
+                    "&r&c&lINFO " + "&f&l오류 ID &r&8&l: &r&7" + Error + "\n" +
+                    "&r&c&lINFO " + "&f&l디스코드 &r&8&l: &r&7" + Config.DiscordLink + "\n");
+        }
+        System.out.println("[ERROR] 오류 발생 (대상유저:" + getPlayerName(p) + "),(오류ID:" + Error + ")");
+    }
+
+    public static String getPlayerName(Player p) {
+        if(p == null) {
+            return "null";
+        } else {
+            return p.getName();
+        }
     }
 
     public static TextComponent Convert(String message) {
