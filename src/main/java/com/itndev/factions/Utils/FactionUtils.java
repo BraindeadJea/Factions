@@ -126,6 +126,10 @@ public class FactionUtils {
         for(String Chunkkey : FactionStorage.FactionToLand.keySet()) {
             UnClaimLand(FactionUUID, Chunkkey);
         }
+        ClearFactionInfo(FactionUUID);
+        for(String Chunkkey : FactionStorage.FactionToOutPost.keySet()) {
+            UnClaimOutPost(FactionUUID, Chunkkey);
+        }
         JedisTempStorage.AddCommandToQueue("update:=:FactionToLand:=:remove:=:" + FactionUUID + ":=:remove:=:" + FactionUUID + ":=:bulk");
         JedisTempStorage.AddCommandToQueue("update:=:FactionToLand:=:remove:=:" + FactionUUID + ":=:add:=:" + "nothing");
         JedisTempStorage.AddCommandToQueue("update:=:FactionOutPost:=:remove:=:" + FactionUUID + ":=:add:=:" + "nothing");
@@ -688,6 +692,7 @@ public class FactionUtils {
 
     public static void SetFactionSpawn(String FactionUUID, String ConvertLoc) {
         JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:add:=:" + FactionUUID + "=spawn" + ":=:add:=:" + Main.ServerName + "===" + ConvertLoc);
+        RegisterFactionInfo(FactionUUID, "spawn");
     }
 
     public static Boolean FactionSpawnExists(String FactionUUID) {
@@ -698,12 +703,21 @@ public class FactionUtils {
         return FactionStorage.FactionInfo.get(FactionUUID + "=spawn");
     }
 
+    public static void ClearFactionInfo(String FactionUUID) {
+        for(String key : FactionStorage.FactionInfoList.get(FactionUUID)) {
+            JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:remove:=:" + FactionUUID + "=" + key  + ":=:remove:=:");
+        }
+        JedisTempStorage.AddCommandToQueue("update:=:FactionInfoList:=:remove:=:" + FactionUUID + ":=:remove:=:");
+    }
+
     public static void RemoveFactionSpawn(String FactionUUID) {
         JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:remove:=:" + FactionUUID + "=spawn" + ":=:add:=:" + Main.ServerName);
+        JedisTempStorage.AddCommandToQueue("update:=:FactionInfoList:=:add:=:" + FactionUUID + "" + ":=:remove:=:" + "spawn");
     }
 
     public static void SetFactionNotice(String FactionUUID, String factionnotice) {
         JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:add:=:" + FactionUUID + "=notice" + ":=:add:=:" + factionnotice);
+        RegisterFactionInfo(FactionUUID, "notice");
     }
 
     public static Boolean FactionNoticeExists(String FactionUUID) {
@@ -718,12 +732,24 @@ public class FactionUtils {
         }
     }
 
+    public static void SetFactionOutPostWarpLocation(String FactionUUID, String Chunkkey, Location loc, String OutPostName) {
+        String location = SystemUtils.loc2string(loc);
+        SetFactionOutPostName(FactionUUID, Chunkkey, OutPostName);
+        JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:add:=:" + FactionUUID + "=" + OutPostName + ":=:add:=:" + Main.ServerName + "===" + location);
+    }
+
+    public static void SetFactionOutPostName(String FactionUUID, String Chunkkey, String OutPostName) {
+        JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:add:=:" + FactionUUID + "=" + Chunkkey + ":=:add:=:" + OutPostName);
+        RegisterFactionInfo(FactionUUID, Chunkkey);
+    }
+
     public static void RemoveFactionNotice(String FactionUUID) {
         JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:remove:=:" + FactionUUID + "=notice" + ":=:add:=:" + "D");
     }
 
     public static void SetFactionDesc(String FactionUUID, String factionDesc) {
         JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:add:=:" + FactionUUID + "=desc" + ":=:add:=:" + factionDesc);
+        RegisterFactionInfo(FactionUUID, "desc");
     }
 
     public static Boolean FactionDescExists(String FactionUUID) {
@@ -748,5 +774,9 @@ public class FactionUtils {
         } else {
             JedisTempStorage.AddCommandToQueue("warplocation:=:" + UUID + ":=:" + ServerName + ":=:" + Location + ":=:expired");
         }
+    }
+
+    public static void RegisterFactionInfo(String FactionUUID, String type) {
+        JedisTempStorage.AddCommandToQueue("update:=:FactionInfoList:=:add:=:" + FactionUUID + ":=:add:=:" + type);
     }
 }

@@ -42,6 +42,8 @@ public class FactionStorage {
 
     public static ConcurrentHashMap<String, String> FactionInfo = new ConcurrentHashMap<>();
 
+    public static ConcurrentHashMap<String, ArrayList<String>> FactionInfoList = new ConcurrentHashMap<>();
+
     public static HashMap<String, ArrayList<String>> FactionInviteQueue = new HashMap<>();
 
     public static ConcurrentHashMap<String, String> FactionOutPost = new ConcurrentHashMap<>(); //do not trust this
@@ -400,6 +402,54 @@ public class FactionStorage {
                 if(FactionStorage.FactionInfo.containsKey(key)) {
                     FactionStorage.FactionInfo.remove(key);
                 }
+            }
+        } else if(args[1].equalsIgnoreCase("FactionInfoList")) {
+
+            if(args[2].equalsIgnoreCase("add")) {
+                String key = args[3];
+                String value = args[5];
+                if(args[4].equalsIgnoreCase("add")) {
+                    if (!FactionStorage.FactionInfoList.isEmpty()) { //비어있지 않으면
+                        if (FactionStorage.FactionInfoList.containsKey(key)) {
+
+                            //해당 키가 있으면
+                            ArrayList<String> updatelist = FactionStorage.FactionInfoList.get(key);
+                            if(!updatelist.contains(value)) {
+                                updatelist.add(value);
+                            }
+                            FactionStorage.FactionInfoList.put(key, updatelist);
+                        } else {
+
+                            //해당 키가 없으면
+                            ArrayList<String> updatelist2 = new ArrayList<>();
+                            updatelist2.add(value);
+                            FactionStorage.FactionInfoList.put(key, updatelist2);
+                        }
+                    } else { //만약 비어있으면
+                        ArrayList<String> updatelist3 = new ArrayList<>();
+                        updatelist3.add(value);
+                        FactionStorage.FactionInfoList.put(key, updatelist3);;
+                    }
+                } else if(args[4].equalsIgnoreCase("remove")) {
+                    if (!FactionStorage.FactionInfoList.isEmpty()) { //비어있지 않으면
+                        if (FactionStorage.FactionInfoList.containsKey(key)) {
+
+                            //해당 키가 있으면
+                            ArrayList<String> updatelist = FactionStorage.FactionInfoList.get(key);
+                            updatelist.remove(value);
+                            FactionStorage.FactionInfoList.put(key, updatelist);
+                        } else {
+
+                            //해당 키가 없으면
+                            //없으니까 하지 말자
+                        }
+                    } else { //만약 비어있으면
+                        //시발 존재하지도 않는데 어떻게 없애냐 뭔시발 병신이냐
+                    }
+                }
+            } else if(args[2].equalsIgnoreCase("remove")) {
+                String key = args[3];
+                FactionStorage.FactionInfoList.remove(key);
             }
 
         } else if(args[1].equalsIgnoreCase("FactionInviteQueue")) {

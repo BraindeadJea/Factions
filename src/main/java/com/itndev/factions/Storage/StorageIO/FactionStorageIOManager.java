@@ -29,6 +29,7 @@ public class FactionStorageIOManager {
             restoreFactionWarpLocations(Storage);
             restoreLandToFaction(Storage);
             restoreFactionInfo(Storage);
+            restoreFactionInfoList(Storage);
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
@@ -54,6 +55,7 @@ public class FactionStorageIOManager {
             saveFactionWarpLocations(Storage);
             saveLandToFaction(Storage);
             saveFactionInfo(Storage);
+            saveFactionInfoList(Storage);
             factionstorage.saveStorage();
         } catch (IOException e) {
             e.printStackTrace();
@@ -245,6 +247,23 @@ public class FactionStorageIOManager {
         Storage.getConfigurationSection("FactionInfo.").getKeys(false).forEach(key -> {
             String v = Storage.get("FactionInfo." + key).toString();
             FactionStorage.FactionInfo.put(key, v);
+        });
+    }
+    public static void saveFactionInfoList(FileConfiguration Storage) {
+        if(FactionStorage.FactionInfoList.isEmpty()) {
+            return;
+        }
+        for (Map.Entry<String, ArrayList<String>> entry : FactionStorage.FactionInfoList.entrySet()) {
+            Storage.set("FactionInfoList." + (String) entry.getKey(), entry.getValue());
+        }
+    }
+    public static void restoreFactionInfoList(FileConfiguration Storage) {
+        if(!Storage.contains("FactionInfoList.")) {
+            return;
+        }
+        Storage.getConfigurationSection("FactionInfoList.").getKeys(false).forEach(key -> {
+            ArrayList<String> v = (ArrayList<String>)Storage.get("FactionInfoList." + key);
+            FactionStorage.FactionInfoList.put(key, v);
         });
     }
 }

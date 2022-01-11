@@ -42,7 +42,7 @@ public class FactionInfo {
                     "&r&7&l> &r 금고잔액 &r&8&l: &7" + df.format(faction.getBank()) + "\n" +
                     "&r&7&l> &r 남은파워 &r&8&l: &7" + faction.getDTR() + "&f/&7100.0\n" +
                     "&r&7&l> &r 설립일 &r&8&l: &7" + SystemUtils.FactionUUIDToDate(TargetFactionUUID) + "\n" +
-                    "&r&7&l> &r 영토 &r&8&l: &7" + faction.getClaimLand() + " 청크\n" +
+                    "&r&7&l> &r 영토 &r&8&l: &7" + faction.getClaimLand() + "&f/&7100" + " 청크\n" +
                     "&r\n" +
                     "&r&7&l> &r " + Config.Leader_Lang + " &r&8&l: &7" + faction.getFormattedMembers(Config.Leader) + "\n" +
                     "&r&7&l> &r " + Config.CoLeader_Lang + " &r&8&l: &7" + faction.getFormattedMembers(Config.CoLeader) + "\n" +
