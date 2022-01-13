@@ -38,8 +38,6 @@ public class PlayerListener implements Listener {
 
     public static HashMap<String, Location> onJoinWarp = new HashMap<>();
 
-    public static HashMap<String, Long> chatevent = new HashMap<>();
-
     @EventHandler(priority = EventPriority.MONITOR)
     public void onMove(PlayerMoveEvent e) {
         new Thread( () -> {
@@ -73,11 +71,9 @@ public class PlayerListener implements Listener {
                     return;
                 }
             } else if(!tempwefjw) {
-                if(holding.getType() == Material.BEACON && holding.hasItemMeta() && holding.getItemMeta().getDisplayName().contains("전초기지")) {
+                if (holding.getType() == Material.BEACON && holding.hasItemMeta() && holding.getItemMeta().getDisplayName().contains("전초기지")) {
                     //try claim outpost
                 }
-            } else {
-
             }
         }
     }
@@ -88,8 +84,11 @@ public class PlayerListener implements Listener {
         if(!p.getGameMode().equals(GameMode.CREATIVE)) {
             Location loc = e.getBlock().getLocation();
             String UUID = p.getUniqueId().toString();
-            if(FactionUtils.isClaimed(loc)) {
-                if(!FactionUtils.getPlayerFactionUUID(UUID).equalsIgnoreCase(FactionUtils.AsyncWhosClaim(loc))) {
+            Boolean isOutPost = FactionUtils.isOutPost(loc);
+            String LocalFactionUUID = FactionUtils.AsyncWhosClaim(loc);
+            String PlayerFactionUUID = FactionUtils.getPlayerFactionUUID(UUID);
+            if(LocalFactionUUID != null) {
+                if(!PlayerFactionUUID.equalsIgnoreCase(LocalFactionUUID)) {
                     e.setCancelled(true);
                     return;
                 }
@@ -104,11 +103,11 @@ public class PlayerListener implements Listener {
                 * ---> MYSQL 데이터베이스 갯수만 저장 <- 데이터 중복 방지 (이름 , 금고 금액, DTR 등등) <- 리얼타임
                 * 국가 전용 UUID
                 * */
-            }/* else if() {
-                if(e.getBlock().getType().equals(Material.BEACON)) {
-
+            } else if(isOutPost) {
+                if (!PlayerFactionUUID.equalsIgnoreCase(LocalFactionUUID) && e.getBlock().getType() == Material.BEACON) {
+                    //try break outpost
                 }
-            }*/
+            }
 
         }
     }
@@ -149,6 +148,8 @@ public class PlayerListener implements Listener {
         Player p = e.getPlayer();
         String UUID = p.getUniqueId().toString();
         e.setCancelled(true);
+
+        Main.sysutils.MainChatProcced(p , UUID, k);
             /*try {
                 if (main.getInstance().ess.getUser(p.getUniqueId()).isMuted()) {
                     utils.sendmsg(p, "&4&l(!) &f&l당신은 뮤트됬습니다");
@@ -158,150 +159,8 @@ public class PlayerListener implements Listener {
             } catch (NullPointerException nulle) {
                 System.out.println(nulle.getMessage());
             }*/
-        new Thread( () -> {
-            if(!p.hasPermission("faxcore.chatbypass")) {
-                if (FactionChatToggle.FactionChatToggled.containsKey(p.getName())) {
-                    int cooldownTime = 2;
-                    long secondsLeft = ((Long) chatevent.get(p.getName())).longValue() / 1000L + cooldownTime - System.currentTimeMillis() / 1000L;
-                    if (secondsLeft > 0L) {
-                        p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c&l(!) &r&f채팅은 2초마다 한번 칠수 있습니다."));
-                        return;
-                    }
-                }
-                chatevent.put(p.getName(), Long.valueOf(System.currentTimeMillis()));
-            }
-            if(k.startsWith("@")) {
-                if(FactionUtils.isInFaction(UUID)) {
-
-                    //utils.teamchat(e.getPlayer().getUniqueId().toString(), k);
-                    JedisTempStorage.AddCommandToQueueFix("chat" + ":=:" + p.getUniqueId().toString() + ":=:" + k.replaceFirst("@", ""), "chat" + ":=:" + p.getUniqueId().toString() + ":=:" + k.replaceFirst("@", ""));
-                } else {
-                    SystemUtils.sendmessage(p, "&c&l(!) &7소속된 팀이 없습니다");
-                }
-            } else if(FactionChatToggle.FactionChatToggled.containsKey(p)) {
-                if(FactionUtils.isInFaction(UUID)) {
-
-                    //utils.teamchat(e.getPlayer().getUniqueId().toString(), k);
-                    JedisTempStorage.AddCommandToQueueFix("chat" + ":=:" + p.getUniqueId().toString() + ":=:" + k, "chat" + ":=:" + p.getUniqueId().toString() + ":=:" + k);
-                } else {
-
-                    SystemUtils.sendmessage(p, "&c&l(!) &7소속된 팀이 없어서 팀 채팅에서 강제적으로 퇴장당했습니다");
-                    FactionChatToggle.FactionChatToggled.remove(p);
-
-                }
-            } else if(!p.hasPermission("faxcore.chatbypass") && k.length() > 64){
-                SystemUtils.sendmessage(p, "&c&l(!) &f&l메시지가 너무 깁니다. 64자 미만으로 줄여주세요");
-
-            } else {
-                try {
-                    if (Universal.get().getMethods().callChat(e.getPlayer())) {
-                        return;
-                    }
-                } catch (NullPointerException nulle) {
-                    System.out.println(nulle.getMessage());
-                }
-                if(Main.chattoggle.equals(true) && !p.hasPermission("faxcore.chatmutebypass")) {
-                    p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c&l(!) &f현재 채팅이 잠겨있습니다"));
-                    return;
-                }
-                Player player = p;
-                String group = loadUser(player).getPrimaryGroup();
-                String message = k;
-                String format = (String) Objects.<String>requireNonNull("%itndevfactions_formatfactionname%%itndevfaction_formatrank%{prefix}{name} {suffix}&8:: &r{message}".replace("{world}", player.getWorld().getName()).replace("{prefix}", getPrefix(player)).replace("{prefixes}", getPrefixes(player)).replace("{name}", player.getName()).replace("{suffix}", getSuffix(player)).replace("{suffixes}", getSuffixes(player)).replace("{username-color}", (playerMeta(player).getMetaValue("username-color") != null) ? playerMeta(player).getMetaValue("username-color") : ((groupMeta(group).getMetaValue("username-color") != null) ? groupMeta(group).getMetaValue("username-color") : "")).replace("{message-color}", (playerMeta(player).getMetaValue("message-color") != null) ?
-                        playerMeta(player).getMetaValue("message-color") : ((groupMeta(group).getMetaValue("message-color") != null) ?
-                        groupMeta(group).getMetaValue("message-color") : "")));
-                ArrayList<Player> closeplayer = new ArrayList<>();
-                for(Player online : Bukkit.getOnlinePlayers()) {
-                    if(online.getLocation().getWorld().getName().equals(p.getLocation().getWorld().getName()) && online.getLocation().distanceSquared(p.getLocation()) <= 300 * 300) {
-                        closeplayer.add(online);
-                    }
-                }
-                String tagonfront = "&7[ " + String.valueOf(closeplayer.size()) + "명 ]&r";
-
-                String Dformat = colorize(tagonfront) + colorize(format.replace("{message}", (player.hasPermission("lpc.colorcodes") && player.hasPermission("lpc.rgbcodes")) ?
-                        translateHexColorCodes(colorize(message)) : (player.hasPermission("lpc.colorcodes") ? colorize(message) : (player.hasPermission("lpc.rgbcodes") ?
-                        translateHexColorCodes(message) : message))).replace("%itndevfactions_formatfactionname%",  " " + FactionUtils.getFormattedFaction(UUID) + " ").replace("%itndevfaction_formatrank%", FactionUtils.getFormattedRank(UUID) + " "));
-                for(Player finalonlinecloseplayers : closeplayer) {
-                    finalonlinecloseplayers.sendMessage(Dformat);
-                }
-            }
-
-        }).start();
-
-    }
 
 
-    private String colorize(String message) {
-        return ChatColor.translateAlternateColorCodes('&', message);
-    }
-
-    private String translateHexColorCodes(String message) {
-        Pattern hexPattern = Pattern.compile("&#([A-Fa-f0-9]{6})");
-        char colorChar = '§';
-        Matcher matcher = hexPattern.matcher(message);
-        StringBuffer buffer = new StringBuffer(message.length() + 32);
-        while (matcher.find()) {
-            String group = matcher.group(1);
-            matcher.appendReplacement(buffer, "§x§" + group
-                    .charAt(0) + '§' + group.charAt(1) + '§' + group
-                    .charAt(2) + '§' + group.charAt(3) + '§' + group
-                    .charAt(4) + '§' + group.charAt(5));
-        }
-        return matcher.appendTail(buffer).toString();
-    }
-
-    private String getPrefix(Player player) {
-        String prefix = playerMeta(player).getPrefix();
-        return (prefix != null) ? prefix : "";
-    }
-
-    private String getSuffix(Player player) {
-        String suffix = playerMeta(player).getSuffix();
-        return (suffix != null) ? suffix : "";
-    }
-
-    private String getPrefixes(Player player) {
-        SortedMap<Integer, String> map = playerMeta(player).getPrefixes();
-        StringBuilder prefixes = new StringBuilder();
-        for (String prefix : map.values())
-            prefixes.append(prefix);
-        return prefixes.toString();
-    }
-
-    private String getSuffixes(Player player) {
-        SortedMap<Integer, String> map = playerMeta(player).getSuffixes();
-        StringBuilder suffixes = new StringBuilder();
-        for (String prefix : map.values())
-            suffixes.append(prefix);
-        return suffixes.toString();
-    }
-
-    private CachedMetaData playerMeta(Player player) {
-        return loadUser(player).getCachedData().getMetaData(getApi().getContextManager().getQueryOptions(player));
-    }
-
-    private CachedMetaData groupMeta(String group) {
-        return loadGroup(group).getCachedData().getMetaData(getApi().getContextManager().getStaticQueryOptions());
-    }
-
-    private User loadUser(Player player) {
-        if (!player.isOnline())
-            throw new IllegalStateException("Player is offline!");
-        return getApi().getUserManager().getUser(player.getUniqueId());
-    }
-
-    private Group loadGroup(String group) {
-        return getApi().getGroupManager().getGroup(group);
-    }
-
-    private LuckPerms getApi() {
-        RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServer().getServicesManager().getRegistration(LuckPerms.class);
-        Validate.notNull(provider);
-        return (LuckPerms)provider.getProvider();
-    }
-
-    private boolean isPlaceholderAPIEnabled() {
-        return Bukkit.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI");
     }
 
     //@EventHandler

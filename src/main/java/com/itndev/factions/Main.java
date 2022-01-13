@@ -30,6 +30,8 @@ public class Main extends JavaPlugin {
 
     public static Boolean chattoggle = false;
 
+    public static SystemUtils sysutils = new SystemUtils();
+
     FileConfiguration config = getConfig();
     public final Logger logger = Logger.getLogger("Minecraft");
 
