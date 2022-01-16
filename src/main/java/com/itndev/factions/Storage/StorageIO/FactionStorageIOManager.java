@@ -25,9 +25,12 @@ public class FactionStorageIOManager {
             restoreFactionRank(Storage);
             restorePlayerFaction(Storage);
             restoreFactionOutPost(Storage);
+            restoreFactionOutPostList(Storage);
             restoreFactionToLand(Storage);
+            restoreFactionToOutPost(Storage);
             restoreFactionWarpLocations(Storage);
             restoreLandToFaction(Storage);
+            restoreOutPostToFaction(Storage);
             restoreFactionInfo(Storage);
             restoreFactionInfoList(Storage);
         } catch (NullPointerException e) {
@@ -51,9 +54,12 @@ public class FactionStorageIOManager {
             saveFactionRank(Storage);
             savePlayerFaction(Storage);
             saveFactionOutPost(Storage);
+            saveFactionOutPostList(Storage);
             saveFactionToLand(Storage);
+            saveFactionToOutPost(Storage);
             saveFactionWarpLocations(Storage);
             saveLandToFaction(Storage);
+            saveOutPostToFaction(Storage);
             saveFactionInfo(Storage);
             saveFactionInfoList(Storage);
             factionstorage.saveStorage();
@@ -196,6 +202,40 @@ public class FactionStorageIOManager {
         Storage.getConfigurationSection("LandToFaction.").getKeys(false).forEach(key -> {
             String v = Storage.get("LandToFaction." + key).toString();
             FactionStorage.LandToFaction.put(key, v);
+        });
+    }
+    public static void saveFactionToOutPost(FileConfiguration Storage) {
+        if(FactionStorage.FactionToOutPost.isEmpty()) {
+            return;
+        }
+        for (Map.Entry<String, ArrayList<String>> entry : FactionStorage.FactionToOutPost.entrySet()) {
+            Storage.set("FactionToOutPost." + (String) entry.getKey(), entry.getValue());
+        }
+    }
+    public static void restoreFactionToOutPost(FileConfiguration Storage) {
+        if(!Storage.contains("FactionToOutPost.")) {
+            return;
+        }
+        Storage.getConfigurationSection("FactionToOutPost.").getKeys(false).forEach(key -> {
+            ArrayList<String> v = (ArrayList<String>)Storage.get("FactionToOutPost." + key);
+            FactionStorage.FactionToOutPost.put(key, v);
+        });
+    }
+    public static void saveOutPostToFaction(FileConfiguration Storage) {
+        if(FactionStorage.OutPostToFaction.isEmpty()) {
+            return;
+        }
+        for (Map.Entry<String, String> entry : FactionStorage.OutPostToFaction.entrySet()) {
+            Storage.set("OutPostToFaction." + (String)entry.getKey(), entry.getValue());
+        }
+    }
+    public static void restoreOutPostToFaction(FileConfiguration Storage) {
+        if(!Storage.contains("OutPostToFaction.")) {
+            return;
+        }
+        Storage.getConfigurationSection("OutPostToFaction.").getKeys(false).forEach(key -> {
+            String v = Storage.get("OutPostToFaction." + key).toString();
+            FactionStorage.OutPostToFaction.put(key, v);
         });
     }
     public static void saveFactionOutPost(FileConfiguration Storage) {

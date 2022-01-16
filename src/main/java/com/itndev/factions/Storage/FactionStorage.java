@@ -46,7 +46,7 @@ public class FactionStorage {
 
     public static ConcurrentHashMap<String, ArrayList<String>> FactionInviteQueue = new ConcurrentHashMap<>();
 
-    public static ConcurrentHashMap<String, String> FactionOutPost = new ConcurrentHashMap<>(); //do not trust this
+    public static ConcurrentHashMap<String, String> FactionOutPost = new ConcurrentHashMap<>();
 
     public static ConcurrentHashMap<String, String> FactionWarpLocations = new ConcurrentHashMap<>();
 
@@ -737,6 +737,37 @@ public class FactionStorage {
                 FactionStorage.FactionOutPostList.remove(key);
             }
 
+        } else if(args[1].equalsIgnoreCase("FactionOutPost")) { //no longer used
+            if(args[2].equalsIgnoreCase("add")) {
+                String key = args[3]; //키
+                String value = args[5]; //추가하고 싶은 값
+
+                if(args[4].equalsIgnoreCase("add")) {
+
+                    if(FactionStorage.FactionOutPost.containsKey(key)) {
+                        FactionStorage.FactionOutPost.remove(key);
+                        FactionStorage.FactionOutPost.put(key, value);
+                    } else {
+                        FactionStorage.FactionOutPost.put(key, value);
+                    }
+                } else if(args[4].equalsIgnoreCase("remove")) {
+
+                    if(FactionStorage.FactionOutPost.containsKey(key)) {
+
+                        FactionStorage.FactionOutPost.remove(key);
+
+                        //할거 없다
+                    } else {
+                        //할거 없다
+                    }
+                }
+
+            } else if(args[2].equalsIgnoreCase("remove")) {
+                String key = args[3];
+                if(FactionStorage.FactionOutPost.containsKey(key)) {
+                    FactionStorage.FactionOutPost.remove(key);
+                }
+            }
         }
         /* else if(args[1].equalsIgnoreCase("LandToFaction")) { //====================== Land To Faction
 

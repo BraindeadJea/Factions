@@ -1,6 +1,7 @@
 package com.itndev.factions.AdminCommands;
 
 import com.itndev.factions.Faction.FactionOutpost;
+import com.itndev.factions.Storage.FactionStorage;
 import com.itndev.factions.Utils.FactionList.FactionList;
 import com.itndev.factions.Utils.FactionUtils;
 import com.itndev.factions.Utils.SystemUtils;
@@ -12,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 public class AdminMainCommand implements CommandExecutor {
 
@@ -63,6 +65,31 @@ public class AdminMainCommand implements CommandExecutor {
         } else if(args[0].equalsIgnoreCase("tryclaimoutpost")) {
             Location loc = p.getLocation();
             FactionOutpost.TryClaimOutPost(p, loc, UUID.randomUUID().toString());
+        } else if(args[0].equalsIgnoreCase("radiusclaimed")) {
+            new Thread(() -> {
+                try {
+                    if(FactionUtils.AsyncNearByChunksAreOwned5(p.getLocation()).get()) {
+                        p.sendMessage("yes");
+                    } else {
+                        p.sendMessage("no");
+                    }
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+        } else if(args[0].equalsIgnoreCase("checkfactionoutposthashmap")) {
+            new Thread( () -> {
+                p.sendMessage("==============");
+                for(String key : FactionStorage.FactionOutPost.keySet()) {
+                    p.sendMessage(key + " - " + FactionStorage.FactionOutPost.get(key));
+                }
+                p.sendMessage("==============");
+                for(String key : FactionStorage.FactionOutPostList.keySet()) {
+                    p.sendMessage(key + " - " + FactionStorage.FactionOutPostList.get(key).toString());
+                }
+                p.sendMessage("==============");
+            }).start();
+
         }
     }
 

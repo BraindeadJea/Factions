@@ -351,7 +351,11 @@ public class JedisManager {
                         || args[1].equalsIgnoreCase("FactionDTR")
                         || args[1].equalsIgnoreCase("FactionInfo")
                         || args[1].equalsIgnoreCase("Timeout2")
-                        || args[1].equalsIgnoreCase("Timeout2info")) {
+                        || args[1].equalsIgnoreCase("Timeout2info")
+                        || args[1].equalsIgnoreCase("FactionOutPost")
+                        || args[1].equalsIgnoreCase("FactionOutPostList")
+                        || args[1].equalsIgnoreCase("FactionToOutPost")
+                        || args[1].equalsIgnoreCase("OutPostToFaction")) {
                     FactionStorage.FactionStorageUpdateHandler(args, ServerName);
                 } else if(args[1].equalsIgnoreCase("namename")
                         || args[1].equalsIgnoreCase("nameuuid")

@@ -30,7 +30,7 @@ public class FactionOutpost {
             CompletableFuture<Boolean> AreNotOwned = FactionUtils.AsyncNearByChunksAreOwned5(loc.clone());
             String Chunkkey = FactionUtils.getChunkKey(loc);
             try {
-                if(AreNotOwned.get()) {
+                if(!AreNotOwned.get()) {
                     /*Location beaconloc = SystemUtils.ReplaceChunk(AdminMainCommand.getCopyLocation(), loc);
                     String k = "X:" + beaconloc.getBlockX() + " Y:" + beaconloc.getBlockY() + " Z:" + beaconloc.getBlockZ();
                     SystemUtils.sendfactionmessage(p, "&r&f참 신호기 위치 &r&7: &r&c" + k);
@@ -50,12 +50,13 @@ public class FactionOutpost {
                         public void run() {
                             Location beaconloc = SystemUtils.ReplaceChunk(AdminMainCommand.getCopyLocation(), loc);
                             String k = "X:" + beaconloc.getBlockX() + " Y:" + beaconloc.getBlockY() + " Z:" + beaconloc.getBlockZ();
-                            FactionUtils.SetFactionOutPostName(FactionUUID, Chunkkey, OutPostName);
+                            //FactionUtils.SetFactionOutPostWarpLocation(FactionUUID, Chunkkey, loc, OutPostName);
                             SystemUtils.sendfactionmessage(p, "&r&f참 신호기 위치 &r&7: &r&c" + k);
                             Location loc2 = loc.getChunk().getBlock(7, 68, 7).getLocation();
                             loc2.setX(loc2.getX() - 1);
                             loc2.setZ(loc2.getZ() + 1);
                             SystemUtils.sendmessage(p, "&c&lINFO &r&7Location:" + loc2.getX() + ":" + loc2.getY() + ":" + loc2.getZ());
+                            FactionUtils.SetFactionOutPostWarpLocation(FactionUUID, Chunkkey, loc2, OutPostName);
                             new BukkitRunnable() {
                                 @Override
                                 public void run() {
@@ -63,6 +64,7 @@ public class FactionOutpost {
                                     for(Player ktmf :teleportlist) {
                                         ktmf.teleportAsync(loc2);
                                     }
+                                    FactionUtils.SetFactionOutPostWarpLocation(FactionUUID, Chunkkey, loc2, OutPostName);
                                 }
                             }.runTaskLater(Main.getInstance(), 2L);
                         }

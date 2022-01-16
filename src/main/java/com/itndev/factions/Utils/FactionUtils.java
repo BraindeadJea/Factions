@@ -15,6 +15,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -145,57 +146,67 @@ public class FactionUtils {
         new Thread( () -> {
             ArrayList<Location> checklist = new ArrayList<>();
             ArrayList<CompletableFuture<Boolean>> checkfinishlist = new ArrayList<>();
-            int x = loc.getBlockX();
-            int z = loc.getBlockZ();
+            int x = loc.clone().getBlockX();
+            int z = loc.clone().getBlockZ();
             int amount = 48;
-            Location temploc1 = loc;
+            Location temploc1 = loc.clone();
             temploc1.setX(x + amount);
             temploc1.setZ(z + amount);
             checklist.add(temploc1);
-            Location temploc2 = loc;
+            Location temploc2 = loc.clone();
             temploc2.setX(x - amount);
             temploc2.setZ(z - amount);
             checklist.add(temploc2);
-            Location temploc3 = loc;
+            Location temploc3 = loc.clone();
             temploc3.setX(x + amount);
             temploc3.setZ(z - amount);
             checklist.add(temploc3);
-            Location temploc4 = loc;
+            Location temploc4 = loc.clone();
             temploc4.setX(x - amount);
             temploc4.setZ(z + amount);
             checklist.add(temploc4);
-            Location temploc5 = loc;
+            Location temploc5 = loc.clone();
             temploc5.setX(x + amount);
             checklist.add(temploc5);
-            Location temploc6 = loc;
+            Location temploc6 = loc.clone();
             temploc6.setX(x - amount);
             checklist.add(temploc6);
-            Location temploc7 = loc;
+            Location temploc7 = loc.clone();
             temploc7.setZ(z + amount);
             checklist.add(temploc7);
-            Location temploc8 = loc;
+            Location temploc8 = loc.clone();
             temploc8.setZ(z - amount);
             checklist.add(temploc8);
-            Location temploc9 = loc;
+            Location temploc9 = loc.clone();
             checklist.add(temploc9);
+            Location temploc10 = loc.clone();
+            temploc10.setX(x + 16);
+            checklist.add(temploc10);
+            Location temploc11 = loc.clone();
+            temploc11.setZ(z + 16);
+            checklist.add(temploc11);
+            Location temploc12 = loc.clone();
+            temploc12.setX(x - 16);
+            checklist.add(temploc12);
+            Location temploc13 = loc.clone();
+            temploc13.setZ(z - 16);
+            checklist.add(temploc13);
             for(Location temploc : checklist) {
                 checkfinishlist.add(AsyncNearByChunksAreOwned(temploc));
             }
             Boolean isfinished = false;
             for(CompletableFuture<Boolean> finalboolean : checkfinishlist) {
                 try {
-                    if(!finalboolean.get()) {
-                        Finalbool.complete(false);
+                    if(finalboolean.get()) {
+                        Finalbool.complete(true);
                         isfinished = true;
                     }
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
-                    Finalbool.complete(false);
-                    isfinished = true;
                 }
             }
             if(!isfinished) {
-                Finalbool.complete(true);
+                Finalbool.complete(false);
             }
 
         }).start();
@@ -212,18 +223,22 @@ public class FactionUtils {
     }
 
     public static Boolean isExistingOutPost(String FactionUUID, String OutPostName) {
-        return FactionStorage.FactionOutPostList.get(FactionUUID).contains(OutPostName.toLowerCase(Locale.ROOT));
+        if(FactionStorage.FactionOutPostList.containsKey(FactionUUID)) {
+            return FactionStorage.FactionOutPostList.get(FactionUUID).contains(OutPostName.toLowerCase(Locale.ROOT));
+        } else {
+            return false;
+        }
     }
 
     public static Boolean NearByChunksAreOwned(Location loc) {
-        Location temploc1 = loc;
-        Location temploc2 = loc;
-        Location temploc3 = loc;
-        Location temploc4 = loc;
-        Location templocC1 = loc;
-        Location templocC2 = loc;
-        Location templocC3 = loc;
-        Location templocC4 = loc;
+        Location temploc1 = loc.clone();
+        Location temploc2 = loc.clone();
+        Location temploc3 = loc.clone();
+        Location temploc4 = loc.clone();
+        Location templocC1 = loc.clone();
+        Location templocC2 = loc.clone();
+        Location templocC3 = loc.clone();
+        Location templocC4 = loc.clone();
 
         temploc1.setX(loc.getX() + 16);
 
@@ -270,14 +285,15 @@ public class FactionUtils {
     public static CompletableFuture<Boolean> AsyncNearByChunksAreOwned(Location loc) {
         CompletableFuture<Boolean> Finalbool = new CompletableFuture<>();
         new Thread( () -> {
-            Location temploc1 = loc;
-            Location temploc2 = loc;
-            Location temploc3 = loc;
-            Location temploc4 = loc;
-            Location templocC1 = loc;
-            Location templocC2 = loc;
-            Location templocC3 = loc;
-            Location templocC4 = loc;
+            Location temploc0 = loc.clone();
+            Location temploc1 = loc.clone();
+            Location temploc2 = loc.clone();
+            Location temploc3 = loc.clone();
+            Location temploc4 = loc.clone();
+            Location templocC1 = loc.clone();
+            Location templocC2 = loc.clone();
+            Location templocC3 = loc.clone();
+            Location templocC4 = loc.clone();
 
             temploc1.setX(loc.getX() + 16);
 
@@ -299,24 +315,46 @@ public class FactionUtils {
             templocC4.setX(loc.getX() - 16);
             templocC4.setZ(loc.getZ() - 16);
 
-            if(FactionUtils.isClaimed(temploc1)) {
-                Finalbool.complete(false);
-            } else if(FactionUtils.isClaimed(temploc2)) {
-                Finalbool.complete(false);
-            } else if(FactionUtils.isClaimed(temploc3)) {
-                Finalbool.complete(false);
-            } else if(FactionUtils.isClaimed(temploc4)) {
-                Finalbool.complete(false);
-            } else if(FactionUtils.isClaimed(templocC1)) {
-                Finalbool.complete(false);
-            } else if(FactionUtils.isClaimed(templocC2)) {
-                Finalbool.complete(false);
-            } else if(FactionUtils.isClaimed(templocC3)) {
-                Finalbool.complete(false);
-            } else if(FactionUtils.isClaimed(templocC4)) {
-                Finalbool.complete(false);
-            } else {
+            Boolean isFinished = false;
+
+            if(FactionUtils.isClaimed(temploc0)) {
                 Finalbool.complete(true);
+                isFinished = true;
+            }
+            if(FactionUtils.isClaimed(temploc1) && !isFinished) {
+                Finalbool.complete(true);
+                isFinished = true;
+            }
+            if(FactionUtils.isClaimed(temploc2) && !isFinished) {
+                Finalbool.complete(true);
+                isFinished = true;
+            }
+            if(FactionUtils.isClaimed(temploc3) && !isFinished) {
+                Finalbool.complete(true);
+                isFinished = true;
+            }
+            if(FactionUtils.isClaimed(temploc4) && !isFinished) {
+                Finalbool.complete(true);
+                isFinished = true;
+            }
+            if(FactionUtils.isClaimed(templocC1) && !isFinished) {
+                Finalbool.complete(true);
+                isFinished = true;
+            }
+            if(FactionUtils.isClaimed(templocC2) && !isFinished) {
+                Finalbool.complete(true);
+                isFinished = true;
+            }
+            if(FactionUtils.isClaimed(templocC3) && !isFinished) {
+                Finalbool.complete(true);
+                isFinished = true;
+            }
+            if(FactionUtils.isClaimed(templocC4) && !isFinished) {
+                Finalbool.complete(true);
+                isFinished = true;
+            }
+            if(!isFinished) {
+                Finalbool.complete(false);
             }
         }).start();
 
@@ -403,11 +441,17 @@ public class FactionUtils {
         }
     }
 
+    public static String GetOutPostOwner(Location loc) {
+        return FactionStorage.OutPostToFaction.get(FactionUtils.getChunkKey(loc));
+    }
+
     public static String GetClaimFaction(Location loc) {
         if(!isClaimed(loc)) {
             return "&2야생";
+        } else if(isOutPost(loc)) {
+            return "&a" + FactionUtils.getCappedFactionName(FactionUtils.getFactionName(FactionUtils.GetOutPostOwner(loc))) + "&7(전초기지)&r";
         } else {
-            return "&a" + FactionUtils.getCappedFactionName(FactionUtils.getFactionName(FactionUtils.AsyncWhosClaim(loc)));
+            return "&a" + FactionUtils.getCappedFactionName(FactionUtils.getFactionName(FactionUtils.AsyncWhosClaim(loc))) + "&r";
         }
     }
 
@@ -696,10 +740,12 @@ public class FactionUtils {
     }
 
     public static void ClearFactionInfo(String FactionUUID) {
-        for(String key : FactionStorage.FactionInfoList.get(FactionUUID)) {
-            JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:remove:=:" + FactionUUID + "=" + key  + ":=:remove:=:");
+        if(FactionStorage.FactionInfo.containsKey(FactionUUID)) {
+            for (String key : FactionStorage.FactionInfoList.get(FactionUUID)) {
+                JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:remove:=:" + FactionUUID + "=" + key + ":=:remove:=:");
+            }
+            JedisTempStorage.AddCommandToQueue("update:=:FactionInfoList:=:remove:=:" + FactionUUID + ":=:remove:=:");
         }
-        JedisTempStorage.AddCommandToQueue("update:=:FactionInfoList:=:remove:=:" + FactionUUID + ":=:remove:=:");
     }
 
     public static void RemoveFactionSpawn(String FactionUUID) {
@@ -732,6 +778,8 @@ public class FactionUtils {
 
     public static void SetFactionOutPostName(String FactionUUID, String Chunkkey, String OutPostName) {
         JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:add:=:" + FactionUUID + "=" + Chunkkey + ":=:add:=:" + OutPostName);
+        JedisTempStorage.AddCommandToQueue("update:=:FactionOutPost:=:add:=:" + Chunkkey + ":=:add:=:" + OutPostName);
+        JedisTempStorage.AddCommandToQueue("update:=:FactionOutPostList:=:add:=:" + FactionUUID + ":=:add:=:" + OutPostName);
         RegisterFactionInfo(FactionUUID, Chunkkey);
     }
 
