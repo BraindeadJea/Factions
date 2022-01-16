@@ -347,6 +347,14 @@ public class FactionMainCommand implements CommandExecutor {
 
                     //=================공지=================
 
+                } else if(args[0].equalsIgnoreCase("전초기지점령")) {
+
+                    //=================전초기지점령=================
+
+                    FactionOutPostClaim.FactionOutPostClaimCommand(sender, UUID, args);
+
+                    //=================전초기지점령=================
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();

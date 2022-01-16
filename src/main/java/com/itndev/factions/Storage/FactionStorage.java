@@ -44,7 +44,7 @@ public class FactionStorage {
 
     public static ConcurrentHashMap<String, ArrayList<String>> FactionInfoList = new ConcurrentHashMap<>();
 
-    public static HashMap<String, ArrayList<String>> FactionInviteQueue = new HashMap<>();
+    public static ConcurrentHashMap<String, ArrayList<String>> FactionInviteQueue = new ConcurrentHashMap<>();
 
     public static ConcurrentHashMap<String, String> FactionOutPost = new ConcurrentHashMap<>(); //do not trust this
 
@@ -56,7 +56,9 @@ public class FactionStorage {
 
     public static HashMap<String, ArrayList<String>> FactionToOutPost = new HashMap<>();
 
-    // key : FactionUUID + Type + id
+    public static ConcurrentHashMap<String, ArrayList<String>> FactionOutPostList = new ConcurrentHashMap<>();
+
+    // key : FactionUUID + Type + id / FactionOutPostList
     // if Type is Spawn id is Spawn
     // -- example --
     // FactionUUID=Spawn=Spawn , Coords
@@ -64,7 +66,7 @@ public class FactionStorage {
 
     public static void FactionStorageUpdateHandler(String[] args, String ServerName) {
         if(args[1].equalsIgnoreCase("FactionToLand")) {
-            if(ServerName.equalsIgnoreCase(Main.ServerName)) {
+            if(args.length > 6 && args[6].equalsIgnoreCase(Main.ServerName)) {
                 return;
             }
             if(args[2].equalsIgnoreCase("add")) {
@@ -119,7 +121,7 @@ public class FactionStorage {
             }
 
         } else if(args[1].equalsIgnoreCase("LandToFaction")) {
-            if(ServerName.equalsIgnoreCase(Main.ServerName)) {
+            if(args.length > 6 && args[6].equalsIgnoreCase(Main.ServerName)) {
                 return;
             }
             if(args[2].equalsIgnoreCase("add")) {
@@ -629,7 +631,7 @@ public class FactionStorage {
                 }
             }
         } else if(args[1].equalsIgnoreCase("FactionToOutPost")) {
-            if(ServerName.equalsIgnoreCase(Main.ServerName)) {
+            if(args.length > 6 && args[6].equalsIgnoreCase(Main.ServerName)) {
                 return;
             }
             if(args[2].equalsIgnoreCase("add")) {
@@ -681,6 +683,58 @@ public class FactionStorage {
             } else if(args[2].equalsIgnoreCase("remove")) {
                 String key = args[3];
                 FactionStorage.FactionToOutPost.remove(key);
+            }
+
+        } else if(args[1].equalsIgnoreCase("FactionOutPostList")) {
+            if(args[2].equalsIgnoreCase("add")) {
+                String key = args[3];
+                String value = args[5];
+                if(args[4].equalsIgnoreCase("add")) {
+                    if (!FactionStorage.FactionOutPostList.isEmpty()) { //비어있지 않으면
+                        if (FactionStorage.FactionOutPostList.containsKey(key)) {
+
+                            //해당 키가 있으면
+                            ArrayList<String> updatelist = FactionStorage.FactionOutPostList.get(key);
+                            if(!updatelist.contains(value)) {
+                                updatelist.add(value);
+                            }
+                            FactionStorage.FactionOutPostList.put(key, updatelist);
+                        } else {
+
+                            //해당 키가 없으면
+                            ArrayList<String> updatelist2 = new ArrayList<>();
+                            updatelist2.add(value);
+                            FactionStorage.FactionOutPostList.put(key, updatelist2);
+                        }
+                    } else { //만약 비어있으면
+                        ArrayList<String> updatelist3 = new ArrayList<>();
+                        updatelist3.add(value);
+                        FactionStorage.FactionOutPostList.put(key, updatelist3);;
+                    }
+                } else if(args[4].equalsIgnoreCase("remove")) {
+                    if (!FactionStorage.FactionOutPostList.isEmpty()) { //비어있지 않으면
+                        if (FactionStorage.FactionOutPostList.containsKey(key)) {
+
+                            //해당 키가 있으면
+                            ArrayList<String> updatelist = FactionStorage.FactionOutPostList.get(key);
+                            updatelist.remove(value);
+                            if(updatelist.isEmpty()) {
+                                FactionStorage.FactionOutPostList.remove(key);
+                            } else {
+                                FactionStorage.FactionOutPostList.put(key, updatelist);
+                            }
+                        } else {
+
+                            //해당 키가 없으면
+                            //없으니까 하지 말자
+                        }
+                    } else { //만약 비어있으면
+                        //시발 존재하지도 않는데 어떻게 없애냐 뭔시발 병신이냐
+                    }
+                }
+            } else if(args[2].equalsIgnoreCase("remove")) {
+                String key = args[3];
+                FactionStorage.FactionOutPostList.remove(key);
             }
 
         }

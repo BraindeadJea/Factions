@@ -1,6 +1,8 @@
 package com.itndev.factions.AdminCommands;
 
+import com.itndev.factions.Faction.FactionOutpost;
 import com.itndev.factions.Utils.FactionList.FactionList;
+import com.itndev.factions.Utils.FactionUtils;
 import com.itndev.factions.Utils.SystemUtils;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -8,6 +10,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
 
 public class AdminMainCommand implements CommandExecutor {
 
@@ -45,11 +49,20 @@ public class AdminMainCommand implements CommandExecutor {
             SystemUtils.sendmessage(p, "&c&lSUCESS &r&7복사 위치 설정완료");
         } else if(args[0].equalsIgnoreCase("pastechunk")) {
             if(loc != null) {
-                SystemUtils.ReplaceChunk(loc, p.getLocation());
+                Location loc2 = SystemUtils.ReplaceChunk(loc, p.getLocation());
                 SystemUtils.sendmessage(p, "&c&lSUCESS &r&7청크 붙여넣는중");
+                if(loc2 == null) {
+                    SystemUtils.sendmessage(p, "&c&lINFO &r&7BEACON 위치 확인 불가");
+                } else {
+                    String k = "X:" + loc2.getBlockX() + " Y:" + loc2.getBlockY() + " Z:" + loc2.getBlockZ();
+                    SystemUtils.sendfactionmessage(p, "&r&f참 신호기 위치 &r&7: &r&c" + k);
+                }
             } else {
                 SystemUtils.sendmessage(p, "&c&lERROR &r&7설정된 위치가 존재하지 않음");
             }
+        } else if(args[0].equalsIgnoreCase("tryclaimoutpost")) {
+            Location loc = p.getLocation();
+            FactionOutpost.TryClaimOutPost(p, loc, UUID.randomUUID().toString());
         }
     }
 

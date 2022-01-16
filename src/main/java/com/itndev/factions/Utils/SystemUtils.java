@@ -6,6 +6,7 @@ import com.itndev.factions.Config.Config;
 import com.itndev.factions.FactionCommands.FactionsCommands.FactionChatToggle;
 import com.itndev.factions.Jedis.JedisTempStorage;
 import com.itndev.factions.Main;
+import com.itndev.factions.Package.WrappedInfo;
 import io.papermc.paper.text.PaperComponents;
 import me.leoko.advancedban.Universal;
 import net.kyori.adventure.text.Component;
@@ -166,31 +167,32 @@ public class SystemUtils {
 
     public static Location ReplaceChunk(Location From, Location To) {
         ChunkSnapshot SnapShot = From.getChunk().getChunkSnapshot();
+
         int height = 0;
         To.getChunk().getBlock(8, height, 8).getLocation();
         Random random = new Random();
         int c = random.nextInt(8) + 1;
         int amount = 0;
-
+        Location loc1 = null;
         for(int x = 0; x <= 15; x++) {
             for(int z = 0; z <= 15; z++) {
-                for(int y = 1; y <= 255; y++) {
+                for(int y = 64; y <= 118; y++) {
                     BlockData block = SnapShot.getBlockData(x, y, z);
                     Boolean cu = false;
                     if(block.getMaterial() == Material.BEACON) {
-                        amount = amount++;
+                       amount++;
                         if(amount == c) {
                             cu = true;
                         }
                     }
                     To.getChunk().getBlock(x, y, z).setBlockData(block);
                     if(cu) {
-                        return To.getChunk().getBlock(x, y, z).getLocation();
+                        loc1 = To.getChunk().getBlock(x, y, z).getLocation();
                     }
                 }
             }
         }
-        return null;
+        return loc1;
     }
 
     public static void RemoveHeldItem(Player p, int Amount) {

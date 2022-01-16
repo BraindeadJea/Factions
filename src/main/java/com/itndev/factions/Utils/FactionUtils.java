@@ -6,11 +6,15 @@ import com.itndev.factions.Config.Lang;
 import com.itndev.factions.Jedis.JedisTempStorage;
 import com.itndev.factions.Main;
 import com.itndev.factions.Storage.FactionStorage;
+import org.apache.commons.lang.ObjectUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -198,22 +202,6 @@ public class FactionUtils {
         return Finalbool;
     }
 
-    public static void TryClaimOutPost(Player p) {
-        Location loc = p.getLocation();
-        CompletableFuture<Boolean> AreNotOwned = AsyncNearByChunksAreOwned5(loc);
-        try {
-            if(AreNotOwned.get() && !AreNearByPlayersEnemies(p, 30)) {
-                SystemUtils.RemoveHeldItem(p, 1);
-                Location beaconloc = SystemUtils.ReplaceChunk(AdminMainCommand.getCopyLocation(), p.getLocation());
-                String k = "X:" + beaconloc.getBlockX() + " Y:" + beaconloc.getBlockY() + " Z:" + beaconloc.getBlockZ();
-                SystemUtils.sendfactionmessage(p, "&r&f참 신호기 위치 &r&7: &r&c" + k);
-                //FactionUtils.
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static Boolean AreNearByPlayersEnemies(Player p, double Radius) {
         for(Player near : p.getLocation().getNearbyPlayers(Radius)) {
             if(!isSameFaction(p.getUniqueId().toString(), near.getUniqueId().toString())) {
@@ -221,6 +209,10 @@ public class FactionUtils {
             }
         }
         return false;
+    }
+
+    public static Boolean isExistingOutPost(String FactionUUID, String OutPostName) {
+        return FactionStorage.FactionOutPostList.get(FactionUUID).contains(OutPostName.toLowerCase(Locale.ROOT));
     }
 
     public static Boolean NearByChunksAreOwned(Location loc) {

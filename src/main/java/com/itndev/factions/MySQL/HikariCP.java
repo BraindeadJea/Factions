@@ -57,6 +57,7 @@ public class HikariCP {
         CreateFactionNameTable();
         CreateFactionDTRTable();
         CreateFactionBankTable();
+        CreateFactionELOTable();
     }
 
     public void CreateFactionNameTable() {
@@ -94,6 +95,20 @@ public class HikariCP {
                     + "FactionName VARCHAR(100),"
                     + "FactionBank VARCHAR(100),"
                     + "PRIMARY KEY (FactionUUID))");
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void CreateFactionELOTable() {
+        try {
+            PreparedStatement ps = Main.hikariCP.getHikariConnection().prepareStatement("CREATE TABLE IF NOT EXISTS FactionELO "
+                    + "(FactionUUID VARCHAR(100),"
+                    + "FactionName VARCHAR(100),"
+                    + "FactionELO VARCHAR(100),"
+                    + "PRIMARY KEY (FactionUUID))"); //%^G$%G$%D&*3#d^ %^U5jui34jhhy5i4$y7G54U^5ty
             ps.executeUpdate();
 
         } catch (SQLException e) {

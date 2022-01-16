@@ -68,11 +68,10 @@ public class PlayerListener implements Listener {
             if(FactionUtils.isClaimed(loc)) {
                 if(!FactionUtils.getPlayerFactionUUID(UUID).equalsIgnoreCase(FactionUtils.AsyncWhosClaim(loc))) {
                     e.setCancelled(true);
-                    return;
                 }
             } else if(!tempwefjw) {
-                if (holding.getType() == Material.BEACON && holding.hasItemMeta() && holding.getItemMeta().getDisplayName().contains("전초기지")) {
-                    //try claim outpost
+                if (holding.getType() == Material.BEACON) {
+                    e.setCancelled(true);
                 }
             }
         }
@@ -106,6 +105,8 @@ public class PlayerListener implements Listener {
             } else if(isOutPost) {
                 if (!PlayerFactionUUID.equalsIgnoreCase(LocalFactionUUID) && e.getBlock().getType() == Material.BEACON) {
                     //try break outpost
+                } else {
+                    //try unclaim or void
                 }
             }
 
