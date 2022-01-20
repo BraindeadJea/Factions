@@ -1,5 +1,11 @@
 package com.itndev.factions.Config;
 
+import com.itndev.factions.Main;
+import com.itndev.factions.RedisStreams.RedisConnection;
+import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.io.IOException;
+
 public class Config {
     public static double FactionCreateBalance = 50000.0;
     public static double DTRperPlayer = 1.5;
@@ -32,4 +38,49 @@ public class Config {
 
     public static String DiscordLink = "https://discord.gg/";
     public static String CafeLink = "https://cafe.naver.com/";
+
+    public static YamlConfiguration customlocalstorage = null;
+
+    public static void saveConfig() {
+        try {
+            customlocalstorage.set("lastread.lastreadmessage1", RedisConnection.getLastSeenMessage_CLIENT1());
+            customlocalstorage.set("lastread.lastreadmessage2", RedisConnection.getLastSeenMessage_CLIENT2());
+            customlocalstorage.set("lastread.lastreadmessage3", RedisConnection.getLastSeenMessage_CLIENT3());
+            customlocalstorage.set("lastread.lastreadmessage4", RedisConnection.getLastSeenMessage_CLIENT4());
+            customlocalstorage.set("lastread.lastreadmessage5", RedisConnection.getLastSeenMessage_CLIENT5());
+            customlocalstorage.save(StorageDir.MainConfig);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void readConfig() {
+        customlocalstorage = YamlConfiguration.loadConfiguration(StorageDir.MainConfig);
+        addDefaultConfig();
+        RedisConnection.setRedis_address(customlocalstorage.getString("redis.address"));
+        RedisConnection.setRedis_port(customlocalstorage.getInt("redis.port"));
+        RedisConnection.setRedis_password(customlocalstorage.getString("redis.password"));
+        RedisConnection.setSslEnabled(customlocalstorage.getBoolean("redis.sslEnable"));
+        Main.ServerName = customlocalstorage.getString("redisconfig.mainservername");
+        RedisConnection.setLastSeenMessage_CLIENT1(customlocalstorage.getString("lastread.lastreadmessage1"));
+        RedisConnection.setLastSeenMessage_CLIENT2(customlocalstorage.getString("lastread.lastreadmessage2"));
+        RedisConnection.setLastSeenMessage_CLIENT3(customlocalstorage.getString("lastread.lastreadmessage3"));
+        RedisConnection.setLastSeenMessage_CLIENT4(customlocalstorage.getString("lastread.lastreadmessage4"));
+        RedisConnection.setLastSeenMessage_CLIENT5(customlocalstorage.getString("lastread.lastreadmessage5"));
+    }
+
+    public static void addDefaultConfig() {
+        String k = "0-0";
+        customlocalstorage.addDefault("redis.address", "127.0.0.1");
+        customlocalstorage.addDefault("redis.port", 6374);
+        customlocalstorage.addDefault("redis.password", "password");
+        customlocalstorage.addDefault("redis.sslEnable", false);
+        customlocalstorage.addDefault("redisconfig.mainservername", "client1");
+        customlocalstorage.addDefault("lastread.lastreadmessage1", k);
+        customlocalstorage.addDefault("lastread.lastreadmessage2", k);
+        customlocalstorage.addDefault("lastread.lastreadmessage3", k);
+        customlocalstorage.addDefault("lastread.lastreadmessage4", k);
+        customlocalstorage.addDefault("lastread.lastreadmessage5", k);
+        customlocalstorage.options().copyDefaults(true);
+    }
 }

@@ -20,7 +20,6 @@ public class RegisterStuff {
 
     @Deprecated
     public static void onStartup() {
-        StorageDir.SetupStorage();
         FactionStorageIOManager.restoreFactionInfo();
         UserInfoStorageIOManager.restoreUserInfo();
         FactionTimeOut.TimeoutManager();

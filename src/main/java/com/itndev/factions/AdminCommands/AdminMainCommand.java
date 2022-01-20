@@ -1,6 +1,7 @@
 package com.itndev.factions.AdminCommands;
 
 import com.itndev.factions.Faction.FactionOutpost;
+import com.itndev.factions.Jedis.JedisManager;
 import com.itndev.factions.Storage.FactionStorage;
 import com.itndev.factions.Utils.FactionList.FactionList;
 import com.itndev.factions.Utils.FactionUtils;
@@ -90,7 +91,9 @@ public class AdminMainCommand implements CommandExecutor {
                 p.sendMessage("==============");
             }).start();
 
+        } else if(args[0].equalsIgnoreCase("getclock")) {
+            SystemUtils.sendmessage(p, "&c&lINFO &7JEDIS SYNC CLOCK TIME : " + JedisManager.JEDISSYNCCLOCK);
         }
-    }
+     }
 
 }

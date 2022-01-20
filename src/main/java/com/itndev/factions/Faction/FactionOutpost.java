@@ -2,6 +2,7 @@ package com.itndev.factions.Faction;
 
 import com.itndev.factions.AdminCommands.AdminMainCommand;
 import com.itndev.factions.Main;
+import com.itndev.factions.Storage.FactionStorage;
 import com.itndev.factions.Utils.FactionUtils;
 import com.itndev.factions.Utils.SystemUtils;
 import org.bukkit.Location;
@@ -16,8 +17,9 @@ import java.util.concurrent.ExecutionException;
 
 public class FactionOutpost {
 
-    public static void getFactionOutPostLocation(String FactionUUID) {
-        FactionUUID factionUUID = new FactionUUID(FactionUUID);
+    public static String getFactionOutPostLocation(String FactionUUID, String OutPostName) {
+        String key = FactionUUID + "=" + OutPostName;
+        return FactionStorage.FactionInfo.getOrDefault(key, null);
     }
 
     public static void TryClaimOutPost(Player p, Location loc, String OutPostName) {
@@ -57,6 +59,7 @@ public class FactionOutpost {
                             loc2.setZ(loc2.getZ() + 1);
                             SystemUtils.sendmessage(p, "&c&lINFO &r&7Location:" + loc2.getX() + ":" + loc2.getY() + ":" + loc2.getZ());
                             FactionUtils.SetFactionOutPostWarpLocation(FactionUUID, Chunkkey, loc2, OutPostName);
+                            FactionUtils.SetBeaconLocation(FactionUUID, OutPostName, beaconloc);
                             new BukkitRunnable() {
                                 @Override
                                 public void run() {

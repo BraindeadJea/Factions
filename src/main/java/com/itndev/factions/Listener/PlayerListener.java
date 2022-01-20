@@ -3,6 +3,7 @@ package com.itndev.factions.Listener;
 import com.itndev.factions.FactionCommands.FactionsCommands.FactionChatToggle;
 import com.itndev.factions.Jedis.JedisTempStorage;
 import com.itndev.factions.Main;
+import com.itndev.factions.Storage.FactionStorage;
 import com.itndev.factions.Storage.TempStorage;
 import com.itndev.factions.Storage.UserInfoStorage;
 import com.itndev.factions.Utils.FactionUtils;
@@ -26,7 +27,9 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.apache.commons.lang.Validate;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import javax.security.auth.Subject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
@@ -46,9 +49,9 @@ public class PlayerListener implements Listener {
             if(from.getZ() != to.getZ()  ||  from.getX() != to.getX()  ||  from.getY() != to.getY()) {
                 TempStorage.TeleportLocation.remove(e.getPlayer().getUniqueId().toString());
                 if(!from.getChunk().equals(to.getChunk())) {
-                    if(!FactionUtils.isSameClaimFaction(from, to)) {
-                        String fromname = FactionUtils.GetClaimFaction(from);
-                        String toname = FactionUtils.GetClaimFaction(to);
+                    String fromname = FactionUtils.GetClaimFaction(from);
+                    String toname = FactionUtils.GetClaimFaction(to);
+                    if(!fromname.equals(toname)) {
                         SystemUtils.sendfactionmessage(e.getPlayer(), "&r&f이동 &7: &r" + fromname + " &8->&r&f " + toname);
                     }
                 }
@@ -65,14 +68,17 @@ public class PlayerListener implements Listener {
             ItemStack holding = p.getInventory().getItemInMainHand();
             String UUID = p.getUniqueId().toString();
             Boolean tempwefjw = FactionUtils.isOutPost(loc);
+            if (holding.getType() == Material.BEACON) {
+                e.setCancelled(true);
+                return;
+            }
             if(FactionUtils.isClaimed(loc)) {
                 if(!FactionUtils.getPlayerFactionUUID(UUID).equalsIgnoreCase(FactionUtils.AsyncWhosClaim(loc))) {
                     e.setCancelled(true);
                 }
-            } else if(!tempwefjw) {
-                if (holding.getType() == Material.BEACON) {
-                    e.setCancelled(true);
-                }
+            } else if(tempwefjw) {
+                SystemUtils.sendfactionmessage(p, "&r&f전초기지에서는 해당 액션을 취하실수 없습니다");
+                e.setCancelled(true);
             }
         }
     }
@@ -82,12 +88,13 @@ public class PlayerListener implements Listener {
         Player p = e.getPlayer();
         if(!p.getGameMode().equals(GameMode.CREATIVE)) {
             Location loc = e.getBlock().getLocation();
+            Material m = e.getBlock().getType();
             String UUID = p.getUniqueId().toString();
             Boolean isOutPost = FactionUtils.isOutPost(loc);
             String LocalFactionUUID = FactionUtils.AsyncWhosClaim(loc);
             String PlayerFactionUUID = FactionUtils.getPlayerFactionUUID(UUID);
             if(LocalFactionUUID != null) {
-                if(!PlayerFactionUUID.equalsIgnoreCase(LocalFactionUUID)) {
+                if(PlayerFactionUUID == null || !PlayerFactionUUID.equalsIgnoreCase(LocalFactionUUID)) {
                     e.setCancelled(true);
                     return;
                 }
@@ -103,11 +110,34 @@ public class PlayerListener implements Listener {
                 * 국가 전용 UUID
                 * */
             } else if(isOutPost) {
-                if (!PlayerFactionUUID.equalsIgnoreCase(LocalFactionUUID) && e.getBlock().getType() == Material.BEACON) {
-                    //try break outpost
-                } else {
-                    //try unclaim or void
-                }
+                e.setCancelled(true);
+                new Thread(() -> {
+                    String OutPostFactionUUID = FactionUtils.GetOutPostOwner(loc);
+                    if(PlayerFactionUUID != null && PlayerFactionUUID.equals(OutPostFactionUUID)) {
+                        SystemUtils.sendfactionmessage(p, "&r&f전초기지에서는 해당 액션을 취하실수 없습니다");
+                    } else if(PlayerFactionUUID != null) {
+                        if(m == Material.BEACON) {
+                            String Chunkkey = FactionUtils.getChunkKey(loc);
+                            String FactionOutPostName = FactionUtils.GetFactionOutPostName(Chunkkey);
+                            if(FactionUtils.GetBeaconLocation(OutPostFactionUUID, FactionOutPostName) == SystemUtils.loc2string(loc)) {
+                                SystemUtils.sendfactionmessage(p, "&r&c진짜&r&f 신호기를 파괴했습니다 >.<");
+                                new BukkitRunnable() {
+                                    @Override
+                                    public void run() {
+                                        //DESTROYOUTPOST
+
+                                    }
+                                }.runTask(Main.getInstance());
+                            } else {
+                                SystemUtils.sendfactionmessage(p, "&r&c가짜&r&f 신호기를 파괴했습니다 >.<");
+                            }
+                        }
+                    } else {
+
+                    }
+
+
+                }).start();
             }
 
         }

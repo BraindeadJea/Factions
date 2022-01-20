@@ -8,8 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class JedisTempStorage {
 
-    public static ConcurrentHashMap<String, String> TempCommandQueue = new ConcurrentHashMap<>();
-    public static ConcurrentHashMap<String, String> TempChatQueue = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<String, String> TempCommandQueue = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<String, String> TempChatQueue = new ConcurrentHashMap<>();
 
 
     public static void AddCommandToQueue(String command) {

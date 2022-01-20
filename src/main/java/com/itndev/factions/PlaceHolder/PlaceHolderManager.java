@@ -23,7 +23,7 @@ public class PlaceHolderManager extends PlaceholderExpansion {
 
     @Override
     public String getVersion() {
-        return "0.8.6";
+        return "1.0.0";
     }
 
     @Override
@@ -56,13 +56,13 @@ public class PlaceHolderManager extends PlaceholderExpansion {
             if(FactionUtils.getPlayerRank(UUID).equalsIgnoreCase(Config.Nomad)) {
                 return "&7무소속";
             } else {
-                return "&a" + FactionUtils.getFactionName(FactionUtils.getPlayerFactionUUID(UUID));
+                return "&a" + FactionUtils.getCappedFactionName(FactionUtils.getFactionName(FactionUtils.getPlayerFactionUUID(UUID)));
             }
         } else if(params.equalsIgnoreCase("formatfactionname")) {
             if(FactionUtils.getPlayerRank(UUID).equalsIgnoreCase(Config.Nomad)) {
                 return "";
             } else {
-                return "&f[ &r&a" + FactionUtils.getFactionName(FactionUtils.getPlayerFactionUUID(UUID)) + " &r&f] ";
+                return "&f[ &r&a" + FactionUtils.getCappedFactionName(FactionUtils.getFactionName(FactionUtils.getPlayerFactionUUID(UUID))) + " &r&f] ";
             }
         } else if(params.equalsIgnoreCase("formatrank")) {
             if(FactionUtils.getPlayerRank(UUID).equalsIgnoreCase(Config.Nomad)) {

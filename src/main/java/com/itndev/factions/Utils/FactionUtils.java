@@ -3,6 +3,7 @@ package com.itndev.factions.Utils;
 import com.itndev.factions.AdminCommands.AdminMainCommand;
 import com.itndev.factions.Config.Config;
 import com.itndev.factions.Config.Lang;
+import com.itndev.factions.Jedis.JedisManager;
 import com.itndev.factions.Jedis.JedisTempStorage;
 import com.itndev.factions.Main;
 import com.itndev.factions.Storage.FactionStorage;
@@ -46,7 +47,7 @@ public class FactionUtils {
         if(FactionUtils.getPlayerRank(UUID).equalsIgnoreCase(Config.Nomad)) {
             return "";
         } else {
-            return "&f[ &r&a" + FactionUtils.getFactionName(FactionUtils.getPlayerFactionUUID(UUID)) + " &r&f]";
+            return "&f[ &r&a" + FactionUtils.getCappedFactionName(FactionUtils.getFactionName(FactionUtils.getPlayerFactionUUID(UUID))) + " &r&f]";
         }
     }
 
@@ -446,7 +447,7 @@ public class FactionUtils {
     }
 
     public static String GetClaimFaction(Location loc) {
-        if(!isClaimed(loc)) {
+        if(!isClaimed(loc) && !isOutPost(loc)) {
             return "&2야생";
         } else if(isOutPost(loc)) {
             return "&a" + FactionUtils.getCappedFactionName(FactionUtils.getFactionName(FactionUtils.GetOutPostOwner(loc))) + "&7(전초기지)&r";
@@ -770,15 +771,45 @@ public class FactionUtils {
         }
     }
 
+    public static String GetFactionOutPostWarpLocation(String FactionUUID, String OutPostName) {
+        String key = FactionUUID + "=warplocation=" + OutPostName;
+        return FactionStorage.FactionInfo.get(key);
+    }
+
+    public static String GetBeaconLocation(String FactionUUID, String OutPostName) {
+        String key = FactionUUID + "=beacon=" + OutPostName;
+        return FactionStorage.FactionInfo.get(key);
+    }
+
+    public static String GetFactionOutPostName(String Chunkkey) {
+        if(FactionStorage.OutPostToFaction.containsKey(Chunkkey)) {
+            String FactionUUID = FactionStorage.OutPostToFaction.get(Chunkkey);
+            String key = FactionUUID + "=outpost=" + Chunkkey;
+            return FactionStorage.FactionInfo.get(key);
+        } else {
+            return null;
+        }
+    }
+
+    public static String GetFactionOutPostChunkkey(String FactionUUID, String OutPostName) {
+        String key = FactionUUID + "=" + OutPostName;
+        return FactionStorage.FactionOutPost.get(key);
+    }
+
+    public static void SetBeaconLocation(String FactionUUID, String OutPostName, Location BeaconLocation) {
+        String location = SystemUtils.loc2string(BeaconLocation);
+        JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:add:=:" + FactionUUID + "=beacon=" + OutPostName + ":=:add:=:" + location);
+    }
+
     public static void SetFactionOutPostWarpLocation(String FactionUUID, String Chunkkey, Location loc, String OutPostName) {
         String location = SystemUtils.loc2string(loc);
         SetFactionOutPostName(FactionUUID, Chunkkey, OutPostName);
-        JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:add:=:" + FactionUUID + "=" + OutPostName + ":=:add:=:" + Main.ServerName + "===" + location);
+        JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:add:=:" + FactionUUID + "=warplocation=" + OutPostName + ":=:add:=:" + Main.ServerName + "===" + location);
     }
 
     public static void SetFactionOutPostName(String FactionUUID, String Chunkkey, String OutPostName) {
-        JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:add:=:" + FactionUUID + "=" + Chunkkey + ":=:add:=:" + OutPostName);
-        JedisTempStorage.AddCommandToQueue("update:=:FactionOutPost:=:add:=:" + Chunkkey + ":=:add:=:" + OutPostName);
+        JedisTempStorage.AddCommandToQueue("update:=:FactionInfo:=:add:=:" + FactionUUID + "=outpost=" + Chunkkey + ":=:add:=:" + OutPostName);
+        JedisTempStorage.AddCommandToQueue("update:=:FactionOutPost:=:add:=:" + FactionUUID + "=" + OutPostName + ":=:add:=:" + Chunkkey);
         JedisTempStorage.AddCommandToQueue("update:=:FactionOutPostList:=:add:=:" + FactionUUID + ":=:add:=:" + OutPostName);
         RegisterFactionInfo(FactionUUID, Chunkkey);
     }
