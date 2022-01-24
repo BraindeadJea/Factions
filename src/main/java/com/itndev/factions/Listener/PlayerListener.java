@@ -130,6 +130,12 @@ public class PlayerListener implements Listener {
                                 }.runTask(Main.getInstance());
                             } else {
                                 SystemUtils.sendfactionmessage(p, "&r&c가짜&r&f 신호기를 파괴했습니다 >.<");
+                                new BukkitRunnable() {
+                                    @Override
+                                    public void run() {
+                                        loc.getBlock().setType(Material.AIR);
+                                    }
+                                }.runTask(Main.getInstance());
                             }
                         }
                     } else {

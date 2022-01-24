@@ -69,6 +69,7 @@ public class FactionInvite {
             if(FactionUtils.isExistingFaction(args[1])) {
                 String FactionUUID = FactionUtils.getFactionUUID(args[1].toLowerCase(Locale.ROOT));
                 FactionTimeOut.AcceptInvite(sender, UUID, FactionUUID);
+                FactionUtils.SetPlayerRank(UUID, Config.Member);
             } else {
                 SystemUtils.sendfactionmessage(sender, "&r&f해당 국가 " + args[1] + " 은 존재하지 않습니다");
             }

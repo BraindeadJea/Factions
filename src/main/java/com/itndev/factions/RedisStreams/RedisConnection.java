@@ -36,6 +36,9 @@ public class RedisConnection {
     private static String redis_password = "password";
     private static Boolean sslEnabled = false;
 
+    private static BukkitRunnable StreamWriter = null;
+    private static BukkitRunnable StreamReader = null;
+
     private static Boolean closed = false;
 
     public static void setRedis_address(String address) {
@@ -104,6 +107,8 @@ public class RedisConnection {
     }
 
     public static void RedisDisConnect() {
+        StreamReader.cancel();
+        StreamWriter.cancel();
         connection.close();
         closed = true;
     }
@@ -124,7 +129,7 @@ public class RedisConnection {
 
     public static void RedisStreamReader() {
 
-        new BukkitRunnable() {
+        BukkitRunnable StreamReader = new BukkitRunnable() {
             @Override
             public void run() {
                 while (true) {
@@ -143,7 +148,8 @@ public class RedisConnection {
                     }
                 }
             }
-        }.runTaskAsynchronously(Main.getInstance());
+        };
+        StreamReader.runTaskAsynchronously(Main.getInstance());
 
 
         //String lastSeenMessage = "0-0";
@@ -216,7 +222,7 @@ public class RedisConnection {
     }
 
     public static void RedisStreamWriter() {
-        new BukkitRunnable() {
+        StreamWriter = new BukkitRunnable() {
             @Override
             public void run() {
                 while (true) {
@@ -239,6 +245,7 @@ public class RedisConnection {
                     }
                 }
             }
-        }.runTaskAsynchronously(Main.getInstance());
+        };
+        StreamWriter.runTaskAsynchronously(Main.getInstance());
     }
 }

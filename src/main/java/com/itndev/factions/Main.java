@@ -1,8 +1,6 @@
 package com.itndev.factions;
 
-import com.itndev.factions.Config.Config;
-import com.itndev.factions.Config.StorageDir;
-import com.itndev.factions.Config.YamlConfig;
+import com.itndev.factions.Config.*;
 import com.itndev.factions.Jedis.JedisManager;
 import com.itndev.factions.Listener.BungeeListener;
 import com.itndev.factions.MySQL.*;
@@ -62,7 +60,7 @@ public class Main extends JavaPlugin {
         RegisterStuff.onStartup();
 
         StorageDir.SetupStorage();
-        Config.readConfig();
+        ConfigIO.read();
 
         setupEconomy();
 
@@ -77,15 +75,14 @@ public class Main extends JavaPlugin {
     @Deprecated
     @Override
     public void onDisable() {
-        Config.saveConfig();
+        ConfigIO.save();
         RegisterStuff.onShutdown();
+        RedisConnection.RedisDisConnect();
         try {
             hikariCP.getHikariConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        RedisConnection.RedisDisConnect();
 
         this.getServer().getMessenger().unregisterOutgoingPluginChannel(this);
         this.getServer().getMessenger().unregisterIncomingPluginChannel(this);

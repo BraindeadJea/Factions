@@ -514,7 +514,7 @@ public class FactionUtils {
             }
         } else {
 
-            SystemUtils.sendUUIDmessage(targetuuid, "&a&o&l[ &r&f국가 &a&o&l] &r&f" + message);
+            SystemUtils.sendUUIDmessage(playeruuid, "&a&o&l[ &r&f국가 &a&o&l] &r&f" + message);
             //Bukkit.getPlayer(listener.uuid2name(targetuuid)).sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&o&l[ &r&f팀 &a&o&l] &r&f" + message));
         }
     }

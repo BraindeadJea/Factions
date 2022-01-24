@@ -2,6 +2,7 @@ package com.itndev.factions.AdminCommands;
 
 import com.itndev.factions.Faction.FactionOutpost;
 import com.itndev.factions.Jedis.JedisManager;
+import com.itndev.factions.Jedis.JedisTempStorage;
 import com.itndev.factions.Storage.FactionStorage;
 import com.itndev.factions.Utils.FactionList.FactionList;
 import com.itndev.factions.Utils.FactionUtils;
@@ -22,6 +23,10 @@ public class AdminMainCommand implements CommandExecutor {
 
     public static Location getCopyLocation() {
         return loc;
+    }
+
+    public static void setCopyLocation(Location newloc) {
+        loc = newloc;
     }
 
     @Override
@@ -93,6 +98,11 @@ public class AdminMainCommand implements CommandExecutor {
 
         } else if(args[0].equalsIgnoreCase("getclock")) {
             SystemUtils.sendmessage(p, "&c&lINFO &7JEDIS SYNC CLOCK TIME : " + JedisManager.JEDISSYNCCLOCK);
+        } else if(args[0].equalsIgnoreCase("updatehashmap")) {
+            String updatecommand = SystemUtils.Args2String(args, 1);
+            JedisTempStorage.AddCommandToQueue(updatecommand);
+            SystemUtils.sendmessage(p, "&c&lINFO &r&7Added Command To Queue\n" +
+                    "&r&7-> &r" + updatecommand);
         }
      }
 
