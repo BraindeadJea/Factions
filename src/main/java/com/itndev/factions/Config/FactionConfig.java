@@ -13,7 +13,7 @@ public class FactionConfig {
         YamlConfig factionconf = new YamlConfig();
         factionconf.SetTargetName("FactionConfig");
         FileConfiguration conf = factionconf.getStorage();
-        try {
+        /*try {
             Location loc = AdminMainCommand.getCopyLocation();
             if(loc == null) {
                 loc = new Location(Bukkit.getWorld("world"), 0.0, 0.0, 0.0);
@@ -24,7 +24,7 @@ public class FactionConfig {
             conf.set("FactionOutPost.OustPostLocation.Z", loc.getBlockZ());
         } catch (Exception e){
             e.printStackTrace();
-        }
+        }*/
         factionconf.saveStorage();
     }
 
@@ -33,13 +33,13 @@ public class FactionConfig {
         factionconf.SetTargetName("FactionConfig");
         factionconf.CreateStorage();
         FileConfiguration conf = factionconf.getStorage();
-        setDefaults(conf);
+        /*setDefaults(conf);
         String worldname = conf.getString("FactionOutPost.OustPostLocation.World");
         double X = conf.getDouble("FactionOutPost.OustPostLocation.X");
         double Y = conf.getDouble("FactionOutPost.OustPostLocation.Y");
         double Z = conf.getDouble("FactionOutPost.OustPostLocation.Z");
         Location loc = new Location(Bukkit.getWorld(worldname), X, Y, Z);
-        AdminMainCommand.setCopyLocation(loc);
+        AdminMainCommand.setCopyLocation(loc);*/
     }
 
     public static void setDefaults(FileConfiguration conf) {

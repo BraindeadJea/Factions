@@ -343,6 +343,9 @@ public class JedisManager {
 
     @Deprecated
     public static void updatehashmap(String k, String ServerName) {
+        if(k.equalsIgnoreCase("-buffer-")) {
+            return;
+        }
         double c = 1000;
         if(c > 600) {
             String[] args = k.split(":=:");

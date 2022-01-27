@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class JedisUtils {
     private static String splitter = "/=&C&:&G&:&1&=/";
+    private static String buffer = "-buffer-";
 
     @Deprecated
     public static Boolean HashMapUpdate(HashMap<String, String> map, String ServerName) {
@@ -20,12 +21,12 @@ public class JedisUtils {
     }
 
     public static String HashMap2String(ConcurrentHashMap<String, String> map) {
-        String finalbuildstring = "";
+        String finalbuildstring = buffer + splitter;
         if(!map.isEmpty()) {
             int maxamount = Integer.valueOf(map.get("MAXAMOUNT"));
             for (int c = 1; c <= maxamount; c++) {
                 if (c == maxamount) {
-                    finalbuildstring = finalbuildstring + map.get(String.valueOf(c));
+                    finalbuildstring = finalbuildstring + map.get(String.valueOf(c)) + splitter + buffer;
                 } else {
                     finalbuildstring = finalbuildstring + map.get(String.valueOf(c)) + splitter;
                 }

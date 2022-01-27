@@ -2,6 +2,7 @@ package com.itndev.factions.MySQL;
 
 import com.itndev.factions.Main;
 import com.zaxxer.hikari.HikariDataSource;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -36,6 +37,25 @@ public class HikariCP {
         dataSource.addDataSourceProperty("databaseName", database);
         dataSource.addDataSourceProperty("user", username);
         dataSource.addDataSourceProperty("password", password);
+        PingDatabase();
+    }
+
+    public void PingDatabase() {
+        try {
+            connection = dataSource.getConnection();
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    try {
+                        getHikariConnection().prepareStatement("SELECT FactionName FROM FactionName WHERE='TEST'");
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
+                    }
+                }
+            }.runTaskTimer(Main.getInstance(), 10L, 12000L);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 
     public Connection getHikariConnection() {

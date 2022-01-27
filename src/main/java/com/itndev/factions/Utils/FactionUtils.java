@@ -514,7 +514,16 @@ public class FactionUtils {
             }
         } else {
 
-            SystemUtils.sendUUIDmessage(playeruuid, "&a&o&l[ &r&f국가 &a&o&l] &r&f" + message);
+            OfflinePlayer op = Bukkit.getOfflinePlayer(UserInfoUtils.getPlayerName(playeruuid));
+            OfflinePlayer op2 = Bukkit.getOfflinePlayer(UserInfoUtils.getPlayerName(targetuuid));
+            if(op.isOnline()) {
+                Player p = (Player) op;
+                p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&o&l[ &r&f국가 &a&o&l] &r&f" + message));
+            } else if(op2.isOnline()) {
+                Player p = (Player) op2;
+                p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&o&l[ &r&f국가 &a&o&l] &r&f" + message));
+            }
+            //SystemUtils.sendUUIDmessage(playeruuid, );
             //Bukkit.getPlayer(listener.uuid2name(targetuuid)).sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&o&l[ &r&f팀 &a&o&l] &r&f" + message));
         }
     }

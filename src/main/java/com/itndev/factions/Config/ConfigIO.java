@@ -3,12 +3,12 @@ package com.itndev.factions.Config;
 public class ConfigIO {
 
     public static void read() {
-        FactionConfig.readConfig();
+        //FactionConfig.readConfig();
         Config.readConfig();
     }
 
     public static void save() {
-        FactionConfig.saveConfig();
+        //FactionConfig.saveConfig();
         Config.saveConfig();
     }
 }
