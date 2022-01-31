@@ -16,7 +16,7 @@ public class BaltopUpdateTask extends AsyncTask{
         runnable = new BukkitRunnable() {
             @Override
             public void run() {
-                FactionList.FactionTopExecute();
+                FactionList.FactionTopExecute(100L);
                 FactionList.BuildFactionTop();
             }
         };

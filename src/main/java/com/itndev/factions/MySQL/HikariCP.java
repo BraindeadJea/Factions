@@ -47,7 +47,7 @@ public class HikariCP {
                 @Override
                 public void run() {
                     try {
-                        getHikariConnection().prepareStatement("SELECT FactionName FROM FactionName WHERE='TEST'");
+                        getHikariConnection().prepareStatement("SELECT FactionName FROM FactionName").executeQuery();
                     } catch (SQLException throwables) {
                         throwables.printStackTrace();
                     }

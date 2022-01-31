@@ -449,10 +449,12 @@ public class FactionUtils {
     public static String GetClaimFaction(Location loc) {
         if(!isClaimed(loc) && !isOutPost(loc)) {
             return "&2야생";
+        } else if(isClaimed(loc)){
+            return "&a" + FactionUtils.getCappedFactionName(FactionUtils.getFactionName(FactionUtils.AsyncWhosClaim(loc))) + "&r";
         } else if(isOutPost(loc)) {
             return "&a" + FactionUtils.getCappedFactionName(FactionUtils.getFactionName(FactionUtils.GetOutPostOwner(loc))) + "&7(전초기지)&r";
         } else {
-            return "&a" + FactionUtils.getCappedFactionName(FactionUtils.getFactionName(FactionUtils.AsyncWhosClaim(loc))) + "&r";
+            return "NULL";
         }
     }
 

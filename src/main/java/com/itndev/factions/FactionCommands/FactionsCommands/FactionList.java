@@ -4,7 +4,10 @@ import com.itndev.factions.Utils.SystemUtils;
 import com.itndev.factions.Utils.ValidChecker;
 import org.bukkit.entity.Player;
 
+import java.text.DecimalFormat;
+
 public class FactionList {
+
     public static void FactionList(Player sender, String UUID, String[] args) {
         new Thread( () -> {
             if(args.length < 2) {

@@ -143,7 +143,7 @@ public class FactionOutPost {
                     public void run() {
                         if(TempStorage.TeleportLocation.containsKey(UUID)) {
                             if(TempStorage.TeleportLocation.get(UUID).equals(time)) {
-                                SystemUtils.SendtoServer(sender, Main.ServerName);
+                                SystemUtils.SendtoServer(sender, TargetServerName);
                                 FactionUtils.WarpLocation(UUID, TargetServerName, temp222[1], false);
                                 new BukkitRunnable() {
                                     @Override
@@ -166,5 +166,62 @@ public class FactionOutPost {
             SystemUtils.sendfactionmessage(sender, "&r&f존재하지 않는 전초기지입니다\n");
         }
 
+    }
+
+    public static void Warp2OutPost(Player sender, String UUID, String OutPostName) {
+        new Thread( () -> {
+            String FactionUUID = FactionUtils.getPlayerFactionUUID(UUID);
+            String[] temp222 = FactionUtils.GetFactionOutPostWarpLocation(FactionUUID, OutPostName).split("===");
+            String TargetServerName = temp222[0];
+            Location loc = SystemUtils.string2loc(temp222[1]);
+
+            if(TargetServerName.equalsIgnoreCase(Main.ServerName)) {
+
+                //wait and teleport to location
+                SystemUtils.sendfactionmessage(sender, "&r&c5초&r&f후 전초기지 " + OutPostName + "으로 이동합니다");
+                Long time = System.currentTimeMillis();
+                TempStorage.TeleportLocation.put(sender.getUniqueId().toString(), time);
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if(TempStorage.TeleportLocation.containsKey(UUID)) {
+                            if(TempStorage.TeleportLocation.get(UUID).equals(time)) {
+                                SystemUtils.sendfactionmessage(sender, "&r&f전초기지 " + OutPostName + "으로 이동합니다");
+                                sender.teleport(loc);
+                                return;
+                            }
+                        }
+                        SystemUtils.sendfactionmessage(sender, "&r&f이동이 취소되었습니다");
+                    }
+                }.runTaskLater(Main.getInstance(), 100L);
+            } else {
+                SystemUtils.sendfactionmessage(sender, "&r&c5초&r&f후 전초기지 " + OutPostName + "으로 이동합니다");
+                Long time = System.currentTimeMillis();
+                TempStorage.TeleportLocation.put(sender.getUniqueId().toString(), time);
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if(TempStorage.TeleportLocation.containsKey(UUID)) {
+                            if(TempStorage.TeleportLocation.get(UUID).equals(time)) {
+                                SystemUtils.SendtoServer(sender, TargetServerName);
+                                FactionUtils.WarpLocation(UUID, TargetServerName, temp222[1], false);
+                                new BukkitRunnable() {
+                                    @Override
+                                    public void run() {
+                                        FactionUtils.WarpLocation(UUID, TargetServerName, temp222[1], true);
+                                    }
+                                }.runTaskLaterAsynchronously(Main.getInstance(), 400L);
+                                return;
+                            }
+                        }
+                        SystemUtils.sendfactionmessage(sender, "&r&f이동이 취소되었습니다");
+                    }
+                }.runTaskLater(Main.getInstance(), 100L);
+
+                //
+                //서버로 이동
+                //그다음에 텔레포트
+            }
+        }).start();
     }
 }

@@ -19,7 +19,7 @@ public class FactionInvite {
             if (FactionUtils.HigherThenorSameRank(UUID, Config.VipMember)) {
                 if(UserInfoUtils.hasJoined(args[1])) {
                     String InviteUUID = UserInfoUtils.getPlayerUUID(args[1].toLowerCase(Locale.ROOT));
-                    String CasedName = UserInfoUtils.getPlayerOrginName(InviteUUID);
+                    String CasedName = UserInfoUtils.getPlayerOrginName(UserInfoUtils.getPlayerName(InviteUUID));
                     if(!FactionUtils.isInFaction(InviteUUID)) {
                         FactionTimeOut.InvitePlayer(sender, FactionUtils.getPlayerFactionUUID(UUID), InviteUUID);
                     } else {
@@ -46,7 +46,7 @@ public class FactionInvite {
             if (FactionUtils.HigherThenorSameRank(UUID, Config.VipMember)) {
                 if (UserInfoUtils.hasJoined(args[1])) {
                     String InviteUUID = UserInfoUtils.getPlayerUUID(args[1].toLowerCase(Locale.ROOT));
-                    String CasedName = UserInfoUtils.getPlayerOrginName(InviteUUID);
+                    String CasedName = UserInfoUtils.getPlayerOrginName(UserInfoUtils.getPlayerName(InviteUUID));
                     FactionTimeOut.cancelInvite(sender, FactionUtils.getPlayerFactionUUID(UUID), InviteUUID);
                 } else {
                     SystemUtils.sendfactionmessage(sender, "&r&c" + args[1] + "&r&f(은)는 존재하지 않는 유저입니다");

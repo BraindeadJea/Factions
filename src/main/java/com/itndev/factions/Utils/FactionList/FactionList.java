@@ -9,6 +9,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -19,19 +20,21 @@ public class FactionList {
     public static LinkedHashMap<String, Double> LinkedFactionBalTop = new LinkedHashMap<>();
     public static Integer FactionTopSize = 0;
     public static Long FactionTopLastRefresh = System.currentTimeMillis();
+    private static DecimalFormat df = new DecimalFormat("0.00");
 
-    public static void FactionTopExecute() {
+    public static void FactionTopExecute(Long SleepDelay) {
         new Thread( () -> {
             try {
                 ResultSet rs = Main.hikariCP.getHikariConnection().prepareStatement("SELECT * FROM FactionBank").executeQuery();
                 while (rs.next()) {
+                    Thread.sleep(SleepDelay);
                     FactionBalTop.put(
                             rs.getString("FactionUUID"),
                             Double.parseDouble(rs.getString("FactionBank"))
                     );
                     CacheUtils.UpdateCachedBank(rs.getString("FactionUUID"), Double.parseDouble(rs.getString("FactionBank")));
                 }
-            } catch (SQLException e) {
+            } catch (SQLException | InterruptedException e) {
                 e.printStackTrace();
             }
         }).start();
@@ -50,7 +53,7 @@ public class FactionList {
                 if(!FactionTop.containsKey(i)) {
                     break;
                 }
-                temp = temp + "&r&f" + FactionUtils.getCappedFactionName(FactionUtils.getFactionName(FactionTop.get(i))) + " &8&l- &7" + FactionBalTop.get(FactionTop.get(i)) + "원\n";
+                temp = temp + "&r&f" + FactionUtils.getCappedFactionName(FactionUtils.getFactionName(FactionTop.get(i))) + " &8&l- &7" + df.format(FactionBalTop.get(FactionTop.get(i))) + "원\n";
             }
             SystemUtils.sendmessage(p,"&r&m&l------------&r&3&l[ &f&o국가 목록 &3&l]&r&m&l------------\n" +
                     temp + "&8 - &f" + page + "&7/&f" + maxpage + "&8 -&r \n&r&m&l------------&r&3&l[ &f&o국가 목록 &3&l]&r&m&l------------\n");

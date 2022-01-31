@@ -355,6 +355,14 @@ public class FactionMainCommand implements CommandExecutor {
 
                     //=================전초기지점령=================
 
+                } else if(args[0].equalsIgnoreCase("워프메뉴")) {
+
+                    //=================워프메뉴=================
+
+                    FactionWarpMenu.SendFactionWarpMenu(sender, UUID, args);
+
+                    //=================워프메뉴=================
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();

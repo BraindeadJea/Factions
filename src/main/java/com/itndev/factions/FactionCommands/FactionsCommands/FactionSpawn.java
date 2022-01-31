@@ -53,7 +53,7 @@ public class FactionSpawn {
                         public void run() {
                             if(TempStorage.TeleportLocation.containsKey(UUID)) {
                                 if(TempStorage.TeleportLocation.get(UUID).equals(time)) {
-                                    SystemUtils.SendtoServer(sender, Main.ServerName);
+                                    SystemUtils.SendtoServer(sender, TargetServerName);
                                     FactionUtils.WarpLocation(UUID, TargetServerName, temp222[1], false);
                                     new BukkitRunnable() {
                                         @Override

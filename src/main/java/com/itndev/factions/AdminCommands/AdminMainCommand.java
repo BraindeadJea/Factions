@@ -47,7 +47,7 @@ public class AdminMainCommand implements CommandExecutor {
             return;
         }
         if(args[0].equalsIgnoreCase("reloadfactionbaltop")) {
-            FactionList.FactionTopExecute();
+            FactionList.FactionTopExecute(100L);
             SystemUtils.sendmessage(p, "&c&lSUCESS &r&7국가 금고 정보 로컬 데이터 리프레시 중...");
         } else if(args[0].equalsIgnoreCase("buildfactionbaltop")) {
             FactionList.BuildFactionTop();

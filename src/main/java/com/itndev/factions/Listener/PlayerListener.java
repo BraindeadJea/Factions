@@ -21,6 +21,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandSendEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -202,4 +203,74 @@ public class PlayerListener implements Listener {
     /*public void onTeleport(PlayerTeleportEvent e) {
         TeleportInvisFix.onTeleport(e);
     }*/
+    @Deprecated
+    @EventHandler(ignoreCancelled = true)
+    public void onclick(InventoryClickEvent e) {
+        if(e.getView().getTitle().contains(SystemUtils.colorize("&3&l[ &r&f국가 워프메뉴 &3&l]"))) {
+            //main.sendmsg((Player) e.getWhoClicked(), "&c&l(!) &7상대방의 정보를 보고 있는 도중에는 해당 엑션을 취하실수 없습니다");
+            ItemStack item = e.getCurrentItem().clone();
+            e.setCancelled(true);
+            e.getWhoClicked().closeInventory();
+            Player sender = (Player) e.getWhoClicked();
+            String UUID = sender.getUniqueId().toString();
+
+            new Thread( () -> {
+                String OutPostName = item.getItemMeta().getDisplayName().split(" ")[1];
+                String FactionUUID = FactionUtils.getPlayerFactionUUID(UUID);
+                String[] temp222 = FactionUtils.GetFactionOutPostWarpLocation(FactionUUID, OutPostName).split("===");
+                String TargetServerName = temp222[0];
+                Location loc = SystemUtils.string2loc(temp222[1]);
+
+                if(TargetServerName.equalsIgnoreCase(Main.ServerName)) {
+
+                    //wait and teleport to location
+                    SystemUtils.sendfactionmessage(sender, "&r&c5초&r&f후 전초기지 " + OutPostName + "으로 이동합니다");
+                    Long time = System.currentTimeMillis();
+                    TempStorage.TeleportLocation.put(sender.getUniqueId().toString(), time);
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            if(TempStorage.TeleportLocation.containsKey(UUID)) {
+                                if(TempStorage.TeleportLocation.get(UUID).equals(time)) {
+                                    SystemUtils.sendfactionmessage(sender, "&r&f전초기지 " + OutPostName + "으로 이동합니다");
+                                    sender.teleport(loc);
+                                    return;
+                                }
+                            }
+                            SystemUtils.sendfactionmessage(sender, "&r&f이동이 취소되었습니다");
+                        }
+                    }.runTaskLater(Main.getInstance(), 100L);
+                } else {
+                    SystemUtils.sendfactionmessage(sender, "&r&c5초&r&f후 전초기지 " + OutPostName + "으로 이동합니다");
+                    Long time = System.currentTimeMillis();
+                    TempStorage.TeleportLocation.put(sender.getUniqueId().toString(), time);
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            if(TempStorage.TeleportLocation.containsKey(UUID)) {
+                                if(TempStorage.TeleportLocation.get(UUID).equals(time)) {
+                                    SystemUtils.SendtoServer(sender, TargetServerName);
+                                    FactionUtils.WarpLocation(UUID, TargetServerName, temp222[1], false);
+                                    new BukkitRunnable() {
+                                        @Override
+                                        public void run() {
+                                            FactionUtils.WarpLocation(UUID, TargetServerName, temp222[1], true);
+                                        }
+                                    }.runTaskLaterAsynchronously(Main.getInstance(), 400L);
+                                    return;
+                                }
+                            }
+                            SystemUtils.sendfactionmessage(sender, "&r&f이동이 취소되었습니다");
+                        }
+                    }.runTaskLater(Main.getInstance(), 100L);
+
+                    //
+                    //서버로 이동
+                    //그다음에 텔레포트
+                }
+            }).start();
+
+        }
+    }
+
 }
