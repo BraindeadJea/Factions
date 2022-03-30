@@ -22,6 +22,11 @@ public class CacheUtils {
         CachedStorage.CachedBank.put(FactionUUID, Bank);
     }
 
+    public static void UpdateLocalCachedBank(String FactionUUID, Double Bank) {
+        //JedisTempStorage.AddCommandToQueue("update:=:CachedBank:=:add:=:" + FactionUUID + ":=:add:=:" + String.valueOf(Bank) + ":=:" + Main.ServerName);
+        CachedStorage.CachedBank.put(FactionUUID, Bank);
+    }
+
     public static void removeCachedDTR(String FactionUUID) {
         JedisTempStorage.AddCommandToQueue("update:=:CachedDTR:=:remove:=:" + FactionUUID + ":=:add:=:" + String.valueOf(0) + ":=:" + Main.ServerName);
         CachedStorage.CachedDTR.remove(FactionUUID);

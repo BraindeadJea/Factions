@@ -27,13 +27,13 @@ public class SyncMap {
         new BukkitRunnable() {
             @Override
             public void run() {
-                FactionList.FactionTopExecute(100L);
+                FactionList.FactionTopExecute(10L);
                 try {
                     Thread.sleep(10000);
                 } catch (InterruptedException ignored) {
                 }
                 FactionList.BuildFactionTop();
             }
-        }.runTaskTimerAsynchronously(Main.getInstance(), 100L, 20*60L);
+        }.runTaskTimerAsynchronously(Main.getInstance(), 100L, 2*20*60L);
     }
 }

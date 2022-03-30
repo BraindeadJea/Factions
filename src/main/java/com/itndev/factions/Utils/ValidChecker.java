@@ -405,16 +405,18 @@ public class ValidChecker {
                     "흘흙흚흛흜흝흞흟흠흡흢흣흤흥흦흧흨흩흪흫희흭흮흯흰흱흲흳흴흵흶" +
                     "흷흸흹흺흻흼흽흾흿힀힁힂힃힄힅힆힇히힉힊힋힌힍힎힏힐힑힒힓힔힕" +
                     "힖힗힘힙힚힛힜힝힞힟힠힡힢힣";
-
+            String k_temp = "ㅂㅈㄷㄱㅅㅁㄴㅇㄹㅎㅋㅌㅊ표ㅕㅑㅐㅔㅗㅓㅏㅣㅠㅜㅡㅒㅖㅃㅉㄸㄲㅆㄳㅄ";
             System.out.println("[TextValidChecker] loading all valid options...");
             String k2 = "ABCDEFGHIJKLMOPQRSTUVWXYZ";
-            String k3 = k2.toLowerCase(Locale.ROOT);
+            String k3 = "abcdefghijklmopqrstuvmxyz";
             String k4 = "1234567890";
             String[] words = k.split("");
+            String[] words_temp = k_temp.split("");
             String[] words2 = k2.split("");
             String[] words3 = k3.split("");
             String[] words4 = k4.split("");
             valid.addAll(Arrays.asList(words));
+            valid.addAll(Arrays.asList(words_temp));
             valid.addAll(Arrays.asList(words2));
             valid.addAll(Arrays.asList(words3));
             valid.addAll(Arrays.asList(words4));

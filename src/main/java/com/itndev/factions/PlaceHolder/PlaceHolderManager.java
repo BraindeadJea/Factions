@@ -62,7 +62,7 @@ public class PlaceHolderManager extends PlaceholderExpansion {
             if(FactionUtils.getPlayerRank(UUID).equalsIgnoreCase(Config.Nomad)) {
                 return "";
             } else {
-                return "&f[ &r&a" + FactionUtils.getCappedFactionName(FactionUtils.getFactionName(FactionUtils.getPlayerFactionUUID(UUID))) + " &r&f] ";
+                return "&f[&r&a" + FactionUtils.getCappedFactionName(FactionUtils.getFactionName(FactionUtils.getPlayerFactionUUID(UUID))) + "&r&f] ";
             }
         } else if(params.equalsIgnoreCase("formatrank")) {
             if(FactionUtils.getPlayerRank(UUID).equalsIgnoreCase(Config.Nomad)) {

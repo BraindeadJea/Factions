@@ -47,7 +47,7 @@ public class FactionUtils {
         if(FactionUtils.getPlayerRank(UUID).equalsIgnoreCase(Config.Nomad)) {
             return "";
         } else {
-            return "&f[ &r&a" + FactionUtils.getCappedFactionName(FactionUtils.getFactionName(FactionUtils.getPlayerFactionUUID(UUID))) + " &r&f]";
+            return "&f[&r&a" + FactionUtils.getCappedFactionName(FactionUtils.getFactionName(FactionUtils.getPlayerFactionUUID(UUID))) + "&r&f]";
         }
     }
 
@@ -517,12 +517,17 @@ public class FactionUtils {
         } else {
 
             OfflinePlayer op = Bukkit.getOfflinePlayer(UserInfoUtils.getPlayerName(playeruuid));
-            OfflinePlayer op2 = Bukkit.getOfflinePlayer(UserInfoUtils.getPlayerName(targetuuid));
+            if(targetuuid.equalsIgnoreCase("puremessagesendoptiontrue")) {
+                if(op.isOnline()) {
+                    Player s = (Player) op;
+                    s.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+                }
+            } else
             if(op.isOnline()) {
                 Player p = (Player) op;
                 p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&o&l[ &r&f국가 &a&o&l] &r&f" + message));
-            } else if(op2.isOnline()) {
-                Player p = (Player) op2;
+            } else if(Bukkit.getOfflinePlayer(UserInfoUtils.getPlayerName(targetuuid)).isOnline()) {
+                Player p = (Player) Bukkit.getOfflinePlayer(UserInfoUtils.getPlayerName(targetuuid));
                 p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&o&l[ &r&f국가 &a&o&l] &r&f" + message));
             }
             //SystemUtils.sendUUIDmessage(playeruuid, );

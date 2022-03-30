@@ -8,7 +8,11 @@ import com.itndev.factions.Storage.UserInfoStorage;
 import com.itndev.factions.Utils.FactionUtils;
 import com.itndev.factions.Utils.JedisUtils;
 import com.itndev.factions.Utils.SystemUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import redis.clients.jedis.*;
 
@@ -17,6 +21,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class JedisManager {
@@ -414,6 +419,21 @@ public class JedisManager {
                         PlayerListener.onJoinWarp.put(targetuuid, loc);
                     } else {
                         PlayerListener.onJoinWarp.remove(targetuuid);
+                    }
+                }
+            } else if(args[0].equalsIgnoreCase("eco")) {
+                String giveortake = args[1];
+                String targetuuid = args[2];
+                String Amount = args[3];
+                if(Bukkit.getOfflinePlayer(UUID.fromString(targetuuid)).isOnline()) {
+                    OfflinePlayer op = Bukkit.getOfflinePlayer(UUID.fromString(targetuuid));
+                    Double AmountDouble = Double.parseDouble(Amount);
+                    if(giveortake.equalsIgnoreCase("give")) {
+                        Main.getEconomy().depositPlayer(op, AmountDouble);
+                    } else if(giveortake.equalsIgnoreCase("take")) {
+                        Main.getEconomy().withdrawPlayer(op, AmountDouble);
+                    } else {
+                        SystemUtils.warning("INVALID COMMAND USAGE AT ECON COMMAND [give/take/null <-]");
                     }
                 }
             } else {

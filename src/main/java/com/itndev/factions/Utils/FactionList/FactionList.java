@@ -24,17 +24,17 @@ public class FactionList {
 
     public static void FactionTopExecute(Long SleepDelay) {
         new Thread( () -> {
+            FactionBalTop.clear();
             try {
                 ResultSet rs = Main.hikariCP.getHikariConnection().prepareStatement("SELECT * FROM FactionBank").executeQuery();
                 while (rs.next()) {
-                    Thread.sleep(SleepDelay);
                     FactionBalTop.put(
                             rs.getString("FactionUUID"),
                             Double.parseDouble(rs.getString("FactionBank"))
                     );
-                    CacheUtils.UpdateCachedBank(rs.getString("FactionUUID"), Double.parseDouble(rs.getString("FactionBank")));
+                    CacheUtils.UpdateLocalCachedBank(rs.getString("FactionUUID"), Double.parseDouble(rs.getString("FactionBank")));
                 }
-            } catch (SQLException | InterruptedException e) {
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         }).start();
@@ -76,6 +76,7 @@ public class FactionList {
         List<Map.Entry<String, Double> > list =
                 new LinkedList<Map.Entry<String, Double> >(hm.entrySet());
 
+        FactionTop.clear();
         // Sort the list
         Collections.sort(list, new Comparator<Map.Entry<String, Double> >() {
             public int compare(Map.Entry<String, Double> o1,
