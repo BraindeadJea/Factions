@@ -1,6 +1,7 @@
 package com.itndev.factions.MySQL;
 
 import com.itndev.factions.Main;
+import com.itndev.factions.Utils.SystemUtils;
 import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -58,18 +59,32 @@ public class HikariCP {
         }
     }
 
+    @Deprecated
     public Connection getHikariConnection() {
-        if(connection != null) {
-            return connection;
-        } else {
+        try {
+            if(connection != null || !connection.isClosed()) {
+                return connection;
+            } else {
+                try {
+                    ConnectHikari();
+                    connection = dataSource.getConnection();
+                    return connection;
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    return connection;
+                }
+            }
+        } catch (SQLException e) {
+            ConnectHikari();
             try {
-                ConnectHikari();
                 connection = dataSource.getConnection();
                 return connection;
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return connection;
+            } catch (SQLException ex) {
+                ex.printStackTrace();
             }
+
+            SystemUtils.warning("cannot connect to database");
+            return null;
         }
     }
 

@@ -37,6 +37,51 @@ public class wtfDatabase {
         }).start();
     }
 
+    public static void CacheFactionDTR(String FactionUUID) {
+        new Thread( () -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            try {
+                PreparedStatement ps = Main.hikariCP.getHikariConnection().prepareStatement("SELECT " +
+                        "FactionDTR FROM FactionDTR WHERE FactionUUID='" + FactionUUID + "'");
+                ResultSet rs = ps.executeQuery();
+                double DTR = 0;
+                if(rs.next()) {
+                    DTR = Double.parseDouble(rs.getString("FactionDTR"));
+                    CacheUtils.UpdateCachedDTR(FactionUUID, DTR);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    public static void CacheFactionBank(String FactionUUID) {
+        new Thread( () -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            try {
+                PreparedStatement ps = Main.hikariCP.getHikariConnection().prepareStatement("SELECT " +
+                        "FactionBank FROM FactionBank WHERE FactionUUID='" + FactionUUID + "'");
+                ResultSet rs = ps.executeQuery();
+                double Bank = 0;
+                if(rs.next()) {
+                    Bank = Double.parseDouble(rs.getString("FactionBank"));
+                    CacheUtils.UpdateCachedBank(FactionUUID, Bank);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+
     public CompletableFuture<Boolean> TryClaimName(String FactionNameCapped, String FactionUUID) {
         CompletableFuture<Boolean> hasSucceed = new CompletableFuture<>();
         new Thread(() -> {
@@ -220,6 +265,7 @@ public class wtfDatabase {
                 } else {
                     futureDTR.complete(-420D);
                 }
+                CacheFactionDTR(FactionUUID);
                 /*PreparedStatement ps = Main.hikariCP.getHikariConnection().prepareStatement("SELECT " +
                         "FactionDTR FROM FactionDTR WHERE FactionUUID=?");
                 ps.setString(1, FactionUUID);
@@ -256,6 +302,7 @@ public class wtfDatabase {
                 } else {
                     futureBank.complete(-420D);
                 }
+                CacheFactionBank(FactionUUID);
                 /*PreparedStatement DTRUPDATE = Main.hikariCP.getHikariConnection().prepareStatement("SELECT @ORIGINNAME := (SELECT FactionBank FROM FactionBank WHERE FactionUUID='"+ FactionUUID +"');" +
                         "UPDATE FactionBank SET FactionBank=CONVERT(CONVERT(@ORIGINNAME, DOUBLE) + " + String.valueOf(DTR) + ", CHAR) WHERE FactionUUID='"+ FactionUUID +"';" +
                         "SELECT FactionBank FROM FactionBank WHERE FactionUUID='"+ FactionUUID +"';");

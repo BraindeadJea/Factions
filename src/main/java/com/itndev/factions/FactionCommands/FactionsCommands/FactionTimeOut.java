@@ -71,6 +71,7 @@ public class FactionTimeOut {
                         }
                     }
                 }
+                this.cancel();
             }
         }.runTaskTimerAsynchronously(Main.getInstance(), 0L, 20L);
     }

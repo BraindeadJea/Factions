@@ -29,6 +29,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.graalvm.compiler.lir.alloc.lsra.LinearScan;
 import org.jetbrains.annotations.Unmodifiable;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Consumer;
@@ -332,5 +333,11 @@ public class SystemUtils {
 
     private boolean isPlaceholderAPIEnabled() {
         return Bukkit.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI");
+    }
+
+    private static DecimalFormat df = new DecimalFormat("0.00");
+
+    public static String getPlayerBalance(Player p) {
+        return df.format(Main.getEconomy().getBalance((OfflinePlayer) p));
     }
 }

@@ -59,6 +59,7 @@ public class JedisManager {
                 };
                 getJedisPool().getResource().subscribe(jedisPubSub3, channels);
                 getJedisPool().getResource().sync();
+                this.cancel();
             }
         }.runTaskAsynchronously(Main.getInstance());
     }
